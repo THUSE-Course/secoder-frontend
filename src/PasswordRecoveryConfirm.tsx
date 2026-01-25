@@ -80,8 +80,10 @@ const PasswordRecoveryConfirm: React.FC<PasswordRecoveryConfirmProps> = ({
       setConfirmPassword("");
       setPasswordErrors([]);
 
-    } catch (err: any) {
-      setError(err.message || t("password_reset_failed", "Password reset failed"));
+    } catch (err: unknown) {
+      const fallbackMessage = t("password_reset_failed", "Password reset failed");
+      const message = err instanceof Error && err.message ? err.message : fallbackMessage;
+      setError(message);
     } finally {
       setLoading(false);
     }

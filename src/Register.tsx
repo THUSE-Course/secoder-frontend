@@ -77,8 +77,10 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
       setRegisterPassword("");
       setPasswordErrors([]);
 
-    } catch (err: any) {
-      setError(err.message || t("registration_failed", "Registration failed"));
+    } catch (err: unknown) {
+      const fallbackMessage = t("registration_failed", "Registration failed");
+      const message = err instanceof Error && err.message ? err.message : fallbackMessage;
+      setError(message);
     } finally {
       setLoading(false);
     }

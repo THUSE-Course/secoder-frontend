@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Box, CircularProgress } from '@mui/material';
 import Login from '../Login';
@@ -12,24 +12,24 @@ interface AuthWrapperProps {
 
 const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
   const { user, loading } = useAuth();
-  const [currentView, setCurrentView] = useState<'login' | 'register' | 'passwordRecovery' | 'passwordRecoveryConfirm'>('login');
-  const [recoveryToken, setRecoveryToken] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Handle routing based on URL path
+  const [currentView, setCurrentView] = useState<'login' | 'register' | 'passwordRecovery' | 'passwordRecoveryConfirm'>(() => {
     const path = window.location.pathname;
-    const urlParams = new URLSearchParams(window.location.search);
-
     if (path === '/PasswordRecovery') {
-      setCurrentView('passwordRecovery');
-    } else if (path === '/PasswordRecoveryConfirm') {
-      const token = urlParams.get('token');
-      setRecoveryToken(token);
-      setCurrentView('passwordRecoveryConfirm');
-    } else {
-      setCurrentView('login');
+      return 'passwordRecovery';
     }
-  }, []);
+    if (path === '/PasswordRecoveryConfirm') {
+      return 'passwordRecoveryConfirm';
+    }
+    return 'login';
+  });
+  const [recoveryToken] = useState<string | null>(() => {
+    const path = window.location.pathname;
+    if (path === '/PasswordRecoveryConfirm') {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('token');
+    }
+    return null;
+  });
 
   // Function to navigate to different views
   const navigateToView = (view: 'login' | 'register' | 'passwordRecovery' | 'passwordRecoveryConfirm') => {

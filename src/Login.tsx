@@ -37,8 +37,10 @@ const Login: React.FC<LoginProps> = ({ onSwitchToRegister, onSwitchToPasswordRec
       } else {
         throw new Error(t("no_token_received", "No authentication token received"));
       }
-    } catch (err: any) {
-      setError(err.message || t("login_failed"));
+    } catch (err: unknown) {
+      const fallbackMessage = t("login_failed");
+      const message = err instanceof Error && err.message ? err.message : fallbackMessage;
+      setError(message);
     } finally {
       setLoading(false);
     }

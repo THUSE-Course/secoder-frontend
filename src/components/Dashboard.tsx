@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import {
   Box,
   Card,
@@ -6,14 +6,16 @@ import {
   Typography,
   Button,
   Avatar,
-  Divider
+  Divider,
+  CircularProgress
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import ThemeToggle from './ThemeToggle';
 import LanguageSelector from './LanguageSelector';
-import GroupManagement from './GroupManagement';
 import { AccountCircle, Email, School, ExitToApp, Launch, Code, BugReport, Dashboard as DashboardIcon } from '@mui/icons-material';
+
+const GroupManagement = lazy(() => import('./GroupManagement'));
 
 const Dashboard: React.FC = () => {
   const { t } = useTranslation();
@@ -231,7 +233,15 @@ const Dashboard: React.FC = () => {
         </Card>
 
         {/* Group Management Card */}
-        <GroupManagement />
+        <Suspense
+          fallback={
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
+              <CircularProgress />
+            </Box>
+          }
+        >
+          <GroupManagement />
+        </Suspense>
       </Box>
     </Box>
   );

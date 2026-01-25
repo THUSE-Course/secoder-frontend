@@ -35,10 +35,22 @@ async function hashPassword(password: string): Promise<string> {
   return hashHex;
 }
 
-async function post(
+type ApiResponse = Record<string, unknown>;
+
+const extractErrorMessage = (data: unknown): string | undefined => {
+  if (!data || typeof data !== 'object') {
+    return undefined;
+  }
+
+  const record = data as Record<string, unknown>;
+  const msg = record.msg ?? record.message;
+  return typeof msg === 'string' ? msg : undefined;
+};
+
+async function post<T = ApiResponse>(
   payload: RegisterPayload | LoginPayload | RecoverPasswordPayload | ConfirmPasswordRecoveryPayload,
   route: string
-): Promise<any> {
+): Promise<T> {
   const apiEndpoint = import.meta.env.VITE_API_ENDPOINT;
 
   try {
@@ -52,13 +64,13 @@ async function post(
 
     // Check if response has content
     const contentType = response.headers.get('content-type');
-    let data: any = null;
+    let data: unknown = null;
 
     if (contentType && contentType.includes('application/json')) {
       const text = await response.text();
       if (text.trim()) {
         try {
-          data = JSON.parse(text);
+          data = JSON.parse(text) as unknown;
         } catch (parseError) {
           console.error('JSON parse error:', parseError, 'Response text:', text);
           throw new Error('Invalid JSON response from server');
@@ -74,12 +86,12 @@ async function post(
     }
 
     if (!response.ok) {
-      const errorMessage = data?.msg || data?.message || `Request failed with status ${response.status}`;
+      const errorMessage = extractErrorMessage(data) || `Request failed with status ${response.status}`;
       throw new Error(errorMessage);
     }
 
-    return data;
-  } catch (error) {
+    return data as T;
+  } catch (error: unknown) {
     console.error('API request error:', error);
     if (error instanceof TypeError && error.message.includes('fetch')) {
       throw new Error('Network error: Unable to connect to server');
@@ -89,11 +101,11 @@ async function post(
 }
 
 // Authenticated API call
-async function authenticatedRequest(
+async function authenticatedRequest<T = ApiResponse>(
   url: string,
   options: RequestInit = {},
   token?: string
-): Promise<any> {
+): Promise<T> {
   const apiEndpoint = import.meta.env.VITE_API_ENDPOINT;
   const authToken = token || localStorage.getItem('auth_token');
 
@@ -111,13 +123,13 @@ async function authenticatedRequest(
 
     // Check if response has content
     const contentType = response.headers.get('content-type');
-    let data: any = null;
+    let data: unknown = null;
 
     if (contentType && contentType.includes('application/json')) {
       const text = await response.text();
       if (text.trim()) {
         try {
-          data = JSON.parse(text);
+          data = JSON.parse(text) as unknown;
         } catch (parseError) {
           console.error('JSON parse error:', parseError, 'Response text:', text);
           throw new Error('Invalid JSON response from server');
@@ -133,12 +145,12 @@ async function authenticatedRequest(
     }
 
     if (!response.ok) {
-      const errorMessage = data?.msg || data?.message || `Request failed with status ${response.status}`;
+      const errorMessage = extractErrorMessage(data) || `Request failed with status ${response.status}`;
       throw new Error(errorMessage);
     }
 
-    return data;
-  } catch (error) {
+    return data as T;
+  } catch (error: unknown) {
     console.error('Authenticated API request error:', error);
     if (error instanceof TypeError && error.message.includes('fetch')) {
       throw new Error('Network error: Unable to connect to server');
@@ -217,19 +229,19 @@ interface GroupsResponse {
 
 // Grouping API functions
 async function getUsers(page: number = 1, pageSize: number = 20): Promise<UsersResponse> {
-  return authenticatedRequest(`/users?page=${page}&page_size=${pageSize}`, {
+  return authenticatedRequest<UsersResponse>(`/users?page=${page}&page_size=${pageSize}`, {
     method: 'GET',
   });
 }
 
 async function getGroups(page: number = 1, pageSize: number = 20): Promise<GroupsResponse> {
-  return authenticatedRequest(`/groups?page=${page}&page_size=${pageSize}`, {
+  return authenticatedRequest<GroupsResponse>(`/groups?page=${page}&page_size=${pageSize}`, {
     method: 'GET',
   });
 }
 
-async function createGroup(name: string, codeName: string): Promise<any> {
-  return authenticatedRequest('/group/create', {
+async function createGroup(name: string, codeName: string): Promise<ApiResponse> {
+  return authenticatedRequest<ApiResponse>('/group/create', {
     method: 'POST',
     body: JSON.stringify({
       name,
@@ -238,8 +250,8 @@ async function createGroup(name: string, codeName: string): Promise<any> {
   });
 }
 
-async function inviteToGroup(groupCodeName: string, inviteeStudentId: string): Promise<any> {
-  return authenticatedRequest('/group/invite', {
+async function inviteToGroup(groupCodeName: string, inviteeStudentId: string): Promise<ApiResponse> {
+  return authenticatedRequest<ApiResponse>('/group/invite', {
     method: 'POST',
     body: JSON.stringify({
       group_code_name: groupCodeName,
@@ -248,22 +260,22 @@ async function inviteToGroup(groupCodeName: string, inviteeStudentId: string): P
   });
 }
 
-async function acceptInvitation(token: string): Promise<any> {
-  return authenticatedRequest('/group/invite/accept', {
+async function acceptInvitation(token: string): Promise<ApiResponse> {
+  return authenticatedRequest<ApiResponse>('/group/invite/accept', {
     method: 'POST',
     body: JSON.stringify({ token }),
   });
 }
 
-async function rejectInvitation(token: string): Promise<any> {
-  return authenticatedRequest('/group/invite/reject', {
+async function rejectInvitation(token: string): Promise<ApiResponse> {
+  return authenticatedRequest<ApiResponse>('/group/invite/reject', {
     method: 'POST',
     body: JSON.stringify({ token }),
   });
 }
 
-async function joinGroup(groupCodeName: string): Promise<any> {
-  return authenticatedRequest('/group/join', {
+async function joinGroup(groupCodeName: string): Promise<ApiResponse> {
+  return authenticatedRequest<ApiResponse>('/group/join', {
     method: 'POST',
     body: JSON.stringify({
       group_code_name: groupCodeName,
@@ -271,22 +283,22 @@ async function joinGroup(groupCodeName: string): Promise<any> {
   });
 }
 
-async function acceptJoinRequest(token: string): Promise<any> {
-  return authenticatedRequest('/group/join/accept', {
+async function acceptJoinRequest(token: string): Promise<ApiResponse> {
+  return authenticatedRequest<ApiResponse>('/group/join/accept', {
     method: 'POST',
     body: JSON.stringify({ token }),
   });
 }
 
-async function rejectJoinRequest(token: string): Promise<any> {
-  return authenticatedRequest('/group/join/reject', {
+async function rejectJoinRequest(token: string): Promise<ApiResponse> {
+  return authenticatedRequest<ApiResponse>('/group/join/reject', {
     method: 'POST',
     body: JSON.stringify({ token }),
   });
 }
 
-async function assignUserToGroup(groupCodeName: string, studentId: string): Promise<any> {
-  return authenticatedRequest('/admin/group_assign', {
+async function assignUserToGroup(groupCodeName: string, studentId: string): Promise<ApiResponse> {
+  return authenticatedRequest<ApiResponse>('/admin/group_assign', {
     method: 'POST',
     body: JSON.stringify({
       group_code_name: groupCodeName,

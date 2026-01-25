@@ -36,8 +36,10 @@ const PasswordRecovery: React.FC<PasswordRecoveryProps> = ({ onSwitchToLogin }) 
       setStudentId("");
       setEmail("");
 
-    } catch (err: any) {
-      setError(err.message || t("password_recovery_failed", "Password recovery request failed"));
+    } catch (err: unknown) {
+      const fallbackMessage = t("password_recovery_failed", "Password recovery request failed");
+      const message = err instanceof Error && err.message ? err.message : fallbackMessage;
+      setError(message);
     } finally {
       setLoading(false);
     }

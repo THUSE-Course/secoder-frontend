@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Card,
@@ -100,11 +100,7 @@ const GroupManagement: React.FC = () => {
   const [joinGroupCodeName, setJoinGroupCodeName] = useState('');
   const [joinGroupName, setJoinGroupName] = useState('');
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async (newGroupsPage?: number, newUsersPage?: number) => {
+  const loadData = useCallback(async (newGroupsPage?: number, newUsersPage?: number) => {
     setLoading(true);
     setError(null);
     try {
@@ -135,7 +131,11 @@ const GroupManagement: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentUser, groupsPage, pageSize, usersPage]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const handleCreateGroup = async () => {
     if (!newGroupName.trim() || !newGroupCodeName.trim()) {
@@ -207,12 +207,10 @@ const GroupManagement: React.FC = () => {
 
   const handleGroupsPageChange = (_event: React.ChangeEvent<unknown>, value: number) => {
     setGroupsPage(value);
-    loadData(value, usersPage);
   };
 
   const handleUsersPageChange = (_event: React.ChangeEvent<unknown>, value: number) => {
     setUsersPage(value);
-    loadData(groupsPage, value);
   };
 
   const closeAlerts = () => {
