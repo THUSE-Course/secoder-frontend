@@ -51,9 +51,7 @@ const Login: React.FC<LoginProps> = ({
       if (result.token) {
         await login(result.token);
       } else {
-        throw new Error(
-          t('no_token_received', 'No authentication token received'),
-        );
+        throw new Error(t('no_token_received'));
       }
     } catch (err: unknown) {
       const fallbackMessage = t('login_failed');
@@ -143,7 +141,7 @@ const Login: React.FC<LoginProps> = ({
         </Button>
 
         <Typography variant="body2" sx={{ textAlign: 'center', mt: 2 }}>
-          {t('no_account', "Don't have an account?")}{' '}
+          {t('no_account')}{' '}
           <Link
             component="button"
             variant="body2"
@@ -152,7 +150,7 @@ const Login: React.FC<LoginProps> = ({
               onSwitchToRegister();
             }}
           >
-            {t('register_here', 'Register here')}
+            {t('register_here')}
           </Link>
         </Typography>
 
@@ -166,7 +164,7 @@ const Login: React.FC<LoginProps> = ({
                 onSwitchToPasswordRecovery();
               }}
             >
-              {t('forgot_password', 'Forgot Password?')}
+              {t('forgot_password')}
             </Link>
           </Typography>
         )}

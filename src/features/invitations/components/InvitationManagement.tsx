@@ -82,10 +82,10 @@ const InvitationManagement: React.FC = () => {
       try {
         if (decision === 'accept') {
           await acceptInvitation(token);
-          setSuccess(t('invitation_accepted', 'Invitation accepted!'));
+          setSuccess(t('invitation_accepted'));
         } else {
           await rejectInvitation(token);
-          setSuccess(t('invitation_rejected', 'Invitation rejected'));
+          setSuccess(t('invitation_rejected'));
         }
         await loadUserInvitations(userPage);
       } catch (err) {
@@ -111,13 +111,13 @@ const InvitationManagement: React.FC = () => {
           <TableHead>
             <TableRow sx={{ backgroundColor: 'action.hover' }}>
               <TableCell>
-                <strong>{t('group_code_name', 'Group Code Name')}</strong>
+                <strong>{t('group_code_name')}</strong>
               </TableCell>
               <TableCell>
-                <strong>{t('inviter_id', 'Invited By')}</strong>
+                <strong>{t('inviter_id')}</strong>
               </TableCell>
               <TableCell>
-                <strong>{t('actions', 'Actions')}</strong>
+                <strong>{t('actions')}</strong>
               </TableCell>
             </TableRow>
           </TableHead>
@@ -139,7 +139,7 @@ const InvitationManagement: React.FC = () => {
                       onClick={() => handleDecision(invitation.token, 'accept')}
                       disabled={processingToken === invitation.token}
                     >
-                      {t('accept', 'Accept')}
+                      {t('accept')}
                     </Button>
                     <Button
                       size="small"
@@ -148,7 +148,7 @@ const InvitationManagement: React.FC = () => {
                       onClick={() => handleDecision(invitation.token, 'reject')}
                       disabled={processingToken === invitation.token}
                     >
-                      {t('reject', 'Reject')}
+                      {t('reject')}
                     </Button>
                   </Box>
                 </TableCell>
@@ -165,9 +165,9 @@ const InvitationManagement: React.FC = () => {
     <Card sx={{ width: '100%' }}>
       <CardContent sx={{ padding: 3 }}>
         <PageHeader
-          title={t('invitations', 'Invitations')}
+          title={t('invitations')}
           actions={
-            <Tooltip title={t('refresh', 'Refresh')}>
+            <Tooltip title={t('refresh')}>
               <IconButton
                 onClick={handleRefresh}
                 disabled={loadingUser}
@@ -199,7 +199,7 @@ const InvitationManagement: React.FC = () => {
           </Box>
         ) : userInvitations.length === 0 ? (
           <Typography variant="body2" color="text.secondary" sx={{ py: 2 }}>
-            {t('no_invitations', 'No invitations yet.')}
+            {t('no_invitations')}
           </Typography>
         ) : (
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>

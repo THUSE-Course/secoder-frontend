@@ -65,9 +65,9 @@ const UserDirectory: React.FC = () => {
     <Card sx={{ width: '100%' }}>
       <CardContent sx={{ p: 3 }}>
         <PageHeader
-          title={t('users_directory', 'Users Directory')}
+          title={t('users_directory')}
           actions={
-            <Tooltip title={t('refresh', 'Refresh')}>
+            <Tooltip title={t('refresh')}>
               <IconButton onClick={() => loadUsers()} disabled={loading}>
                 <RefreshIcon />
               </IconButton>
@@ -92,13 +92,13 @@ const UserDirectory: React.FC = () => {
                 <TableHead>
                   <TableRow sx={{ backgroundColor: 'action.hover' }}>
                     <TableCell>
-                      <strong>{t('name', 'Name')}</strong>
+                      <strong>{t('name')}</strong>
                     </TableCell>
                     <TableCell>
-                      <strong>{t('student_id', 'Student ID')}</strong>
+                      <strong>{t('student_id')}</strong>
                     </TableCell>
                     <TableCell>
-                      <strong>{t('group', 'Group')}</strong>
+                      <strong>{t('group')}</strong>
                     </TableCell>
                   </TableRow>
                 </TableHead>
@@ -123,7 +123,7 @@ const UserDirectory: React.FC = () => {
                             color="text.secondary"
                             sx={{ fontStyle: 'italic' }}
                           >
-                            {t('no_group', 'No group')}
+                            {t('no_group')}
                           </Typography>
                         )}
                       </TableCell>

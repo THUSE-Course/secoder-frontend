@@ -199,9 +199,7 @@ const GroupManagement: React.FC = () => {
 
   const handleCreateGroup = async () => {
     if (!newGroupName.trim() || !newGroupCodeName.trim()) {
-      setError(
-        t('group_name_required', 'Group name and code name are required'),
-      );
+      setError(t('group_name_required'));
       return;
     }
 
@@ -209,7 +207,7 @@ const GroupManagement: React.FC = () => {
     setError(null);
     try {
       await createGroup(newGroupName.trim(), newGroupCodeName.trim());
-      setSuccess(t('group_created_success', 'Group created successfully!'));
+      setSuccess(t('group_created_success'));
       setCreateDialogOpen(false);
       setNewGroupName('');
       setNewGroupCodeName('');
@@ -223,7 +221,7 @@ const GroupManagement: React.FC = () => {
 
   const handleInviteUser = async () => {
     if (!selectedGroupForInvite || !inviteeStudentId.trim()) {
-      setError(t('invite_fields_required', 'Please enter a student ID'));
+      setError(t('invite_fields_required'));
       return;
     }
 
@@ -231,7 +229,7 @@ const GroupManagement: React.FC = () => {
     setError(null);
     try {
       await inviteToGroup(selectedGroupForInvite, inviteeStudentId.trim());
-      setSuccess(t('invitation_sent_success', 'Invitation sent successfully!'));
+      setSuccess(t('invitation_sent_success'));
       setInviteDialogOpen(false);
       setSelectedGroupForInvite('');
       setInviteeStudentId('');
@@ -281,9 +279,9 @@ const GroupManagement: React.FC = () => {
     <Card sx={{ width: '100%' }}>
       <CardContent sx={{ padding: 3 }}>
         <PageHeader
-          title={t('group_management', 'Group Management')}
+          title={t('group_management')}
           actions={
-            <Tooltip title={t('refresh', 'Refresh')}>
+            <Tooltip title={t('refresh')}>
               <IconButton
                 onClick={async () => {
                   await loadData();
@@ -320,11 +318,9 @@ const GroupManagement: React.FC = () => {
             onChange={handleTabChange}
             aria-label="grouping tabs"
           >
-            <Tab label={t('my_group', 'My Group')} />
-            <Tab label={t('all_groups', 'All Groups')} />
-            {isLeader && (
-              <Tab label={t('group_invitations', 'Group Invitations')} />
-            )}
+            <Tab label={t('my_group')} />
+            <Tab label={t('all_groups')} />
+            {isLeader && <Tab label={t('group_invitations')} />}
           </Tabs>
         </Box>
 
@@ -338,7 +334,7 @@ const GroupManagement: React.FC = () => {
                   onClick={() => setConfirmCreateDialogOpen(true)}
                   disabled={loading}
                 >
-                  {t('create_group', 'Create Group')}
+                  {t('create_group')}
                 </Button>
               </Box>
             )}
@@ -393,7 +389,7 @@ const GroupManagement: React.FC = () => {
                       color="text.secondary"
                       gutterBottom
                     >
-                      {t('leader', 'Leader')}
+                      {t('leader')}
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                       <Chip
@@ -408,7 +404,7 @@ const GroupManagement: React.FC = () => {
                       {currentUser?.student_id ===
                         myGroup.leader.student_id && (
                         <Chip
-                          label={t('you', 'You')}
+                          label={t('you')}
                           color="success"
                           size="small"
                           variant="outlined"
@@ -423,7 +419,7 @@ const GroupManagement: React.FC = () => {
                       color="text.secondary"
                       gutterBottom
                     >
-                      {t('members', 'Members')} ({myGroup.members.length})
+                      {t('members')} ({myGroup.members.length})
                     </Typography>
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                       {myGroup.members.map((member) => (
@@ -452,7 +448,7 @@ const GroupManagement: React.FC = () => {
                         }}
                         size="small"
                       >
-                        {t('invite_to_group', 'Invite to Group')}
+                        {t('invite_to_group')}
                       </Button>
                     </Box>
                   )}
@@ -474,18 +470,16 @@ const GroupManagement: React.FC = () => {
                   <TableHead>
                     <TableRow sx={{ backgroundColor: 'action.hover' }}>
                       <TableCell>
-                        <strong>{t('group_name', 'Group Name')}</strong>
+                        <strong>{t('group_name')}</strong>
                       </TableCell>
                       <TableCell>
-                        <strong>
-                          {t('group_code_name', 'Group Code Name')}
-                        </strong>
+                        <strong>{t('group_code_name')}</strong>
                       </TableCell>
                       <TableCell>
-                        <strong>{t('leader', 'Leader')}</strong>
+                        <strong>{t('leader')}</strong>
                       </TableCell>
                       <TableCell>
-                        <strong>{t('members', 'Members')}</strong>
+                        <strong>{t('members')}</strong>
                       </TableCell>
                     </TableRow>
                   </TableHead>
@@ -563,7 +557,7 @@ const GroupManagement: React.FC = () => {
               </Box>
             ) : groupInvitations.length === 0 ? (
               <Typography variant="body2" color="text.secondary" sx={{ py: 2 }}>
-                {t('no_group_invitations', 'No group invitations yet.')}
+                {t('no_group_invitations')}
               </Typography>
             ) : (
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -572,15 +566,13 @@ const GroupManagement: React.FC = () => {
                     <TableHead>
                       <TableRow sx={{ backgroundColor: 'action.hover' }}>
                         <TableCell>
-                          <strong>
-                            {t('group_code_name', 'Group Code Name')}
-                          </strong>
+                          <strong>{t('group_code_name')}</strong>
                         </TableCell>
                         <TableCell>
-                          <strong>{t('inviter_id', 'Invited By')}</strong>
+                          <strong>{t('inviter_id')}</strong>
                         </TableCell>
                         <TableCell>
-                          <strong>{t('invitee_id', 'Invited User')}</strong>
+                          <strong>{t('invitee_id')}</strong>
                         </TableCell>
                       </TableRow>
                     </TableHead>
@@ -626,9 +618,7 @@ const GroupManagement: React.FC = () => {
           maxWidth="sm"
           fullWidth
         >
-          <DialogTitle>
-            {t('create_group_warning', 'Important Notice')}
-          </DialogTitle>
+          <DialogTitle>{t('create_group_warning')}</DialogTitle>
           <DialogContent>
             <Alert severity="warning" sx={{ mb: 2 }}>
               {t(
@@ -645,7 +635,7 @@ const GroupManagement: React.FC = () => {
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setConfirmCreateDialogOpen(false)}>
-              {t('cancel', 'Cancel')}
+              {t('cancel')}
             </Button>
             <Button
               onClick={() => {
@@ -655,7 +645,7 @@ const GroupManagement: React.FC = () => {
               variant="contained"
               color="primary"
             >
-              {t('continue', 'Continue')}
+              {t('continue')}
             </Button>
           </DialogActions>
         </Dialog>
@@ -667,20 +657,20 @@ const GroupManagement: React.FC = () => {
           maxWidth="sm"
           fullWidth
         >
-          <DialogTitle>{t('create_new_group', 'Create New Group')}</DialogTitle>
+          <DialogTitle>{t('create_new_group')}</DialogTitle>
           <DialogContent>
             <TextField
               autoFocus
               margin="dense"
-              label={t('group_name', 'Group Name')}
+              label={t('group_name')}
               fullWidth
               value={newGroupName}
               onChange={(e) => setNewGroupName(e.target.value)}
-              helperText={t('group_name_help', 'Display name for the group')}
+              helperText={t('group_name_help')}
             />
             <TextField
               margin="dense"
-              label={t('group_code_name', 'Group Code Name')}
+              label={t('group_code_name')}
               fullWidth
               value={newGroupCodeName}
               onChange={(e) => setNewGroupCodeName(e.target.value)}
@@ -692,14 +682,14 @@ const GroupManagement: React.FC = () => {
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setCreateDialogOpen(false)}>
-              {t('cancel', 'Cancel')}
+              {t('cancel')}
             </Button>
             <Button
               onClick={handleCreateGroup}
               variant="contained"
               disabled={loading}
             >
-              {loading ? <CircularProgress size={24} /> : t('create', 'Create')}
+              {loading ? <CircularProgress size={24} /> : t('create')}
             </Button>
           </DialogActions>
         </Dialog>
@@ -711,14 +701,12 @@ const GroupManagement: React.FC = () => {
           maxWidth="sm"
           fullWidth
         >
-          <DialogTitle>
-            {t('invite_user_to_group', 'Invite User to Group')}
-          </DialogTitle>
+          <DialogTitle>{t('invite_user_to_group')}</DialogTitle>
           <DialogContent>
             <TextField
               autoFocus
               margin="dense"
-              label={t('student_id', 'Student ID')}
+              label={t('student_id')}
               fullWidth
               value={inviteeStudentId}
               onChange={(e) => setInviteeStudentId(e.target.value)}
@@ -730,18 +718,14 @@ const GroupManagement: React.FC = () => {
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setInviteDialogOpen(false)}>
-              {t('cancel', 'Cancel')}
+              {t('cancel')}
             </Button>
             <Button
               onClick={handleInviteUser}
               variant="contained"
               disabled={loading}
             >
-              {loading ? (
-                <CircularProgress size={24} />
-              ) : (
-                t('send_invite', 'Send Invite')
-              )}
+              {loading ? <CircularProgress size={24} /> : t('send_invite')}
             </Button>
           </DialogActions>
         </Dialog>

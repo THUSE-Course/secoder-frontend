@@ -49,7 +49,7 @@ const OverviewPage: React.FC = () => {
               gutterBottom
               sx={{ color: 'primary.main', fontWeight: 'medium' }}
             >
-              {t('secoder_services', 'Services')}
+              {t('secoder_services')}
             </Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
               <Button
@@ -63,14 +63,14 @@ const OverviewPage: React.FC = () => {
               >
                 <Box sx={{ flexGrow: 1, textAlign: 'left' }}>
                   <Typography variant="body1" component="span">
-                    {t('gitlab', 'GitLab')}
+                    {t('gitlab')}
                   </Typography>
                   <Typography
                     variant="body2"
                     color="text.secondary"
                     component="div"
                   >
-                    {t('gitlab_desc', 'Source code repository and CI/CD')}
+                    {t('gitlab_desc')}
                   </Typography>
                 </Box>
               </Button>
@@ -149,7 +149,7 @@ const OverviewPage: React.FC = () => {
                 <AccountCircle color="primary" />
                 <Box>
                   <Typography variant="subtitle2" color="text.secondary">
-                    {t('name', 'Name')}
+                    {t('name')}
                   </Typography>
                   <Typography
                     variant="body1"
@@ -165,7 +165,7 @@ const OverviewPage: React.FC = () => {
               <School color="primary" />
               <Box>
                 <Typography variant="subtitle2" color="text.secondary">
-                  {t('student_id', 'Student ID')}
+                  {t('student_id')}
                 </Typography>
                 <Typography variant="body1" fontWeight="medium">
                   {user.student_id}
@@ -177,7 +177,7 @@ const OverviewPage: React.FC = () => {
               <Email color="primary" />
               <Box>
                 <Typography variant="subtitle2" color="text.secondary">
-                  {t('email', 'Email')}
+                  {t('email')}
                 </Typography>
                 <Typography
                   variant="body1"

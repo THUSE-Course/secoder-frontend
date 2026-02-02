@@ -42,7 +42,7 @@ const DashboardLayout: React.FC = () => {
       }}
     >
       <TopBar
-        title={activeItem?.label || t('dashboard', 'Dashboard')}
+        title={activeItem?.label || t('dashboard')}
         onMenuClick={isMobile ? handleMobileToggle : handleSidebarToggle}
         isMobile={isMobile}
         isSidebarOpen={sidebarOpen}

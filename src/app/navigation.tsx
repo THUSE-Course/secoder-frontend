@@ -18,31 +18,31 @@ export type NavItem = {
 export const buildNavItems = (t: TFunction): NavItem[] => [
   {
     id: 'overview',
-    label: t('nav_overview', 'Overview'),
+    label: t('nav_overview'),
     icon: <HomeIcon />,
     path: '/overview',
   },
   {
     id: 'users',
-    label: t('nav_users', 'Users'),
+    label: t('nav_users'),
     icon: <PeopleIcon />,
     path: '/users',
   },
   {
     id: 'groups',
-    label: t('nav_groups', 'Groups'),
+    label: t('nav_groups'),
     icon: <GroupsIcon />,
     path: '/groups',
   },
   {
     id: 'invitations',
-    label: t('nav_invitations', 'Invitations'),
+    label: t('nav_invitations'),
     icon: <MailIcon />,
     path: '/invitations',
   },
   {
     id: 'profile',
-    label: t('nav_profile', 'Profile'),
+    label: t('nav_profile'),
     icon: <ManageAccountsIcon />,
     path: '/profile',
   },

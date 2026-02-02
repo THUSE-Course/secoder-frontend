@@ -69,7 +69,7 @@ const ProfilePage: React.FC = () => {
       }
 
       if (trimmedPassword !== editConfirmPassword) {
-        setEditError(t('password_mismatch', 'Passwords do not match'));
+        setEditError(t('password_mismatch'));
         return;
       }
     }
@@ -91,9 +91,7 @@ const ProfilePage: React.FC = () => {
       setEditPassword('');
       setEditConfirmPassword('');
       setEditPasswordErrors([]);
-      setEditSuccess(
-        t('profile_update_success', 'Your profile has been updated.'),
-      );
+      setEditSuccess(t('profile_update_success'));
     } catch (err: unknown) {
       const fallbackMessage = t(
         'profile_update_failed',
@@ -115,7 +113,7 @@ const ProfilePage: React.FC = () => {
     <Card sx={{ width: '100%' }}>
       <CardContent sx={{ p: 3 }}>
         <PageHeader
-          title={t('edit_profile', 'Edit Profile')}
+          title={t('edit_profile')}
           subtitle={t(
             'edit_profile_subtitle',
             'Update your name, email, or password.',
@@ -128,7 +126,7 @@ const ProfilePage: React.FC = () => {
           sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
         >
           <TextField
-            label={t('name', 'Name')}
+            label={t('name')}
             variant="outlined"
             value={editName}
             onChange={(e) => setEditName(e.target.value)}
@@ -136,7 +134,7 @@ const ProfilePage: React.FC = () => {
           />
 
           <TextField
-            label={t('email', 'Email')}
+            label={t('email')}
             variant="outlined"
             type="email"
             value={editEmail}
@@ -145,7 +143,7 @@ const ProfilePage: React.FC = () => {
           />
 
           <TextField
-            label={t('new_password', 'New Password')}
+            label={t('new_password')}
             variant="outlined"
             type="password"
             value={editPassword}
@@ -163,7 +161,7 @@ const ProfilePage: React.FC = () => {
           />
 
           <TextField
-            label={t('confirm_new_password', 'Confirm New Password')}
+            label={t('confirm_new_password')}
             variant="outlined"
             type="password"
             value={editConfirmPassword}
@@ -176,7 +174,7 @@ const ProfilePage: React.FC = () => {
             helperText={
               editConfirmPassword.length > 0 &&
               editPassword !== editConfirmPassword
-                ? t('password_mismatch', 'Passwords do not match')
+                ? t('password_mismatch')
                 : ''
             }
           />
@@ -191,9 +189,7 @@ const ProfilePage: React.FC = () => {
             color="primary"
             disabled={editLoading}
           >
-            {editLoading
-              ? t('saving', 'Saving...')
-              : t('save_changes', 'Save Changes')}
+            {editLoading ? t('saving') : t('save_changes')}
           </Button>
         </Box>
       </CardContent>

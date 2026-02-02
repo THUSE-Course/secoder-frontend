@@ -88,7 +88,7 @@ const TopBar: React.FC<TopBarProps> = ({
             startIcon={<ExitToApp />}
             onClick={logout}
           >
-            {t('logout', 'Logout')}
+            {t('logout')}
           </Button>
         </Box>
       </Toolbar>

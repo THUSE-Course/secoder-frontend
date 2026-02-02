@@ -44,7 +44,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
 
     try {
       if (!name.trim()) {
-        setError(t('name_required', 'Name is required'));
+        setError(t('name_required'));
         return;
       }
 
@@ -62,7 +62,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
 
       // Check password confirmation
       if (password !== confirmPassword) {
-        setError(t('password_mismatch', 'Passwords do not match'));
+        setError(t('password_mismatch'));
         return;
       }
 
@@ -89,7 +89,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
       setConfirmPassword('');
       setPasswordErrors([]);
     } catch (err: unknown) {
-      const fallbackMessage = t('registration_failed', 'Registration failed');
+      const fallbackMessage = t('registration_failed');
       const message =
         err instanceof Error && err.message ? err.message : fallbackMessage;
       setError(message);
@@ -145,7 +145,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
         </Typography>
 
         <TextField
-          label={t('name', 'Name')}
+          label={t('name')}
           variant="outlined"
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -160,7 +160,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
           onChange={(e) => setStudentId(e.target.value)}
           required
           fullWidth
-          helperText={t('student_id_help', 'Your student ID number')}
+          helperText={t('student_id_help')}
         />
 
         <TextField
@@ -171,7 +171,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
           onChange={(e) => setEmail(e.target.value)}
           required
           fullWidth
-          helperText={t('email_help', 'Your primary email address')}
+          helperText={t('email_help')}
         />
 
         <TextField
@@ -218,7 +218,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
           error={confirmPassword.length > 0 && password !== confirmPassword}
           helperText={
             confirmPassword.length > 0 && password !== confirmPassword
-              ? t('password_mismatch', 'Passwords do not match')
+              ? t('password_mismatch')
               : ''
           }
         />
@@ -244,11 +244,11 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
             loading || passwordErrors.length > 0 || password !== confirmPassword
           }
         >
-          {loading ? t('registering', 'Registering...') : t('register')}
+          {loading ? t('registering') : t('register')}
         </Button>
 
         <Typography variant="body2" sx={{ textAlign: 'center', mt: 2 }}>
-          {t('already_have_account', 'Already have an account?')}{' '}
+          {t('already_have_account')}{' '}
           <Link
             component="button"
             variant="body2"
@@ -257,7 +257,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
               onSwitchToLogin();
             }}
           >
-            {t('login_here', 'Login here')}
+            {t('login_here')}
           </Link>
         </Typography>
       </Box>
