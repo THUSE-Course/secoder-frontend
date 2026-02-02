@@ -28,7 +28,6 @@ import {
   Paper,
 } from '@mui/material';
 import {
-  Group as GroupIcon,
   Add as AddIcon,
   PersonAdd as PersonAddIcon,
   GroupAdd as GroupAddIcon,
@@ -251,7 +250,6 @@ const GroupManagement: React.FC = () => {
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <GroupIcon color="primary" fontSize="large" />
             <Typography
               variant="h5"
               component="h2"

@@ -70,14 +70,6 @@ const TopBar: React.FC<TopBarProps> = ({
             gap: 1,
           }}
         >
-          <Box
-            sx={{
-              width: 28,
-              height: 28,
-              borderRadius: '50%',
-              background: 'linear-gradient(135deg, #2a6df4, #4fd1c5)',
-            }}
-          />
           <Typography variant="h6" sx={{ fontWeight: 700 }}>
             SECoder
           </Typography>

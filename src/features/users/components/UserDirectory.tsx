@@ -17,10 +17,7 @@ import {
   Typography,
   Paper,
 } from '@mui/material';
-import {
-  Refresh as RefreshIcon,
-  People as PeopleIcon,
-} from '@mui/icons-material';
+import { Refresh as RefreshIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { getUsers } from '../../../utils';
 import type { User } from '../../../utils';
@@ -75,7 +72,6 @@ const UserDirectory: React.FC = () => {
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <PeopleIcon color="primary" />
             <Typography variant="h5" component="h2" sx={{ fontWeight: 600 }}>
               {t('users_directory', 'Users Directory')}
             </Typography>
