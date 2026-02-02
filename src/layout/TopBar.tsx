@@ -7,12 +7,7 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
-import {
-  Menu as MenuIcon,
-  ExitToApp,
-  ChevronLeft,
-  ChevronRight,
-} from '@mui/icons-material';
+import { Menu as MenuIcon, ExitToApp } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import LanguageSelector from '../components/LanguageSelector';
@@ -22,15 +17,9 @@ interface TopBarProps {
   title: string;
   onMenuClick: () => void;
   isMobile: boolean;
-  isSidebarOpen: boolean;
 }
 
-const TopBar: React.FC<TopBarProps> = ({
-  title,
-  onMenuClick,
-  isMobile,
-  isSidebarOpen,
-}) => {
+const TopBar: React.FC<TopBarProps> = ({ title, onMenuClick, isMobile }) => {
   const { t } = useTranslation();
   const { logout } = useAuth();
 
@@ -54,15 +43,11 @@ const TopBar: React.FC<TopBarProps> = ({
           gap: 2,
         }}
       >
-        <IconButton onClick={onMenuClick} color="inherit">
-          {isMobile ? (
+        {isMobile && (
+          <IconButton onClick={onMenuClick} color="inherit">
             <MenuIcon />
-          ) : isSidebarOpen ? (
-            <ChevronLeft />
-          ) : (
-            <ChevronRight />
-          )}
-        </IconButton>
+          </IconButton>
+        )}
         <Box
           sx={{
             display: { xs: 'none', md: 'flex' },

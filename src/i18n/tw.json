@@ -91,5 +91,7 @@
   "delete_group": "刪除小組",
   "delete_group_warning": "刪除小組會移除所有成員並清除待處理邀請.",
   "delete_group_confirm": "確定要刪除這個小組嗎?",
-  "group_deleted_success": "小組已刪除."
+  "group_deleted_success": "小組已刪除.",
+  "switch_to_dark_mode": "切換為深色模式",
+  "switch_to_light_mode": "切換為淺色模式"
 }
