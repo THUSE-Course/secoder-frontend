@@ -6,11 +6,11 @@ import {
   Card,
   CardContent,
   TextField,
-  Typography,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexts/AuthContext';
 import { editUserInfo, validatePassword } from '../../../utils';
+import PageHeader from '../../../components/common/PageHeader';
 
 const ProfilePage: React.FC = () => {
   const { t } = useTranslation();
@@ -114,17 +114,13 @@ const ProfilePage: React.FC = () => {
   return (
     <Card sx={{ width: '100%', boxShadow: 2 }}>
       <CardContent sx={{ p: 3 }}>
-        <Typography
-          variant="h6"
-          component="h3"
-          gutterBottom
-          sx={{ color: 'primary.main', fontWeight: 'medium' }}
-        >
-          {t('edit_profile', 'Edit Profile')}
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          {t('edit_profile_subtitle', 'Update your name, email, or password.')}
-        </Typography>
+        <PageHeader
+          title={t('edit_profile', 'Edit Profile')}
+          subtitle={t(
+            'edit_profile_subtitle',
+            'Update your name, email, or password.',
+          )}
+        />
 
         <Box
           component="form"

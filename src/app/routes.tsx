@@ -13,8 +13,6 @@ import { useAuth } from '../contexts/AuthContext';
 import DashboardLayout from '../layout/DashboardLayout';
 import Login from '../Login';
 import Register from '../Register';
-import PasswordRecovery from '../PasswordRecovery';
-import PasswordRecoveryConfirm from '../PasswordRecoveryConfirm';
 
 const OverviewPage = lazy(
   () => import('../features/overview/pages/OverviewPage'),
@@ -51,33 +49,12 @@ const RequireAuth: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 const AppRoutes = () => {
   const LoginRoute = () => {
     const navigate = useNavigate();
-    return (
-      <Login
-        onSwitchToRegister={() => navigate('/register')}
-        onSwitchToPasswordRecovery={() => navigate('/password-recovery')}
-      />
-    );
+    return <Login onSwitchToRegister={() => navigate('/register')} />;
   };
 
   const RegisterRoute = () => {
     const navigate = useNavigate();
     return <Register onSwitchToLogin={() => navigate('/login')} />;
-  };
-
-  const PasswordRecoveryRoute = () => {
-    const navigate = useNavigate();
-    return <PasswordRecovery onSwitchToLogin={() => navigate('/login')} />;
-  };
-
-  const PasswordRecoveryConfirmRoute = () => {
-    const navigate = useNavigate();
-    const [params] = useSearchParams();
-    return (
-      <PasswordRecoveryConfirm
-        onSwitchToLogin={() => navigate('/login')}
-        token={params.get('token') || undefined}
-      />
-    );
   };
 
   return (
@@ -86,14 +63,6 @@ const AppRoutes = () => {
         <Routes>
           <Route path="/login" element={<LoginRoute />} />
           <Route path="/register" element={<RegisterRoute />} />
-          <Route
-            path="/password-recovery"
-            element={<PasswordRecoveryRoute />}
-          />
-          <Route
-            path="/password-recovery/confirm"
-            element={<PasswordRecoveryConfirmRoute />}
-          />
 
           <Route
             path="/"

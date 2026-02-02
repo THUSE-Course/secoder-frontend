@@ -35,6 +35,7 @@ import {
 } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexts/AuthContext';
+import PageHeader from '../../../components/common/PageHeader';
 import {
   getGroups,
   getUsers,
@@ -241,33 +242,20 @@ const GroupManagement: React.FC = () => {
   return (
     <Card sx={{ width: '100%', boxShadow: 2 }}>
       <CardContent sx={{ padding: 3 }}>
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: 2,
-          }}
-        >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Typography
-              variant="h5"
-              component="h2"
-              sx={{ fontWeight: 'medium' }}
-            >
-              {t('group_management', 'Group Management')}
-            </Typography>
-          </Box>
-          <Tooltip title={t('refresh', 'Refresh')}>
-            <IconButton
-              onClick={() => loadData()}
-              disabled={loading}
-              color="primary"
-            >
-              <RefreshIcon />
-            </IconButton>
-          </Tooltip>
-        </Box>
+        <PageHeader
+          title={t('group_management', 'Group Management')}
+          actions={
+            <Tooltip title={t('refresh', 'Refresh')}>
+              <IconButton
+                onClick={() => loadData()}
+                disabled={loading}
+                color="primary"
+              >
+                <RefreshIcon />
+              </IconButton>
+            </Tooltip>
+          }
+        />
 
         {error && (
           <Alert severity="error" onClose={closeAlerts} sx={{ mb: 2 }}>

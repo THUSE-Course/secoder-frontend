@@ -21,6 +21,7 @@ import { Refresh as RefreshIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { getUsers } from '../../../utils';
 import type { User } from '../../../utils';
+import PageHeader from '../../../components/common/PageHeader';
 
 const UserDirectory: React.FC = () => {
   const { t } = useTranslation();
@@ -63,25 +64,16 @@ const UserDirectory: React.FC = () => {
   return (
     <Card sx={{ width: '100%', boxShadow: 2 }}>
       <CardContent sx={{ p: 3 }}>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            mb: 2,
-          }}
-        >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Typography variant="h5" component="h2" sx={{ fontWeight: 600 }}>
-              {t('users_directory', 'Users Directory')}
-            </Typography>
-          </Box>
-          <Tooltip title={t('refresh', 'Refresh')}>
-            <IconButton onClick={() => loadUsers()} disabled={loading}>
-              <RefreshIcon />
-            </IconButton>
-          </Tooltip>
-        </Box>
+        <PageHeader
+          title={t('users_directory', 'Users Directory')}
+          actions={
+            <Tooltip title={t('refresh', 'Refresh')}>
+              <IconButton onClick={() => loadUsers()} disabled={loading}>
+                <RefreshIcon />
+              </IconButton>
+            </Tooltip>
+          }
+        />
 
         {error && (
           <Alert severity="error" sx={{ mb: 2 }}>
