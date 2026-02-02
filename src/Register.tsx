@@ -9,7 +9,7 @@ import {
   Chip
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { post, hashPassword, validatePassword } from "./utils";
+import { post, validatePassword } from "./utils";
 import type { RegisterPayload } from "./utils";
 import ThemeToggle from "./components/ThemeToggle";
 import LanguageSelector from "./components/LanguageSelector";
@@ -24,7 +24,6 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [registerPassword, setRegisterPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -56,14 +55,10 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
         return;
       }
 
-      // Hash the password before sending
-      const hashedPassword = await hashPassword(password);
-
       const payload: RegisterPayload = {
         student_id: studentId,
-        rPassword: registerPassword,
         email: email,
-        password: hashedPassword
+        password
       };
 
       await post(payload, "register");
@@ -74,7 +69,6 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
       setEmail("");
       setPassword("");
       setConfirmPassword("");
-      setRegisterPassword("");
       setPasswordErrors([]);
 
     } catch (err: unknown) {
@@ -140,16 +134,6 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
           required
           fullWidth
           helperText={t("student_id_help", "Your student ID number")}
-        />
-
-        <TextField
-          label={t("register_password")}
-          variant="outlined"
-          value={registerPassword}
-          onChange={(e) => setRegisterPassword(e.target.value)}
-          required
-          fullWidth
-          helperText={t("register_password_help", "Registration password provided by administrator")}
         />
 
         <TextField

@@ -15,8 +15,6 @@
   "user_info_subtitle": "Here is your account information",
   "student_id": "Student ID",
   "no_token_received": "No authentication token received",
-  "register_password": "Registration Password",
-  "register_password_help": "Registration password provided by administrator",
   "student_id_help": "Your student ID number",
   "email_help": "Your primary email address",
   "confirm_password": "Confirm Password",

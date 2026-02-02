@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Box, TextField, Button, Typography, Link, Alert, Chip } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { post, hashPassword, validatePassword, type ConfirmPasswordRecoveryPayload } from "./utils";
+import { post, validatePassword, type ConfirmPasswordRecoveryPayload } from "./utils";
 import ThemeToggle from "./components/ThemeToggle";
 import LanguageSelector from "./components/LanguageSelector";
 
@@ -64,12 +64,9 @@ const PasswordRecoveryConfirm: React.FC<PasswordRecoveryConfirmProps> = ({
         return;
       }
 
-      // Hash the password before sending
-      const hashedPassword = await hashPassword(password);
-
       const payload: ConfirmPasswordRecoveryPayload = {
         token: tokenFromUrl,
-        newPassword: hashedPassword
+        newPassword: password
       };
 
       await post(payload, "recover_password/confirm");

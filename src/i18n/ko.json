@@ -15,8 +15,6 @@
   "user_info_subtitle": "계정 정보입니다",
   "student_id": "학번",
   "no_token_received": "인증 토큰을 받지 못했습니다",
-  "register_password": "등록 비밀번호",
-  "register_password_help": "관리자가 제공한 등록 비밀번호",
   "student_id_help": "학번",
   "email_help": "기본 이메일 주소",
   "confirm_password": "비밀번호 확인",

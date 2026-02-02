@@ -25,15 +25,6 @@ function validatePassword(password: string): { isValid: boolean; errors: string[
   };
 }
 
-// Hash password using SHA-256
-async function hashPassword(password: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(password);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-  return hashHex;
-}
 
 type ApiResponse = Record<string, unknown>;
 
@@ -161,14 +152,13 @@ async function authenticatedRequest<T = ApiResponse>(
 
 interface RegisterPayload {
   student_id: string;
-  rPassword: string;
   email: string;
-  password: string; // SHA-256 hashed password
+  password: string;
 }
 
 interface LoginPayload {
   student_id: string;
-  password: string; // SHA-256 hashed password
+  password: string;
 }
 
 interface RecoverPasswordPayload {
@@ -178,7 +168,7 @@ interface RecoverPasswordPayload {
 
 interface ConfirmPasswordRecoveryPayload {
   token: string;
-  newPassword: string; // SHA-256 hashed password
+  newPassword: string;
 }
 
 interface LoginResponse {
@@ -324,7 +314,6 @@ export type {
 export {
   post,
   authenticatedRequest,
-  hashPassword,
   validatePassword,
   getUsers,
   getGroups,

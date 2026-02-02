@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, TextField, Button, Typography, Link } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { post, hashPassword, type LoginResponse } from "./utils";
+import { post, type LoginResponse } from "./utils";
 import { useAuth } from "./contexts/AuthContext";
 import ThemeToggle from "./components/ThemeToggle";
 import LanguageSelector from "./components/LanguageSelector";
@@ -24,11 +24,9 @@ const Login: React.FC<LoginProps> = ({ onSwitchToRegister, onSwitchToPasswordRec
     setError(null);
     setLoading(true);
     try {
-      // Hash the password before sending
-      const hashedPassword = await hashPassword(password);
       const result: LoginResponse = await post({
         student_id: studentId,
-        password: hashedPassword
+        password
       }, "login");
 
       // Store the JWT token and update auth state
