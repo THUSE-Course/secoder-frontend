@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, TextField, Button, Typography, Link } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { post, type LoginResponse } from './utils';
 import { useAuth } from './contexts/AuthContext';
 import ThemeToggle from './components/ThemeToggle';
@@ -16,11 +17,22 @@ const Login: React.FC<LoginProps> = ({
   onSwitchToPasswordRecovery,
 }) => {
   const { t } = useTranslation();
-  const { login } = useAuth();
+  const { login, user } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [studentId, setStudentId] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      const from =
+        (location.state as { from?: { pathname?: string } } | null)?.from
+          ?.pathname || '/overview';
+      navigate(from, { replace: true });
+    }
+  }, [location.state, navigate, user]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

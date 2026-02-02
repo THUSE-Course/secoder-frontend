@@ -11,9 +11,15 @@
   "switch_to_dark_mode": "다크 모드로 전환",
   "switch_to_light_mode": "라이트 모드로 전환",
   "dashboard": "SECoder 대시보드",
+  "dashboard_subtitle": "헤드램프 뷰: 중요한 것에 집중합니다.",
+  "nav_overview": "개요",
+  "nav_users": "사용자",
+  "nav_groups": "그룹",
+  "nav_profile": "프로필",
   "logout": "로그아웃",
   "welcome": "환영합니다",
   "user_info_subtitle": "계정 정보입니다",
+  "status_beam": "상태 빔",
   "student_id": "학번",
   "no_token_received": "인증 토큰을 받지 못했습니다",
   "student_id_help": "학번",
@@ -60,5 +66,6 @@
   "password_reset_failed": "비밀번호 재설정 실패",
   "resetting_password": "비밀번호 재설정 중...",
   "reset_password": "비밀번호 재설정",
-  "invalid_token": "유효하지 않거나 누락된 복구 토큰"
+  "invalid_token": "유효하지 않거나 누락된 복구 토큰",
+  "users_directory": "사용자 디렉터리"
 }

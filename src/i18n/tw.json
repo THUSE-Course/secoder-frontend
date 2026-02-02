@@ -11,9 +11,15 @@
   "switch_to_dark_mode": "切換到暗色模式",
   "switch_to_light_mode": "切換到亮色模式",
   "dashboard": "SECoder 儀表板",
+  "dashboard_subtitle": "頭燈視圖：聚焦最重要的內容。",
+  "nav_overview": "總覽",
+  "nav_users": "使用者",
+  "nav_groups": "小組",
+  "nav_profile": "個人資料",
   "logout": "登出",
   "welcome": "歡迎",
   "user_info_subtitle": "這是您的帳戶資訊",
+  "status_beam": "狀態光束",
   "student_id": "學號",
   "no_token_received": "未收到身份驗證令牌",
   "student_id_help": "您的學號",
@@ -60,5 +66,6 @@
   "password_reset_failed": "密碼重設失敗",
   "resetting_password": "正在重設密碼...",
   "reset_password": "重設密碼",
-  "invalid_token": "無效或缺失的恢復令牌"
+  "invalid_token": "無效或缺失的恢復令牌",
+  "users_directory": "使用者目錄"
 }

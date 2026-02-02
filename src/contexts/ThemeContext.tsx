@@ -70,43 +70,75 @@ export const CustomThemeProvider: React.FC<CustomThemeProviderProps> = ({
             ? {
                 // Light mode colors
                 primary: {
-                  main: '#1976d2',
+                  main: '#414141',
                 },
                 secondary: {
-                  main: '#dc004e',
+                  main: '#eff2f5',
                 },
                 background: {
-                  default: '#ffffff',
-                  paper: '#f5f5f5',
+                  default: '#f5f5f5',
+                  paper: '#f0f0f0',
                 },
                 text: {
-                  primary: '#000000',
-                  secondary: '#555555',
+                  primary: '#44444f',
+                  secondary: '#605e5c',
                 },
               }
             : {
                 // Dark mode colors
                 primary: {
-                  main: '#4aa3ff',
+                  main: '#ffffff',
                 },
                 secondary: {
-                  main: '#fc7486',
+                  main: '#1b1a19',
                 },
                 background: {
-                  default: '#121212',
-                  paper: '#1e1e1e',
+                  default: '#292827',
+                  paper: '#313131',
                 },
                 text: {
-                  primary: '#ffffff',
-                  secondary: '#aaaaaa',
+                  primary: '#faf9f8',
+                  secondary: '#cdcdcd',
                 },
               }),
         },
+        typography: {
+          fontFamily:
+            '"Space Grotesk", "Segoe UI", "Helvetica Neue", Arial, sans-serif',
+          h4: { fontWeight: 700 },
+          h5: { fontWeight: 700 },
+          h6: { fontWeight: 700 },
+          subtitle1: { fontWeight: 600 },
+          button: { textTransform: 'none', fontWeight: 600 },
+        },
+        shape: { borderRadius: 6 },
         components: {
           MuiCssBaseline: {
             styleOverrides: {
               body: {
                 transition: 'background-color 0.3s ease, color 0.3s ease',
+              },
+            },
+          },
+          MuiCard: {
+            styleOverrides: {
+              root: {
+                borderRadius: 8,
+                border: '1px solid rgba(0, 0, 0, 0.08)',
+              },
+            },
+          },
+          MuiButton: {
+            styleOverrides: {
+              root: {
+                borderRadius: 6,
+              },
+            },
+          },
+          MuiPaper: {
+            styleOverrides: {
+              root: {
+                backgroundImage: 'none',
               },
             },
           },

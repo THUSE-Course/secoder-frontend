@@ -20,6 +20,7 @@ interface RegisterProps {
 
 const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
   const { t } = useTranslation();
+  const [name, setName] = useState('');
   const [studentId, setStudentId] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -42,6 +43,11 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
     setLoading(true);
 
     try {
+      if (!name.trim()) {
+        setError(t('name_required', 'Name is required'));
+        return;
+      }
+
       // Validate password
       const passwordValidation = validatePassword(password);
       if (!passwordValidation.isValid) {
@@ -61,6 +67,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
       }
 
       const payload: RegisterPayload = {
+        name: name.trim(),
         student_id: studentId,
         email: email,
         password,
@@ -75,6 +82,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
       );
 
       // Clear form
+      setName('');
       setStudentId('');
       setEmail('');
       setPassword('');
@@ -135,6 +143,15 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
         <Typography variant="h4" component="h1" gutterBottom>
           {t('register')}
         </Typography>
+
+        <TextField
+          label={t('name', 'Name')}
+          variant="outlined"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          fullWidth
+        />
 
         <TextField
           label={t('student_id')}

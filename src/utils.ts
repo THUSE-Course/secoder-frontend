@@ -179,6 +179,7 @@ async function authenticatedRequest<T = ApiResponse>(
 
 interface RegisterPayload {
   student_id: string;
+  name: string;
   email: string;
   password: string;
 }

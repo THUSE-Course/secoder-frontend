@@ -35,15 +35,15 @@ import {
   Refresh as RefreshIcon,
 } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../../../contexts/AuthContext';
 import {
   getGroups,
   getUsers,
   createGroup,
   inviteToGroup,
   joinGroup,
-} from '../utils';
-import type { Group, User } from '../utils';
+} from '../../../utils';
+import type { Group, User } from '../../../utils';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -240,7 +240,7 @@ const GroupManagement: React.FC = () => {
   };
 
   return (
-    <Card sx={{ maxWidth: 600, width: '100%', boxShadow: 3 }}>
+    <Card sx={{ width: '100%', boxShadow: 2 }}>
       <CardContent sx={{ padding: 3 }}>
         <Box
           sx={{
