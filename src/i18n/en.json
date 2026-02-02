@@ -95,7 +95,5 @@
   "no_group_invitations": "No group invitations yet.",
   "accept": "Accept",
   "reject": "Reject",
-  "invite_only": "Invite only",
-  "request_invite": "Request an invite",
   "not_group_leader": "Only group leaders can view group invitations."
 }

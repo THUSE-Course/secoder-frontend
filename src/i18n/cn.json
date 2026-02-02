@@ -95,7 +95,5 @@
   "no_group_invitations": "暂无小组邀请.",
   "accept": "接受",
   "reject": "拒绝",
-  "invite_only": "仅限邀请",
-  "request_invite": "请联系组长邀请",
   "not_group_leader": "仅组长可查看小组邀请."
 }

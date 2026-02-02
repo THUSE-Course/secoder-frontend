@@ -95,7 +95,5 @@
   "no_group_invitations": "目前沒有小組邀請.",
   "accept": "接受",
   "reject": "拒絕",
-  "invite_only": "僅限邀請",
-  "request_invite": "請聯繫組長邀請",
   "not_group_leader": "只有組長可以查看小組邀請."
 }

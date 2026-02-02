@@ -42,7 +42,7 @@ import {
   inviteToGroup,
   getGroupInvitations,
 } from '../../../utils';
-import type { Group, Invitation, User } from '../../../utils';
+import type { Group, Invitation } from '../../../utils';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -72,7 +72,6 @@ const GroupManagement: React.FC = () => {
 
   // State for groups and users
   const [groups, setGroups] = useState<Group[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
   const [myGroup, setMyGroup] = useState<Group | null>(null);
   const [loading, setLoading] = useState(false);
   const [loadingInvitations, setLoadingInvitations] = useState(false);
@@ -86,10 +85,9 @@ const GroupManagement: React.FC = () => {
 
   // Pagination states
   const [groupsPage, setGroupsPage] = useState(1);
-  const [usersPage, setUsersPage] = useState(1);
   const [groupsTotal, setGroupsTotal] = useState(0);
-  const [usersTotal, setUsersTotal] = useState(0);
   const pageSize = 10;
+  const usersLookupPageSize = 200;
   const invitationsPageSize = 10;
   const [invitationsPage, setInvitationsPage] = useState(1);
   const [invitationsTotal, setInvitationsTotal] = useState(0);
@@ -102,21 +100,18 @@ const GroupManagement: React.FC = () => {
   const [inviteeStudentId, setInviteeStudentId] = useState('');
 
   const loadData = useCallback(
-    async (newGroupsPage?: number, newUsersPage?: number) => {
+    async (newGroupsPage?: number) => {
       setLoading(true);
       setError(null);
       try {
         const gPage = newGroupsPage ?? groupsPage;
-        const uPage = newUsersPage ?? usersPage;
 
         const [groupsData, usersData] = await Promise.all([
           getGroups(gPage, pageSize),
-          getUsers(uPage, pageSize),
+          getUsers(1, usersLookupPageSize),
         ]);
         setGroups(groupsData.groups || []);
-        setUsers(usersData.users || []);
         setGroupsTotal(Math.ceil((groupsData.groups?.length || 0) / pageSize));
-        setUsersTotal(Math.ceil((usersData.users?.length || 0) / pageSize));
 
         // Find current user's group
         if (currentUser) {
@@ -138,7 +133,7 @@ const GroupManagement: React.FC = () => {
         setLoading(false);
       }
     },
-    [currentUser, groupsPage, pageSize, usersPage],
+    [currentUser, groupsPage, pageSize, usersLookupPageSize],
   );
 
   useEffect(() => {
@@ -269,13 +264,6 @@ const GroupManagement: React.FC = () => {
     setGroupsPage(value);
   };
 
-  const handleUsersPageChange = (
-    _event: React.ChangeEvent<unknown>,
-    value: number,
-  ) => {
-    setUsersPage(value);
-  };
-
   const handleInvitationsPageChange = (
     _event: React.ChangeEvent<unknown>,
     value: number,
@@ -334,7 +322,6 @@ const GroupManagement: React.FC = () => {
           >
             <Tab label={t('my_group', 'My Group')} />
             <Tab label={t('all_groups', 'All Groups')} />
-            <Tab label={t('all_users', 'All Users')} />
             {isLeader && (
               <Tab label={t('group_invitations', 'Group Invitations')} />
             )}
@@ -500,9 +487,6 @@ const GroupManagement: React.FC = () => {
                       <TableCell>
                         <strong>{t('members', 'Members')}</strong>
                       </TableCell>
-                      <TableCell>
-                        <strong>{t('actions', 'Actions')}</strong>
-                      </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -552,25 +536,6 @@ const GroupManagement: React.FC = () => {
                             ))}
                           </Box>
                         </TableCell>
-                        <TableCell>
-                          {myGroup ? (
-                            <Typography
-                              variant="body2"
-                              color="text.secondary"
-                              sx={{ fontStyle: 'italic' }}
-                            >
-                              {t('invite_only', 'Invite only')}
-                            </Typography>
-                          ) : (
-                            <Typography
-                              variant="body2"
-                              color="text.secondary"
-                              sx={{ fontStyle: 'italic' }}
-                            >
-                              {t('request_invite', 'Request an invite')}
-                            </Typography>
-                          )}
-                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -590,74 +555,8 @@ const GroupManagement: React.FC = () => {
           )}
         </TabPanel>
 
-        <TabPanel value={tabValue} index={2}>
-          {loading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
-              <CircularProgress />
-            </Box>
-          ) : (
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <TableContainer component={Paper} variant="outlined">
-                <Table>
-                  <TableHead>
-                    <TableRow sx={{ backgroundColor: 'action.hover' }}>
-                      <TableCell>
-                        <strong>{t('name', 'Name')}</strong>
-                      </TableCell>
-                      <TableCell>
-                        <strong>{t('student_id', 'Student ID')}</strong>
-                      </TableCell>
-                      <TableCell>
-                        <strong>{t('group', 'Group')}</strong>
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {users.map((user) => (
-                      <TableRow key={user.student_id} hover>
-                        <TableCell
-                          sx={{
-                            wordBreak: 'break-word',
-                            overflowWrap: 'anywhere',
-                          }}
-                        >
-                          {user.name}
-                        </TableCell>
-                        <TableCell>{user.student_id}</TableCell>
-                        <TableCell>
-                          {user.group ? (
-                            user.group
-                          ) : (
-                            <Typography
-                              variant="body2"
-                              color="text.secondary"
-                              sx={{ fontStyle: 'italic' }}
-                            >
-                              {t('no_group', 'No group')}
-                            </Typography>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-              {usersTotal > 1 && (
-                <Box sx={{ display: 'flex', justifyContent: 'center', pt: 2 }}>
-                  <Pagination
-                    count={usersTotal}
-                    page={usersPage}
-                    onChange={handleUsersPageChange}
-                    color="primary"
-                  />
-                </Box>
-              )}
-            </Box>
-          )}
-        </TabPanel>
-
         {isLeader && (
-          <TabPanel value={tabValue} index={3}>
+          <TabPanel value={tabValue} index={2}>
             {loadingInvitations ? (
               <Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
                 <CircularProgress />
