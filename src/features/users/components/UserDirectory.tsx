@@ -104,7 +104,7 @@ const UserDirectory: React.FC = () => {
                 </TableHead>
                 <TableBody>
                   {users.map((user) => (
-                    <TableRow key={user.student_id} hover>
+                    <TableRow key={user.id} hover>
                       <TableCell
                         sx={{
                           wordBreak: 'break-word',
@@ -113,7 +113,7 @@ const UserDirectory: React.FC = () => {
                       >
                         {user.name}
                       </TableCell>
-                      <TableCell>{user.student_id}</TableCell>
+                      <TableCell>{user.id}</TableCell>
                       <TableCell>
                         {user.group ? (
                           user.group

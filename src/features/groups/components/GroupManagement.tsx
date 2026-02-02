@@ -123,7 +123,7 @@ const GroupManagement: React.FC = () => {
         // Find current user's group
         if (currentUser) {
           const userInfo = usersData.users?.find(
-            (u) => u.student_id === currentUser.student_id,
+            (u) => u.id === currentUser.id,
           );
           if (userInfo?.group) {
             const userGroup = groupsData.groups?.find(
@@ -149,11 +149,7 @@ const GroupManagement: React.FC = () => {
 
   const loadGroupInvitations = useCallback(
     async (page: number = invitationsPage) => {
-      if (
-        !myGroup ||
-        !currentUser ||
-        myGroup.leader.student_id !== currentUser.student_id
-      ) {
+      if (!myGroup || !currentUser || myGroup.leader.id !== currentUser.id) {
         setGroupInvitations([]);
         setInvitationsTotal(0);
         return;
@@ -191,11 +187,7 @@ const GroupManagement: React.FC = () => {
   );
 
   useEffect(() => {
-    if (
-      myGroup &&
-      currentUser &&
-      myGroup.leader.student_id === currentUser.student_id
-    ) {
+    if (myGroup && currentUser && myGroup.leader.id === currentUser.id) {
       loadGroupInvitations();
     } else {
       setGroupInvitations([]);
@@ -290,8 +282,7 @@ const GroupManagement: React.FC = () => {
     setTabValue(newValue);
   };
 
-  const isLeader =
-    !!myGroup && currentUser?.student_id === myGroup.leader.student_id;
+  const isLeader = !!myGroup && currentUser?.id === myGroup.leader.id;
 
   useEffect(() => {
     if (!isLeader && tabValue === 2) {
@@ -437,16 +428,15 @@ const GroupManagement: React.FC = () => {
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                       <Chip
-                        label={`${myGroup.leader.name} (${myGroup.leader.student_id})`}
+                        label={`${myGroup.leader.name} (${myGroup.leader.id})`}
                         color={
-                          currentUser?.student_id === myGroup.leader.student_id
+                          currentUser?.id === myGroup.leader.id
                             ? 'success'
                             : 'default'
                         }
                         size="small"
                       />
-                      {currentUser?.student_id ===
-                        myGroup.leader.student_id && (
+                      {currentUser?.id === myGroup.leader.id && (
                         <Chip
                           label={t('you')}
                           color="success"
@@ -468,10 +458,10 @@ const GroupManagement: React.FC = () => {
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                       {myGroup.members.map((member) => (
                         <Chip
-                          key={member.student_id}
+                          key={member.id}
                           label={member.name}
                           color={
-                            currentUser?.student_id === member.student_id
+                            currentUser?.id === member.id
                               ? 'success'
                               : 'default'
                           }
@@ -481,7 +471,7 @@ const GroupManagement: React.FC = () => {
                     </Box>
                   </Box>
 
-                  {currentUser?.student_id === myGroup.leader.student_id && (
+                  {currentUser?.id === myGroup.leader.id && (
                     <Box sx={{ pt: 1, display: 'flex', gap: 1 }}>
                       <Button
                         variant="outlined"
@@ -578,7 +568,7 @@ const GroupManagement: React.FC = () => {
                             color="text.secondary"
                             display="block"
                           >
-                            ({group.leader.student_id})
+                            ({group.leader.id})
                           </Typography>
                         </TableCell>
                         <TableCell>
@@ -587,7 +577,7 @@ const GroupManagement: React.FC = () => {
                           >
                             {group.members.map((member) => (
                               <Chip
-                                key={member.student_id}
+                                key={member.id}
                                 label={member.name}
                                 size="small"
                               />

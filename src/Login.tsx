@@ -27,6 +27,10 @@ const Login: React.FC<LoginProps> = ({
 
   useEffect(() => {
     if (user) {
+      if (user.id === 'admin') {
+        navigate('/admin', { replace: true });
+        return;
+      }
       const from =
         (location.state as { from?: { pathname?: string } } | null)?.from
           ?.pathname || '/overview';
@@ -41,7 +45,7 @@ const Login: React.FC<LoginProps> = ({
     try {
       const result: LoginResponse = await post(
         {
-          student_id: studentId,
+          id: studentId,
           password,
         },
         'login',

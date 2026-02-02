@@ -178,19 +178,19 @@ async function authenticatedRequest<T = ApiResponse>(
 }
 
 interface RegisterPayload {
-  student_id: string;
+  id: string;
   name: string;
   email: string;
   password: string;
 }
 
 interface LoginPayload {
-  student_id: string;
+  id: string;
   password: string;
 }
 
 interface RecoverPasswordPayload {
-  student_id: string;
+  id: string;
   email: string;
 }
 
@@ -211,24 +211,24 @@ interface LoginResponse {
 }
 
 interface UserInfo {
-  student_id: string;
+  id: string;
   email: string;
 }
 
 // Grouping interfaces
 interface User {
-  student_id: string;
+  id: string;
   name: string;
   group: string | null;
 }
 
 interface GroupMember {
-  student_id: string;
+  id: string;
   name: string;
 }
 
 interface GroupLeader {
-  student_id: string;
+  id: string;
   name: string;
 }
 
@@ -314,7 +314,7 @@ async function inviteToGroup(
     method: 'POST',
     body: JSON.stringify({
       group_code_name: groupCodeName,
-      invitee_student_id: inviteeStudentId,
+      invitee_id: inviteeStudentId,
     }),
   });
 }
@@ -390,7 +390,7 @@ async function assignUserToGroup(
     method: 'POST',
     body: JSON.stringify({
       group_code_name: groupCodeName,
-      student_id: studentId,
+      id: studentId,
     }),
   });
 }

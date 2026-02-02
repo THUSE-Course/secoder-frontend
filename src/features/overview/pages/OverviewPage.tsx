@@ -168,7 +168,7 @@ const OverviewPage: React.FC = () => {
                   {t('student_id')}
                 </Typography>
                 <Typography variant="body1" fontWeight="medium">
-                  {user.student_id}
+                  {user.id}
                 </Typography>
               </Box>
             </Box>

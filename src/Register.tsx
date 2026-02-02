@@ -68,7 +68,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
 
       const payload: RegisterPayload = {
         name: name.trim(),
-        student_id: studentId,
+        id: studentId,
         email: email,
         password,
       };
