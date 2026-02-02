@@ -105,7 +105,14 @@ const UserDirectory: React.FC = () => {
                 <TableBody>
                   {users.map((user) => (
                     <TableRow key={user.student_id} hover>
-                      <TableCell>{user.name}</TableCell>
+                      <TableCell
+                        sx={{
+                          wordBreak: 'break-word',
+                          overflowWrap: 'anywhere',
+                        }}
+                      >
+                        {user.name}
+                      </TableCell>
                       <TableCell>{user.student_id}</TableCell>
                       <TableCell>
                         {user.group ? (

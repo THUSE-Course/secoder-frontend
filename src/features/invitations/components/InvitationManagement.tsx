@@ -124,7 +124,11 @@ const InvitationManagement: React.FC = () => {
           <TableBody>
             {userInvitations.map((invitation) => (
               <TableRow key={invitation.token} hover>
-                <TableCell>{invitation.group_code_name}</TableCell>
+                <TableCell
+                  sx={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}
+                >
+                  {invitation.group_code_name}
+                </TableCell>
                 <TableCell>{invitation.inviter_id}</TableCell>
                 <TableCell>
                   <Box sx={{ display: 'flex', gap: 1 }}>

@@ -375,7 +375,11 @@ const GroupManagement: React.FC = () => {
               <Card variant="outlined" sx={{ p: 2 }}>
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Typography variant="h6" component="div">
+                    <Typography
+                      variant="h6"
+                      component="div"
+                      sx={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}
+                    >
                       {myGroup.name}
                     </Typography>
                     <Chip
@@ -383,6 +387,14 @@ const GroupManagement: React.FC = () => {
                       size="small"
                       color="primary"
                       variant="outlined"
+                      sx={{
+                        maxWidth: '100%',
+                        '& .MuiChip-label': {
+                          whiteSpace: 'normal',
+                          wordBreak: 'break-word',
+                          overflowWrap: 'anywhere',
+                        },
+                      }}
                     />
                   </Box>
 
@@ -496,9 +508,28 @@ const GroupManagement: React.FC = () => {
                   <TableBody>
                     {groups.map((group) => (
                       <TableRow key={group.code_name} hover>
-                        <TableCell>{group.name}</TableCell>
-                        <TableCell>{group.code_name}</TableCell>
-                        <TableCell>
+                        <TableCell
+                          sx={{
+                            wordBreak: 'break-word',
+                            overflowWrap: 'anywhere',
+                          }}
+                        >
+                          {group.name}
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            wordBreak: 'break-word',
+                            overflowWrap: 'anywhere',
+                          }}
+                        >
+                          {group.code_name}
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            wordBreak: 'break-word',
+                            overflowWrap: 'anywhere',
+                          }}
+                        >
                           {group.leader.name}
                           <Typography
                             variant="caption"
@@ -584,7 +615,14 @@ const GroupManagement: React.FC = () => {
                   <TableBody>
                     {users.map((user) => (
                       <TableRow key={user.student_id} hover>
-                        <TableCell>{user.name}</TableCell>
+                        <TableCell
+                          sx={{
+                            wordBreak: 'break-word',
+                            overflowWrap: 'anywhere',
+                          }}
+                        >
+                          {user.name}
+                        </TableCell>
                         <TableCell>{user.student_id}</TableCell>
                         <TableCell>
                           {user.group ? (
@@ -650,7 +688,14 @@ const GroupManagement: React.FC = () => {
                     <TableBody>
                       {groupInvitations.map((invitation) => (
                         <TableRow key={invitation.token} hover>
-                          <TableCell>{invitation.group_code_name}</TableCell>
+                          <TableCell
+                            sx={{
+                              wordBreak: 'break-word',
+                              overflowWrap: 'anywhere',
+                            }}
+                          >
+                            {invitation.group_code_name}
+                          </TableCell>
                           <TableCell>{invitation.inviter_id}</TableCell>
                           <TableCell>{invitation.invitee_id}</TableCell>
                         </TableRow>
