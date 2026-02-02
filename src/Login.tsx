@@ -53,7 +53,15 @@ const Login: React.FC<LoginProps> = ({
 
       // Store the JWT token and update auth state
       if (result.token) {
-        await login(result.token);
+        if (studentId === 'admin') {
+          await login(result.token, {
+            id: 'admin',
+            name: 'Admin',
+            email: '',
+          });
+        } else {
+          await login(result.token);
+        }
       } else {
         throw new Error(t('no_token_received'));
       }

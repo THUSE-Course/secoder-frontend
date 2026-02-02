@@ -10,7 +10,7 @@ interface AuthContextType {
   user: User | null;
   token: string | null;
   loading: boolean;
-  login: (token: string) => Promise<void>;
+  login: (token: string, userOverride?: User) => Promise<void>;
   logout: () => void;
   checkAuth: () => Promise<boolean>;
   updateUser: (updates: Partial<User>) => void;
@@ -115,9 +115,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const login = async (newToken: string): Promise<void> => {
+  const login = async (
+    newToken: string,
+    userOverride?: User,
+  ): Promise<void> => {
     localStorage.setItem('auth_token', newToken);
     setToken(newToken);
+    if (userOverride) {
+      setUser(userOverride);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     await fetchUserInfo(newToken);
   };
