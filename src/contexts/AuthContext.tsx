@@ -38,9 +38,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Load token from localStorage on mount
   useEffect(() => {
     const savedToken = localStorage.getItem('auth_token');
+    const isAdmin = localStorage.getItem('admin_user') === 'true';
     if (savedToken) {
       setToken(savedToken);
-      fetchUserInfo(savedToken);
+      if (isAdmin) {
+        setUser({ id: 'admin', name: 'Admin', email: '' });
+        setLoading(false);
+      } else {
+        fetchUserInfo(savedToken);
+      }
     } else {
       setLoading(false);
     }
@@ -119,9 +125,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     newToken: string,
     userOverride?: User,
   ): Promise<void> => {
+    // Clear any in-memory user data before starting a new session.
+    setUser(null);
+    localStorage.removeItem('admin_user');
     localStorage.setItem('auth_token', newToken);
     setToken(newToken);
     if (userOverride) {
+      if (userOverride.id === 'admin') {
+        localStorage.setItem('admin_user', 'true');
+      }
       setUser(userOverride);
       setLoading(false);
       return;
@@ -132,12 +144,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('auth_token');
+    localStorage.removeItem('admin_user');
     setToken(null);
     setUser(null);
   };
 
   const checkAuth = async (): Promise<boolean> => {
     if (!token) return false;
+    if (localStorage.getItem('admin_user') === 'true') return true;
     const userData = await fetchUserInfo(token);
     return userData !== null;
   };

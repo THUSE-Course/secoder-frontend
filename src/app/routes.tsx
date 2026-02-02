@@ -51,6 +51,10 @@ const RequireAuth: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
+  if (user.id === 'admin' && !location.pathname.startsWith('/admin')) {
+    return <Navigate to="/admin" replace />;
+  }
+
   return <>{children}</>;
 };
 

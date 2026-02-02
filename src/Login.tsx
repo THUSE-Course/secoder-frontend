@@ -31,12 +31,9 @@ const Login: React.FC<LoginProps> = ({
         navigate('/admin', { replace: true });
         return;
       }
-      const from =
-        (location.state as { from?: { pathname?: string } } | null)?.from
-          ?.pathname || '/overview';
-      navigate(from, { replace: true });
+      navigate('/overview', { replace: true });
     }
-  }, [location.state, navigate, user]);
+  }, [navigate, user]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
