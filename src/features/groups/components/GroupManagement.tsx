@@ -40,8 +40,9 @@ import {
   getUsers,
   createGroup,
   inviteToGroup,
+  getGroupInvitations,
 } from '../../../utils';
-import type { Group, User } from '../../../utils';
+import type { Group, Invitation, User } from '../../../utils';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -74,6 +75,7 @@ const GroupManagement: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [myGroup, setMyGroup] = useState<Group | null>(null);
   const [loading, setLoading] = useState(false);
+  const [loadingInvitations, setLoadingInvitations] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
@@ -88,6 +90,10 @@ const GroupManagement: React.FC = () => {
   const [groupsTotal, setGroupsTotal] = useState(0);
   const [usersTotal, setUsersTotal] = useState(0);
   const pageSize = 10;
+  const invitationsPageSize = 10;
+  const [invitationsPage, setInvitationsPage] = useState(1);
+  const [invitationsTotal, setInvitationsTotal] = useState(0);
+  const [groupInvitations, setGroupInvitations] = useState<Invitation[]>([]);
 
   // Form states
   const [newGroupName, setNewGroupName] = useState('');
@@ -138,6 +144,63 @@ const GroupManagement: React.FC = () => {
   useEffect(() => {
     loadData();
   }, [loadData]);
+
+  const loadGroupInvitations = useCallback(
+    async (page: number = invitationsPage) => {
+      if (
+        !myGroup ||
+        !currentUser ||
+        myGroup.leader.student_id !== currentUser.student_id
+      ) {
+        setGroupInvitations([]);
+        setInvitationsTotal(0);
+        return;
+      }
+      setLoadingInvitations(true);
+      setError(null);
+      try {
+        const response = await getGroupInvitations(
+          myGroup.code_name,
+          page,
+          invitationsPageSize,
+        );
+        const invitations = response.invitations || [];
+        setGroupInvitations(invitations);
+        setInvitationsTotal(
+          invitations.length === invitationsPageSize ? page + 1 : page,
+        );
+      } catch (err) {
+        setError(
+          err instanceof Error
+            ? err.message
+            : 'Failed to load group invitations',
+        );
+      } finally {
+        setLoadingInvitations(false);
+      }
+    },
+    [
+      currentUser,
+      invitationsPage,
+      invitationsPageSize,
+      myGroup,
+      setGroupInvitations,
+    ],
+  );
+
+  useEffect(() => {
+    if (
+      myGroup &&
+      currentUser &&
+      myGroup.leader.student_id === currentUser.student_id
+    ) {
+      loadGroupInvitations();
+    } else {
+      setGroupInvitations([]);
+      setInvitationsPage(1);
+      setInvitationsTotal(0);
+    }
+  }, [currentUser, loadGroupInvitations, myGroup]);
 
   const handleCreateGroup = async () => {
     if (!newGroupName.trim() || !newGroupCodeName.trim()) {
@@ -190,6 +253,15 @@ const GroupManagement: React.FC = () => {
     setTabValue(newValue);
   };
 
+  const isLeader =
+    !!myGroup && currentUser?.student_id === myGroup.leader.student_id;
+
+  useEffect(() => {
+    if (!isLeader && tabValue === 3) {
+      setTabValue(0);
+    }
+  }, [isLeader, tabValue]);
+
   const handleGroupsPageChange = (
     _event: React.ChangeEvent<unknown>,
     value: number,
@@ -202,6 +274,14 @@ const GroupManagement: React.FC = () => {
     value: number,
   ) => {
     setUsersPage(value);
+  };
+
+  const handleInvitationsPageChange = (
+    _event: React.ChangeEvent<unknown>,
+    value: number,
+  ) => {
+    setInvitationsPage(value);
+    loadGroupInvitations(value);
   };
 
   const closeAlerts = () => {
@@ -217,8 +297,13 @@ const GroupManagement: React.FC = () => {
           actions={
             <Tooltip title={t('refresh', 'Refresh')}>
               <IconButton
-                onClick={() => loadData()}
-                disabled={loading}
+                onClick={async () => {
+                  await loadData();
+                  if (isLeader) {
+                    await loadGroupInvitations();
+                  }
+                }}
+                disabled={loading || loadingInvitations}
                 color="primary"
               >
                 <RefreshIcon />
@@ -250,6 +335,9 @@ const GroupManagement: React.FC = () => {
             <Tab label={t('my_group', 'My Group')} />
             <Tab label={t('all_groups', 'All Groups')} />
             <Tab label={t('all_users', 'All Users')} />
+            {isLeader && (
+              <Tab label={t('group_invitations', 'Group Invitations')} />
+            )}
           </Tabs>
         </Box>
 
@@ -529,6 +617,63 @@ const GroupManagement: React.FC = () => {
             </Box>
           )}
         </TabPanel>
+
+        {isLeader && (
+          <TabPanel value={tabValue} index={3}>
+            {loadingInvitations ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
+                <CircularProgress />
+              </Box>
+            ) : groupInvitations.length === 0 ? (
+              <Typography variant="body2" color="text.secondary" sx={{ py: 2 }}>
+                {t('no_group_invitations', 'No group invitations yet.')}
+              </Typography>
+            ) : (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <TableContainer component={Paper} variant="outlined">
+                  <Table>
+                    <TableHead>
+                      <TableRow sx={{ backgroundColor: 'action.hover' }}>
+                        <TableCell>
+                          <strong>
+                            {t('group_code_name', 'Group Code Name')}
+                          </strong>
+                        </TableCell>
+                        <TableCell>
+                          <strong>{t('inviter_id', 'Invited By')}</strong>
+                        </TableCell>
+                        <TableCell>
+                          <strong>{t('invitee_id', 'Invited User')}</strong>
+                        </TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {groupInvitations.map((invitation) => (
+                        <TableRow key={invitation.token} hover>
+                          <TableCell>{invitation.group_code_name}</TableCell>
+                          <TableCell>{invitation.inviter_id}</TableCell>
+                          <TableCell>{invitation.invitee_id}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+                {invitationsTotal > 1 && (
+                  <Box
+                    sx={{ display: 'flex', justifyContent: 'center', pt: 2 }}
+                  >
+                    <Pagination
+                      count={invitationsTotal}
+                      page={invitationsPage}
+                      onChange={handleInvitationsPageChange}
+                      color="primary"
+                    />
+                  </Box>
+                )}
+              </Box>
+            )}
+          </TabPanel>
+        )}
 
         {/* Confirm Create Group Dialog */}
         <Dialog
