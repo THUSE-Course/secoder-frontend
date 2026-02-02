@@ -6,7 +6,6 @@ import {
   Routes,
   useLocation,
   useNavigate,
-  useSearchParams,
 } from 'react-router-dom';
 import { Box, CircularProgress } from '@mui/material';
 import { useAuth } from '../contexts/AuthContext';
@@ -26,6 +25,11 @@ const PageLoader = () => (
     <CircularProgress />
   </Box>
 );
+
+const LoginScreen: React.FC = () => {
+  const navigate = useNavigate();
+  return <Login onSwitchToRegister={() => navigate('/register')} />;
+};
 
 const RequireAuth: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, loading } = useAuth();
@@ -47,11 +51,6 @@ const RequireAuth: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 };
 
 const AppRoutes = () => {
-  const LoginRoute = () => {
-    const navigate = useNavigate();
-    return <Login onSwitchToRegister={() => navigate('/register')} />;
-  };
-
   const RegisterRoute = () => {
     const navigate = useNavigate();
     return <Register onSwitchToLogin={() => navigate('/login')} />;
@@ -61,9 +60,8 @@ const AppRoutes = () => {
     <BrowserRouter>
       <Suspense fallback={<PageLoader />}>
         <Routes>
-          <Route path="/login" element={<LoginRoute />} />
+          <Route path="/login" element={<LoginScreen />} />
           <Route path="/register" element={<RegisterRoute />} />
-
           <Route
             path="/"
             element={

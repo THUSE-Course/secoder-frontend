@@ -36,33 +36,33 @@ const DashboardLayout: React.FC = () => {
     <Box
       sx={{
         display: 'flex',
+        flexDirection: 'column',
         minHeight: '100vh',
         backgroundColor: 'background.default',
       }}
     >
-      <Sidebar
-        navItems={navItems}
-        activePath={activeItem?.path || '/overview'}
-        mobileOpen={mobileOpen}
-        onMobileClose={handleMobileClose}
+      <TopBar
+        title={activeItem?.label || t('dashboard', 'Dashboard')}
+        onMenuClick={isMobile ? handleMobileToggle : handleSidebarToggle}
         isMobile={isMobile}
-        open={sidebarOpen}
-        onToggleOpen={handleSidebarToggle}
+        isSidebarOpen={sidebarOpen}
       />
       <Box
         sx={{
           display: 'flex',
-          flexDirection: 'column',
           flexGrow: 1,
           minWidth: 0,
           backgroundColor: 'background.default',
         }}
       >
-        <TopBar
-          title={activeItem?.label || t('dashboard', 'Dashboard')}
-          onMenuClick={isMobile ? handleMobileToggle : handleSidebarToggle}
+        <Sidebar
+          navItems={navItems}
+          activePath={activeItem?.path || '/overview'}
+          mobileOpen={mobileOpen}
+          onMobileClose={handleMobileClose}
           isMobile={isMobile}
-          isSidebarOpen={sidebarOpen}
+          open={sidebarOpen}
+          onToggleOpen={handleSidebarToggle}
         />
         <Box
           component="main"

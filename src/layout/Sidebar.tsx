@@ -40,7 +40,7 @@ const SidebarContent: React.FC<{
   return (
     <Box
       sx={{
-        height: '100dvh',
+        height: '100%',
         display: 'flex',
         flexDirection: 'column',
         backgroundColor: (theme) =>
@@ -51,33 +51,7 @@ const SidebarContent: React.FC<{
         borderColor: 'divider',
       }}
     >
-      <Box sx={{ px: 3, py: 3 }}>
-        <Typography
-          variant="subtitle2"
-          sx={{
-            textTransform: 'uppercase',
-            letterSpacing: 1.4,
-            opacity: open ? 0.6 : 0,
-            fontWeight: 600,
-            transition: 'opacity 0.2s ease',
-          }}
-        >
-          SECoder
-        </Typography>
-        <Typography
-          variant="h6"
-          sx={{
-            fontWeight: 700,
-            mt: 1,
-            opacity: open ? 1 : 0,
-            transition: 'opacity 0.2s ease',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          Control Center
-        </Typography>
-      </Box>
-      <Divider />
+      <Box sx={{ px: 1.5 }} />
       <List sx={{ px: open ? 1.5 : 1, py: 2, flexGrow: 1 }}>
         {navItems.map((item) => (
           <Tooltip
@@ -187,7 +161,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       sx={{
         width: { md: open ? drawerWidth : drawerCollapsedWidth },
         flexShrink: { md: 0 },
-        height: '100dvh',
+        height: '100%',
       }}
       aria-label="dashboard navigation"
     >
@@ -201,7 +175,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             width: open ? drawerWidth : drawerCollapsedWidth,
             border: 'none',
             position: 'initial',
-            height: '100dvh',
+            height: '100%',
             transition: (theme) =>
               theme.transitions.create('width', {
                 easing: theme.transitions.easing.sharp,
