@@ -29,6 +29,8 @@ import {
 } from '@mui/material';
 import {
   Add as AddIcon,
+  Delete as DeleteIcon,
+  Edit as EditIcon,
   PersonAdd as PersonAddIcon,
   Refresh as RefreshIcon,
 } from '@mui/icons-material';
@@ -41,6 +43,8 @@ import {
   createGroup,
   inviteToGroup,
   getGroupInvitations,
+  editGroupName,
+  deleteGroup,
 } from '../../../utils';
 import type { Group, Invitation } from '../../../utils';
 
@@ -82,6 +86,8 @@ const GroupManagement: React.FC = () => {
   const [confirmCreateDialogOpen, setConfirmCreateDialogOpen] = useState(false);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   // Pagination states
   const [groupsPage, setGroupsPage] = useState(1);
@@ -98,6 +104,7 @@ const GroupManagement: React.FC = () => {
   const [newGroupCodeName, setNewGroupCodeName] = useState('');
   const [selectedGroupForInvite, setSelectedGroupForInvite] = useState('');
   const [inviteeStudentId, setInviteeStudentId] = useState('');
+  const [editedGroupName, setEditedGroupName] = useState('');
 
   const loadData = useCallback(
     async (newGroupsPage?: number) => {
@@ -242,6 +249,43 @@ const GroupManagement: React.FC = () => {
     }
   };
 
+  const handleEditGroup = async () => {
+    if (!myGroup) return;
+    if (!editedGroupName.trim()) {
+      setError(t('group_name_required'));
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    try {
+      await editGroupName(myGroup.code_name, editedGroupName.trim());
+      setSuccess(t('group_name_updated'));
+      setEditDialogOpen(false);
+      await loadData();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update group');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteGroup = async () => {
+    if (!myGroup) return;
+    setLoading(true);
+    setError(null);
+    try {
+      await deleteGroup(myGroup.code_name);
+      setSuccess(t('group_deleted_success'));
+      setDeleteDialogOpen(false);
+      await loadData();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete group');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
@@ -250,7 +294,7 @@ const GroupManagement: React.FC = () => {
     !!myGroup && currentUser?.student_id === myGroup.leader.student_id;
 
   useEffect(() => {
-    if (!isLeader && tabValue === 3) {
+    if (!isLeader && tabValue === 2) {
       setTabValue(0);
     }
   }, [isLeader, tabValue]);
@@ -438,7 +482,7 @@ const GroupManagement: React.FC = () => {
                   </Box>
 
                   {currentUser?.student_id === myGroup.leader.student_id && (
-                    <Box sx={{ pt: 1 }}>
+                    <Box sx={{ pt: 1, display: 'flex', gap: 1 }}>
                       <Button
                         variant="outlined"
                         startIcon={<PersonAddIcon />}
@@ -449,6 +493,26 @@ const GroupManagement: React.FC = () => {
                         size="small"
                       >
                         {t('invite_to_group')}
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        startIcon={<EditIcon />}
+                        size="small"
+                        onClick={() => {
+                          setEditedGroupName(myGroup.name);
+                          setEditDialogOpen(true);
+                        }}
+                      >
+                        {t('edit_group')}
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        startIcon={<DeleteIcon />}
+                        size="small"
+                        onClick={() => setDeleteDialogOpen(true)}
+                      >
+                        {t('delete_group')}
                       </Button>
                     </Box>
                   )}
@@ -726,6 +790,69 @@ const GroupManagement: React.FC = () => {
               disabled={loading}
             >
               {loading ? <CircularProgress size={24} /> : t('send_invite')}
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Edit Group Dialog */}
+        <Dialog
+          open={editDialogOpen}
+          onClose={() => setEditDialogOpen(false)}
+          maxWidth="sm"
+          fullWidth
+        >
+          <DialogTitle>{t('edit_group')}</DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              margin="dense"
+              label={t('group_name')}
+              fullWidth
+              value={editedGroupName}
+              onChange={(e) => setEditedGroupName(e.target.value)}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setEditDialogOpen(false)}>
+              {t('cancel')}
+            </Button>
+            <Button
+              onClick={handleEditGroup}
+              variant="contained"
+              disabled={loading}
+            >
+              {loading ? <CircularProgress size={24} /> : t('save_changes')}
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Delete Group Dialog */}
+        <Dialog
+          open={deleteDialogOpen}
+          onClose={() => setDeleteDialogOpen(false)}
+          maxWidth="sm"
+          fullWidth
+        >
+          <DialogTitle>{t('delete_group')}</DialogTitle>
+          <DialogContent>
+            <Alert severity="warning" sx={{ mb: 2 }}>
+              {t('delete_group_warning')}
+            </Alert>
+            <Typography variant="body2" color="text.secondary">
+              {t('delete_group_confirm')}
+            </Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setDeleteDialogOpen(false)}>
+              {t('cancel')}
+            </Button>
+            <Button
+              onClick={handleDeleteGroup}
+              variant="contained"
+              color="error"
+              disabled={loading}
+            >
+              {loading ? <CircularProgress size={24} /> : t('delete_group')}
             </Button>
           </DialogActions>
         </Dialog>

@@ -319,6 +319,28 @@ async function inviteToGroup(
   });
 }
 
+async function editGroupName(
+  groupCodeName: string,
+  name: string,
+): Promise<ApiResponse> {
+  return authenticatedRequest<ApiResponse>('/group/edit', {
+    method: 'POST',
+    body: JSON.stringify({
+      group_code_name: groupCodeName,
+      name,
+    }),
+  });
+}
+
+async function deleteGroup(groupCodeName: string): Promise<ApiResponse> {
+  return authenticatedRequest<ApiResponse>('/group/delete', {
+    method: 'POST',
+    body: JSON.stringify({
+      group_code_name: groupCodeName,
+    }),
+  });
+}
+
 async function acceptInvitation(token: string): Promise<ApiResponse> {
   return authenticatedRequest<ApiResponse>('/group/invite/accept', {
     method: 'POST',
@@ -406,6 +428,8 @@ export {
   getGroups,
   createGroup,
   inviteToGroup,
+  editGroupName,
+  deleteGroup,
   acceptInvitation,
   rejectInvitation,
   getUserInvitations,

@@ -85,5 +85,11 @@
   "no_invitations": "暂无邀请.",
   "no_group_invitations": "暂无小组邀请.",
   "accept": "接受",
-  "reject": "拒绝"
+  "reject": "拒绝",
+  "edit_group": "编辑小组",
+  "group_name_updated": "小组名称已更新.",
+  "delete_group": "删除小组",
+  "delete_group_warning": "删除小组会移除所有成员并清除待处理邀请.",
+  "delete_group_confirm": "确定要删除该小组吗?",
+  "group_deleted_success": "小组已删除."
 }

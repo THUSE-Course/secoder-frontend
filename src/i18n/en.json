@@ -85,5 +85,11 @@
   "no_invitations": "No invitations yet.",
   "no_group_invitations": "No group invitations yet.",
   "accept": "Accept",
-  "reject": "Reject"
+  "reject": "Reject",
+  "edit_group": "Edit group",
+  "group_name_updated": "Group name updated.",
+  "delete_group": "Delete group",
+  "delete_group_warning": "Deleting a group removes all members and pending invitations.",
+  "delete_group_confirm": "Are you sure you want to delete this group?",
+  "group_deleted_success": "Group deleted."
 }

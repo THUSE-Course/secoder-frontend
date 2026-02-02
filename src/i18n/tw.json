@@ -85,5 +85,11 @@
   "no_invitations": "目前沒有邀請.",
   "no_group_invitations": "目前沒有小組邀請.",
   "accept": "接受",
-  "reject": "拒絕"
+  "reject": "拒絕",
+  "edit_group": "編輯小組",
+  "group_name_updated": "小組名稱已更新.",
+  "delete_group": "刪除小組",
+  "delete_group_warning": "刪除小組會移除所有成員並清除待處理邀請.",
+  "delete_group_confirm": "確定要刪除這個小組嗎?",
+  "group_deleted_success": "小組已刪除."
 }
