@@ -1,11 +1,11 @@
-import i18next from "i18next";
-import { initReactI18next } from "react-i18next";
-import LanguageDetector from "i18next-browser-languagedetector";
+import i18next from 'i18next';
+import { initReactI18next } from 'react-i18next';
+import LanguageDetector from 'i18next-browser-languagedetector';
 
-import en from "./en.json";
-import cn from "./cn.json";
-import tw from "./tw.json";
-import ko from "./ko.json";
+import en from './en.json';
+import cn from './cn.json';
+import tw from './tw.json';
+import ko from './ko.json';
 
 export const resources = {
   en: {
@@ -24,17 +24,17 @@ export const resources = {
 
 // Language mapping for better browser detection
 const languageMap: Record<string, string> = {
-  'zh': 'cn',      // Chinese -> Simplified Chinese
-  'zh-CN': 'cn',   // Chinese (China) -> Simplified Chinese
+  zh: 'cn', // Chinese -> Simplified Chinese
+  'zh-CN': 'cn', // Chinese (China) -> Simplified Chinese
   'zh-Hans': 'cn', // Chinese (Simplified) -> Simplified Chinese
-  'zh-TW': 'tw',   // Chinese (Taiwan) -> Traditional Chinese
-  'zh-HK': 'tw',   // Chinese (Hong Kong) -> Traditional Chinese
+  'zh-TW': 'tw', // Chinese (Taiwan) -> Traditional Chinese
+  'zh-HK': 'tw', // Chinese (Hong Kong) -> Traditional Chinese
   'zh-Hant': 'tw', // Chinese (Traditional) -> Traditional Chinese
-  'ko': 'ko',      // Korean -> Korean
-  'ko-KR': 'ko',   // Korean (South Korea) -> Korean
-  'en': 'en',      // English -> English
-  'en-US': 'en',   // English (US) -> English
-  'en-GB': 'en',   // English (UK) -> English
+  ko: 'ko', // Korean -> Korean
+  'ko-KR': 'ko', // Korean (South Korea) -> Korean
+  en: 'en', // English -> English
+  'en-US': 'en', // English (US) -> English
+  'en-GB': 'en', // English (UK) -> English
 };
 
 // Custom language detector function
@@ -64,7 +64,12 @@ const detectLanguage = (): string => {
     // Partial match (e.g., 'zh-CN' -> 'zh')
     const shortLang = lang.split('-')[0];
     if (languageMap[shortLang]) {
-      console.log('Partial language match:', lang, '->', languageMap[shortLang]);
+      console.log(
+        'Partial language match:',
+        lang,
+        '->',
+        languageMap[shortLang],
+      );
       return languageMap[shortLang];
     }
   }
@@ -78,7 +83,7 @@ i18next
   .use(initReactI18next)
   .init({
     lng: detectLanguage(), // Use our custom detection
-    fallbackLng: "en",
+    fallbackLng: 'en',
     debug: false,
     resources,
     detection: {

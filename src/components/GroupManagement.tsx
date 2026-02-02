@@ -100,38 +100,45 @@ const GroupManagement: React.FC = () => {
   const [joinGroupCodeName, setJoinGroupCodeName] = useState('');
   const [joinGroupName, setJoinGroupName] = useState('');
 
-  const loadData = useCallback(async (newGroupsPage?: number, newUsersPage?: number) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const gPage = newGroupsPage ?? groupsPage;
-      const uPage = newUsersPage ?? usersPage;
+  const loadData = useCallback(
+    async (newGroupsPage?: number, newUsersPage?: number) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const gPage = newGroupsPage ?? groupsPage;
+        const uPage = newUsersPage ?? usersPage;
 
-      const [groupsData, usersData] = await Promise.all([
-        getGroups(gPage, pageSize),
-        getUsers(uPage, pageSize),
-      ]);
-      setGroups(groupsData.groups || []);
-      setUsers(usersData.users || []);
-      setGroupsTotal(Math.ceil((groupsData.groups?.length || 0) / pageSize));
-      setUsersTotal(Math.ceil((usersData.users?.length || 0) / pageSize));
+        const [groupsData, usersData] = await Promise.all([
+          getGroups(gPage, pageSize),
+          getUsers(uPage, pageSize),
+        ]);
+        setGroups(groupsData.groups || []);
+        setUsers(usersData.users || []);
+        setGroupsTotal(Math.ceil((groupsData.groups?.length || 0) / pageSize));
+        setUsersTotal(Math.ceil((usersData.users?.length || 0) / pageSize));
 
-      // Find current user's group
-      if (currentUser) {
-        const userInfo = usersData.users?.find(u => u.student_id === currentUser.student_id);
-        if (userInfo?.group) {
-          const userGroup = groupsData.groups?.find(g => g.code_name === userInfo.group);
-          setMyGroup(userGroup || null);
-        } else {
-          setMyGroup(null);
+        // Find current user's group
+        if (currentUser) {
+          const userInfo = usersData.users?.find(
+            (u) => u.student_id === currentUser.student_id,
+          );
+          if (userInfo?.group) {
+            const userGroup = groupsData.groups?.find(
+              (g) => g.code_name === userInfo.group,
+            );
+            setMyGroup(userGroup || null);
+          } else {
+            setMyGroup(null);
+          }
         }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load data');
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load data');
-    } finally {
-      setLoading(false);
-    }
-  }, [currentUser, groupsPage, pageSize, usersPage]);
+    },
+    [currentUser, groupsPage, pageSize, usersPage],
+  );
 
   useEffect(() => {
     loadData();
@@ -139,7 +146,9 @@ const GroupManagement: React.FC = () => {
 
   const handleCreateGroup = async () => {
     if (!newGroupName.trim() || !newGroupCodeName.trim()) {
-      setError(t('group_name_required', 'Group name and code name are required'));
+      setError(
+        t('group_name_required', 'Group name and code name are required'),
+      );
       return;
     }
 
@@ -174,7 +183,9 @@ const GroupManagement: React.FC = () => {
       setSelectedGroupForInvite('');
       setInviteeStudentId('');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to send invitation');
+      setError(
+        err instanceof Error ? err.message : 'Failed to send invitation',
+      );
     } finally {
       setLoading(false);
     }
@@ -190,12 +201,16 @@ const GroupManagement: React.FC = () => {
     setError(null);
     try {
       await joinGroup(joinGroupCodeName.trim());
-      setSuccess(t('join_request_sent_success', 'Join request sent successfully!'));
+      setSuccess(
+        t('join_request_sent_success', 'Join request sent successfully!'),
+      );
       setJoinDialogOpen(false);
       setJoinGroupCodeName('');
       setJoinGroupName('');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to send join request');
+      setError(
+        err instanceof Error ? err.message : 'Failed to send join request',
+      );
     } finally {
       setLoading(false);
     }
@@ -205,11 +220,17 @@ const GroupManagement: React.FC = () => {
     setTabValue(newValue);
   };
 
-  const handleGroupsPageChange = (_event: React.ChangeEvent<unknown>, value: number) => {
+  const handleGroupsPageChange = (
+    _event: React.ChangeEvent<unknown>,
+    value: number,
+  ) => {
     setGroupsPage(value);
   };
 
-  const handleUsersPageChange = (_event: React.ChangeEvent<unknown>, value: number) => {
+  const handleUsersPageChange = (
+    _event: React.ChangeEvent<unknown>,
+    value: number,
+  ) => {
     setUsersPage(value);
   };
 
@@ -221,15 +242,30 @@ const GroupManagement: React.FC = () => {
   return (
     <Card sx={{ maxWidth: 600, width: '100%', boxShadow: 3 }}>
       <CardContent sx={{ padding: 3 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: 2,
+          }}
+        >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <GroupIcon color="primary" fontSize="large" />
-            <Typography variant="h5" component="h2" sx={{ fontWeight: 'medium' }}>
+            <Typography
+              variant="h5"
+              component="h2"
+              sx={{ fontWeight: 'medium' }}
+            >
               {t('group_management', 'Group Management')}
             </Typography>
           </Box>
           <Tooltip title={t('refresh', 'Refresh')}>
-            <IconButton onClick={() => loadData()} disabled={loading} color="primary">
+            <IconButton
+              onClick={() => loadData()}
+              disabled={loading}
+              color="primary"
+            >
               <RefreshIcon />
             </IconButton>
           </Tooltip>
@@ -250,7 +286,11 @@ const GroupManagement: React.FC = () => {
         <Divider sx={{ marginBottom: 2 }} />
 
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs value={tabValue} onChange={handleTabChange} aria-label="grouping tabs">
+          <Tabs
+            value={tabValue}
+            onChange={handleTabChange}
+            aria-label="grouping tabs"
+          >
             <Tab label={t('my_group', 'My Group')} />
             <Tab label={t('all_groups', 'All Groups')} />
             <Tab label={t('all_users', 'All Users')} />
@@ -280,7 +320,10 @@ const GroupManagement: React.FC = () => {
 
             {!loading && !myGroup && (
               <Typography variant="body2" color="text.secondary" sx={{ py: 2 }}>
-                {t('no_groups_message', 'No groups found. Create or join a group to get started.')}
+                {t(
+                  'no_groups_message',
+                  'No groups found. Create or join a group to get started.',
+                )}
               </Typography>
             )}
 
@@ -291,29 +334,52 @@ const GroupManagement: React.FC = () => {
                     <Typography variant="h6" component="div">
                       {myGroup.name}
                     </Typography>
-                    <Chip label={myGroup.code_name} size="small" color="primary" variant="outlined" />
+                    <Chip
+                      label={myGroup.code_name}
+                      size="small"
+                      color="primary"
+                      variant="outlined"
+                    />
                   </Box>
 
                   <Divider />
 
                   <Box>
-                    <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                    <Typography
+                      variant="subtitle2"
+                      color="text.secondary"
+                      gutterBottom
+                    >
                       {t('leader', 'Leader')}
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                       <Chip
                         label={`${myGroup.leader.name} (${myGroup.leader.student_id})`}
-                        color={currentUser?.student_id === myGroup.leader.student_id ? 'success' : 'default'}
+                        color={
+                          currentUser?.student_id === myGroup.leader.student_id
+                            ? 'success'
+                            : 'default'
+                        }
                         size="small"
                       />
-                      {currentUser?.student_id === myGroup.leader.student_id && (
-                        <Chip label={t('you', 'You')} color="success" size="small" variant="outlined" />
+                      {currentUser?.student_id ===
+                        myGroup.leader.student_id && (
+                        <Chip
+                          label={t('you', 'You')}
+                          color="success"
+                          size="small"
+                          variant="outlined"
+                        />
                       )}
                     </Box>
                   </Box>
 
                   <Box>
-                    <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                    <Typography
+                      variant="subtitle2"
+                      color="text.secondary"
+                      gutterBottom
+                    >
                       {t('members', 'Members')} ({myGroup.members.length})
                     </Typography>
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
@@ -321,7 +387,11 @@ const GroupManagement: React.FC = () => {
                         <Chip
                           key={member.student_id}
                           label={member.name}
-                          color={currentUser?.student_id === member.student_id ? 'success' : 'default'}
+                          color={
+                            currentUser?.student_id === member.student_id
+                              ? 'success'
+                              : 'default'
+                          }
                           size="small"
                         />
                       ))}
@@ -360,30 +430,52 @@ const GroupManagement: React.FC = () => {
                 <Table>
                   <TableHead>
                     <TableRow sx={{ backgroundColor: 'action.hover' }}>
-                      <TableCell><strong>{t('group_name', 'Group Name')}</strong></TableCell>
-                      <TableCell><strong>{t('group_code_name', 'Group Code Name')}</strong></TableCell>
-                      <TableCell><strong>{t('leader', 'Leader')}</strong></TableCell>
-                      <TableCell><strong>{t('members', 'Members')}</strong></TableCell>
-                      {!myGroup && <TableCell><strong>{t('actions', 'Actions')}</strong></TableCell>}
+                      <TableCell>
+                        <strong>{t('group_name', 'Group Name')}</strong>
+                      </TableCell>
+                      <TableCell>
+                        <strong>
+                          {t('group_code_name', 'Group Code Name')}
+                        </strong>
+                      </TableCell>
+                      <TableCell>
+                        <strong>{t('leader', 'Leader')}</strong>
+                      </TableCell>
+                      <TableCell>
+                        <strong>{t('members', 'Members')}</strong>
+                      </TableCell>
+                      {!myGroup && (
+                        <TableCell>
+                          <strong>{t('actions', 'Actions')}</strong>
+                        </TableCell>
+                      )}
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     {groups.map((group) => (
                       <TableRow key={group.code_name} hover>
                         <TableCell>{group.name}</TableCell>
-                        <TableCell>
-                          {group.code_name}
-                        </TableCell>
+                        <TableCell>{group.code_name}</TableCell>
                         <TableCell>
                           {group.leader.name}
-                          <Typography variant="caption" color="text.secondary" display="block">
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            display="block"
+                          >
                             ({group.leader.student_id})
                           </Typography>
                         </TableCell>
                         <TableCell>
-                          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                          <Box
+                            sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}
+                          >
                             {group.members.map((member) => (
-                              <Chip key={member.student_id} label={member.name} size="small" />
+                              <Chip
+                                key={member.student_id}
+                                label={member.name}
+                                size="small"
+                              />
                             ))}
                           </Box>
                         </TableCell>
@@ -433,9 +525,15 @@ const GroupManagement: React.FC = () => {
                 <Table>
                   <TableHead>
                     <TableRow sx={{ backgroundColor: 'action.hover' }}>
-                      <TableCell><strong>{t('name', 'Name')}</strong></TableCell>
-                      <TableCell><strong>{t('student_id', 'Student ID')}</strong></TableCell>
-                      <TableCell><strong>{t('group', 'Group')}</strong></TableCell>
+                      <TableCell>
+                        <strong>{t('name', 'Name')}</strong>
+                      </TableCell>
+                      <TableCell>
+                        <strong>{t('student_id', 'Student ID')}</strong>
+                      </TableCell>
+                      <TableCell>
+                        <strong>{t('group', 'Group')}</strong>
+                      </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -447,7 +545,11 @@ const GroupManagement: React.FC = () => {
                           {user.group ? (
                             user.group
                           ) : (
-                            <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                            <Typography
+                              variant="body2"
+                              color="text.secondary"
+                              sx={{ fontStyle: 'italic' }}
+                            >
                               {t('no_group', 'No group')}
                             </Typography>
                           )}
@@ -478,17 +580,27 @@ const GroupManagement: React.FC = () => {
           maxWidth="sm"
           fullWidth
         >
-          <DialogTitle>{t('create_group_warning', 'Important Notice')}</DialogTitle>
+          <DialogTitle>
+            {t('create_group_warning', 'Important Notice')}
+          </DialogTitle>
           <DialogContent>
             <Alert severity="warning" sx={{ mb: 2 }}>
-              {t('create_group_warning_message', 'Once a group is created, you cannot delete it. You will become the group leader.')}
+              {t(
+                'create_group_warning_message',
+                'Once a group is created, you cannot delete it. You will become the group leader.',
+              )}
             </Alert>
             <Typography variant="body2" color="text.secondary">
-              {t('create_group_confirm_message', 'Are you sure you want to create a new group?')}
+              {t(
+                'create_group_confirm_message',
+                'Are you sure you want to create a new group?',
+              )}
             </Typography>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setConfirmCreateDialogOpen(false)}>{t('cancel', 'Cancel')}</Button>
+            <Button onClick={() => setConfirmCreateDialogOpen(false)}>
+              {t('cancel', 'Cancel')}
+            </Button>
             <Button
               onClick={() => {
                 setConfirmCreateDialogOpen(false);
@@ -503,7 +615,12 @@ const GroupManagement: React.FC = () => {
         </Dialog>
 
         {/* Create Group Dialog */}
-        <Dialog open={createDialogOpen} onClose={() => setCreateDialogOpen(false)} maxWidth="sm" fullWidth>
+        <Dialog
+          open={createDialogOpen}
+          onClose={() => setCreateDialogOpen(false)}
+          maxWidth="sm"
+          fullWidth
+        >
           <DialogTitle>{t('create_new_group', 'Create New Group')}</DialogTitle>
           <DialogContent>
             <TextField
@@ -521,20 +638,36 @@ const GroupManagement: React.FC = () => {
               fullWidth
               value={newGroupCodeName}
               onChange={(e) => setNewGroupCodeName(e.target.value)}
-              helperText={t('group_code_name_help', 'Unique identifier (must conform to GitLab group name rules)')}
+              helperText={t(
+                'group_code_name_help',
+                'Unique identifier (must conform to GitLab group name rules)',
+              )}
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setCreateDialogOpen(false)}>{t('cancel', 'Cancel')}</Button>
-            <Button onClick={handleCreateGroup} variant="contained" disabled={loading}>
+            <Button onClick={() => setCreateDialogOpen(false)}>
+              {t('cancel', 'Cancel')}
+            </Button>
+            <Button
+              onClick={handleCreateGroup}
+              variant="contained"
+              disabled={loading}
+            >
               {loading ? <CircularProgress size={24} /> : t('create', 'Create')}
             </Button>
           </DialogActions>
         </Dialog>
 
         {/* Invite User Dialog */}
-        <Dialog open={inviteDialogOpen} onClose={() => setInviteDialogOpen(false)} maxWidth="sm" fullWidth>
-          <DialogTitle>{t('invite_user_to_group', 'Invite User to Group')}</DialogTitle>
+        <Dialog
+          open={inviteDialogOpen}
+          onClose={() => setInviteDialogOpen(false)}
+          maxWidth="sm"
+          fullWidth
+        >
+          <DialogTitle>
+            {t('invite_user_to_group', 'Invite User to Group')}
+          </DialogTitle>
           <DialogContent>
             <TextField
               autoFocus
@@ -543,13 +676,26 @@ const GroupManagement: React.FC = () => {
               fullWidth
               value={inviteeStudentId}
               onChange={(e) => setInviteeStudentId(e.target.value)}
-              helperText={t('invitee_student_id_help', 'Student ID of the person to invite')}
+              helperText={t(
+                'invitee_student_id_help',
+                'Student ID of the person to invite',
+              )}
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setInviteDialogOpen(false)}>{t('cancel', 'Cancel')}</Button>
-            <Button onClick={handleInviteUser} variant="contained" disabled={loading}>
-              {loading ? <CircularProgress size={24} /> : t('send_invite', 'Send Invite')}
+            <Button onClick={() => setInviteDialogOpen(false)}>
+              {t('cancel', 'Cancel')}
+            </Button>
+            <Button
+              onClick={handleInviteUser}
+              variant="contained"
+              disabled={loading}
+            >
+              {loading ? (
+                <CircularProgress size={24} />
+              ) : (
+                t('send_invite', 'Send Invite')
+              )}
             </Button>
           </DialogActions>
         </Dialog>
@@ -573,13 +719,25 @@ const GroupManagement: React.FC = () => {
             </Typography>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => {
-              setJoinDialogOpen(false);
-              setJoinGroupCodeName('');
-              setJoinGroupName('');
-            }}>{t('cancel', 'Cancel')}</Button>
-            <Button onClick={handleJoinGroup} variant="contained" disabled={loading}>
-              {loading ? <CircularProgress size={24} /> : t('send_request', 'Send Request')}
+            <Button
+              onClick={() => {
+                setJoinDialogOpen(false);
+                setJoinGroupCodeName('');
+                setJoinGroupName('');
+              }}
+            >
+              {t('cancel', 'Cancel')}
+            </Button>
+            <Button
+              onClick={handleJoinGroup}
+              variant="contained"
+              disabled={loading}
+            >
+              {loading ? (
+                <CircularProgress size={24} />
+              ) : (
+                t('send_request', 'Send Request')
+              )}
             </Button>
           </DialogActions>
         </Dialog>

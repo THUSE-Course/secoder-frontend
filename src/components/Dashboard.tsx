@@ -9,13 +9,22 @@ import {
   Divider,
   CircularProgress,
   TextField,
-  Alert
+  Alert,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import ThemeToggle from './ThemeToggle';
 import LanguageSelector from './LanguageSelector';
-import { AccountCircle, Email, School, ExitToApp, Launch, Code, BugReport, Dashboard as DashboardIcon } from '@mui/icons-material';
+import {
+  AccountCircle,
+  Email,
+  School,
+  ExitToApp,
+  Launch,
+  Code,
+  BugReport,
+  Dashboard as DashboardIcon,
+} from '@mui/icons-material';
 import { editUserInfo, validatePassword } from '../utils';
 
 const GroupManagement = lazy(() => import('./GroupManagement'));
@@ -74,14 +83,24 @@ const Dashboard: React.FC = () => {
     const trimmedPassword = editPassword.trim();
 
     if (!trimmedName && !trimmedEmail && !trimmedPassword) {
-      setEditError(t('profile_update_no_changes', 'Please provide at least one field to update.'));
+      setEditError(
+        t(
+          'profile_update_no_changes',
+          'Please provide at least one field to update.',
+        ),
+      );
       return;
     }
 
     if (trimmedPassword) {
       const passwordValidation = validatePassword(trimmedPassword);
       if (!passwordValidation.isValid) {
-        setEditError(t('password_validation_failed', 'Password does not meet requirements'));
+        setEditError(
+          t(
+            'password_validation_failed',
+            'Password does not meet requirements',
+          ),
+        );
         return;
       }
 
@@ -108,10 +127,16 @@ const Dashboard: React.FC = () => {
       setEditPassword('');
       setEditConfirmPassword('');
       setEditPasswordErrors([]);
-      setEditSuccess(t('profile_update_success', 'Your profile has been updated.'));
+      setEditSuccess(
+        t('profile_update_success', 'Your profile has been updated.'),
+      );
     } catch (err: unknown) {
-      const fallbackMessage = t('profile_update_failed', 'Profile update failed');
-      const message = err instanceof Error && err.message ? err.message : fallbackMessage;
+      const fallbackMessage = t(
+        'profile_update_failed',
+        'Profile update failed',
+      );
+      const message =
+        err instanceof Error && err.message ? err.message : fallbackMessage;
       setEditError(message);
     } finally {
       setEditLoading(false);
@@ -135,7 +160,11 @@ const Dashboard: React.FC = () => {
           marginBottom: 3,
         }}
       >
-        <Typography variant="h5" component="h1" sx={{ fontWeight: 'bold', color: 'text.secondary' }}>
+        <Typography
+          variant="h5"
+          component="h1"
+          sx={{ fontWeight: 'bold', color: 'text.secondary' }}
+        >
           {t('dashboard', 'Dashboard')}
         </Typography>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
@@ -245,7 +274,12 @@ const Dashboard: React.FC = () => {
 
             {/* External Services */}
             <Box>
-              <Typography variant="h6" component="h3" gutterBottom sx={{ color: 'primary.main', fontWeight: 'medium' }}>
+              <Typography
+                variant="h6"
+                component="h3"
+                gutterBottom
+                sx={{ color: 'primary.main', fontWeight: 'medium' }}
+              >
                 {t('secoder_services', 'Services')}
               </Typography>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
@@ -262,7 +296,11 @@ const Dashboard: React.FC = () => {
                     <Typography variant="body1" component="span">
                       {t('gitlab', 'GitLab')}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary" component="div">
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      component="div"
+                    >
                       {t('gitlab_desc', 'Source code repository and CI/CD')}
                     </Typography>
                   </Box>
@@ -274,15 +312,24 @@ const Dashboard: React.FC = () => {
                   startIcon={<BugReport />}
                   endIcon={<Launch />}
                   onClick={() => handleExternalLink(sonarQubeUrl)}
-                  disabled={!sonarQubeUrl || sonarQubeUrl.includes('example.com')}
+                  disabled={
+                    !sonarQubeUrl || sonarQubeUrl.includes('example.com')
+                  }
                   sx={{ justifyContent: 'flex-start', textTransform: 'none' }}
                 >
                   <Box sx={{ flexGrow: 1, textAlign: 'left' }}>
                     <Typography variant="body1" component="span">
                       {t('sonarqube', 'SonarQube')}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary" component="div">
-                      {t('sonarqube_desc', 'Code quality and security analysis')}
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      component="div"
+                    >
+                      {t(
+                        'sonarqube_desc',
+                        'Code quality and security analysis',
+                      )}
                     </Typography>
                   </Box>
                 </Button>
@@ -293,15 +340,24 @@ const Dashboard: React.FC = () => {
                   startIcon={<DashboardIcon />}
                   endIcon={<Launch />}
                   onClick={() => handleExternalLink(kubernetesUrl)}
-                  disabled={!kubernetesUrl || kubernetesUrl.includes('example.com')}
+                  disabled={
+                    !kubernetesUrl || kubernetesUrl.includes('example.com')
+                  }
                   sx={{ justifyContent: 'flex-start', textTransform: 'none' }}
                 >
                   <Box sx={{ flexGrow: 1, textAlign: 'left' }}>
                     <Typography variant="body1" component="span">
                       {t('kubernetes_dashboard', 'Kubernetes Dashboard')}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary" component="div">
-                      {t('kubernetes_desc', 'Container orchestration monitoring')}
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      component="div"
+                    >
+                      {t(
+                        'kubernetes_desc',
+                        'Container orchestration monitoring',
+                      )}
                     </Typography>
                   </Box>
                 </Button>
@@ -319,14 +375,26 @@ const Dashboard: React.FC = () => {
           }}
         >
           <CardContent sx={{ padding: 3 }}>
-            <Typography variant="h6" component="h3" gutterBottom sx={{ color: 'primary.main', fontWeight: 'medium' }}>
+            <Typography
+              variant="h6"
+              component="h3"
+              gutterBottom
+              sx={{ color: 'primary.main', fontWeight: 'medium' }}
+            >
               {t('edit_profile', 'Edit Profile')}
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              {t('edit_profile_subtitle', 'Update your name, email, or password.')}
+              {t(
+                'edit_profile_subtitle',
+                'Update your name, email, or password.',
+              )}
             </Typography>
 
-            <Box component="form" onSubmit={handleProfileSave} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Box
+              component="form"
+              onSubmit={handleProfileSave}
+              sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+            >
               <TextField
                 label={t('name', 'Name')}
                 variant="outlined"
@@ -355,7 +423,10 @@ const Dashboard: React.FC = () => {
                 helperText={
                   editPassword.length > 0 && editPasswordErrors.length > 0
                     ? t('password_requirements_not_met')
-                    : t('password_requirements', 'At least 8 characters with 3 types: uppercase, lowercase, numbers, symbols')
+                    : t(
+                        'password_requirements',
+                        'At least 8 characters with 3 types: uppercase, lowercase, numbers, symbols',
+                      )
                 }
               />
 
@@ -366,25 +437,21 @@ const Dashboard: React.FC = () => {
                 value={editConfirmPassword}
                 onChange={(e) => setEditConfirmPassword(e.target.value)}
                 fullWidth
-                error={editConfirmPassword.length > 0 && editPassword !== editConfirmPassword}
+                error={
+                  editConfirmPassword.length > 0 &&
+                  editPassword !== editConfirmPassword
+                }
                 helperText={
-                  editConfirmPassword.length > 0 && editPassword !== editConfirmPassword
+                  editConfirmPassword.length > 0 &&
+                  editPassword !== editConfirmPassword
                     ? t('password_mismatch', 'Passwords do not match')
                     : ''
                 }
               />
 
-              {editError && (
-                <Alert severity="error">
-                  {editError}
-                </Alert>
-              )}
+              {editError && <Alert severity="error">{editError}</Alert>}
 
-              {editSuccess && (
-                <Alert severity="success">
-                  {editSuccess}
-                </Alert>
-              )}
+              {editSuccess && <Alert severity="success">{editSuccess}</Alert>}
 
               <Button
                 type="submit"
@@ -392,7 +459,9 @@ const Dashboard: React.FC = () => {
                 color="primary"
                 disabled={editLoading}
               >
-                {editLoading ? t('saving', 'Saving...') : t('save_changes', 'Save Changes')}
+                {editLoading
+                  ? t('saving', 'Saving...')
+                  : t('save_changes', 'Save Changes')}
               </Button>
             </Box>
           </CardContent>

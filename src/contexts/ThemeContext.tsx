@@ -24,7 +24,9 @@ interface CustomThemeProviderProps {
   children: ReactNode;
 }
 
-export const CustomThemeProvider: React.FC<CustomThemeProviderProps> = ({ children }) => {
+export const CustomThemeProvider: React.FC<CustomThemeProviderProps> = ({
+  children,
+}) => {
   const [mode, setMode] = useState<ThemeMode>(() => {
     // Check localStorage for saved theme preference
     const savedTheme = localStorage.getItem('theme');
@@ -32,7 +34,9 @@ export const CustomThemeProvider: React.FC<CustomThemeProviderProps> = ({ childr
       return savedTheme;
     }
     // Default to system preference
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    return window.matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : 'light';
   });
 
   const toggleColorMode = () => {
@@ -108,7 +112,7 @@ export const CustomThemeProvider: React.FC<CustomThemeProviderProps> = ({ childr
           },
         },
       }),
-    [mode]
+    [mode],
   );
 
   return (

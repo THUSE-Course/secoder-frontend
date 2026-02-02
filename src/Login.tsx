@@ -1,21 +1,24 @@
-import React, { useState } from "react";
-import { Box, TextField, Button, Typography, Link } from "@mui/material";
-import { useTranslation } from "react-i18next";
-import { post, type LoginResponse } from "./utils";
-import { useAuth } from "./contexts/AuthContext";
-import ThemeToggle from "./components/ThemeToggle";
-import LanguageSelector from "./components/LanguageSelector";
+import React, { useState } from 'react';
+import { Box, TextField, Button, Typography, Link } from '@mui/material';
+import { useTranslation } from 'react-i18next';
+import { post, type LoginResponse } from './utils';
+import { useAuth } from './contexts/AuthContext';
+import ThemeToggle from './components/ThemeToggle';
+import LanguageSelector from './components/LanguageSelector';
 
 interface LoginProps {
   onSwitchToRegister: () => void;
   onSwitchToPasswordRecovery?: () => void;
 }
 
-const Login: React.FC<LoginProps> = ({ onSwitchToRegister, onSwitchToPasswordRecovery }) => {
+const Login: React.FC<LoginProps> = ({
+  onSwitchToRegister,
+  onSwitchToPasswordRecovery,
+}) => {
   const { t } = useTranslation();
   const { login } = useAuth();
-  const [studentId, setStudentId] = useState("");
-  const [password, setPassword] = useState("");
+  const [studentId, setStudentId] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -24,20 +27,26 @@ const Login: React.FC<LoginProps> = ({ onSwitchToRegister, onSwitchToPasswordRec
     setError(null);
     setLoading(true);
     try {
-      const result: LoginResponse = await post({
-        student_id: studentId,
-        password
-      }, "login");
+      const result: LoginResponse = await post(
+        {
+          student_id: studentId,
+          password,
+        },
+        'login',
+      );
 
       // Store the JWT token and update auth state
       if (result.token) {
         await login(result.token);
       } else {
-        throw new Error(t("no_token_received", "No authentication token received"));
+        throw new Error(
+          t('no_token_received', 'No authentication token received'),
+        );
       }
     } catch (err: unknown) {
-      const fallbackMessage = t("login_failed");
-      const message = err instanceof Error && err.message ? err.message : fallbackMessage;
+      const fallbackMessage = t('login_failed');
+      const message =
+        err instanceof Error && err.message ? err.message : fallbackMessage;
       setError(message);
     } finally {
       setLoading(false);
@@ -47,24 +56,24 @@ const Login: React.FC<LoginProps> = ({ onSwitchToRegister, onSwitchToPasswordRec
   return (
     <Box
       sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100vh",
-        width: "100%",
-        position: "relative",
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        width: '100%',
+        position: 'relative',
       }}
     >
       {/* Controls in top-right corner */}
       <Box
         sx={{
-          position: "absolute",
+          position: 'absolute',
           top: 16,
           right: 16,
-          display: "flex",
+          display: 'flex',
           gap: 1,
-          alignItems: "center",
+          alignItems: 'center',
         }}
       >
         <LanguageSelector />
@@ -76,20 +85,20 @@ const Login: React.FC<LoginProps> = ({ onSwitchToRegister, onSwitchToPasswordRec
         component="form"
         onSubmit={handleSubmit}
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
           gap: 2,
-          width: "100%",
+          width: '100%',
           maxWidth: 400,
-          margin: "auto",
+          margin: 'auto',
         }}
       >
         <Typography variant="h4" component="h1" gutterBottom>
-          {t("login")}
+          {t('login')}
         </Typography>
         <TextField
-          label={t("studentId")}
+          label={t('studentId')}
           variant="outlined"
           value={studentId}
           onChange={(e) => setStudentId(e.target.value)}
@@ -97,7 +106,7 @@ const Login: React.FC<LoginProps> = ({ onSwitchToRegister, onSwitchToPasswordRec
           fullWidth
         />
         <TextField
-          label={t("password")}
+          label={t('password')}
           variant="outlined"
           type="password"
           value={password}
@@ -118,11 +127,11 @@ const Login: React.FC<LoginProps> = ({ onSwitchToRegister, onSwitchToPasswordRec
           fullWidth
           disabled={loading}
         >
-          {loading ? t("logging_in") : t("login")}
+          {loading ? t('logging_in') : t('login')}
         </Button>
 
-        <Typography variant="body2" sx={{ textAlign: "center", mt: 2 }}>
-          {t("no_account", "Don't have an account?")}{" "}
+        <Typography variant="body2" sx={{ textAlign: 'center', mt: 2 }}>
+          {t('no_account', "Don't have an account?")}{' '}
           <Link
             component="button"
             variant="body2"
@@ -131,12 +140,12 @@ const Login: React.FC<LoginProps> = ({ onSwitchToRegister, onSwitchToPasswordRec
               onSwitchToRegister();
             }}
           >
-            {t("register_here", "Register here")}
+            {t('register_here', 'Register here')}
           </Link>
         </Typography>
 
         {onSwitchToPasswordRecovery && (
-          <Typography variant="body2" sx={{ textAlign: "center", mt: 1 }}>
+          <Typography variant="body2" sx={{ textAlign: 'center', mt: 1 }}>
             <Link
               component="button"
               variant="body2"
@@ -145,7 +154,7 @@ const Login: React.FC<LoginProps> = ({ onSwitchToRegister, onSwitchToPasswordRec
                 onSwitchToPasswordRecovery();
               }}
             >
-              {t("forgot_password", "Forgot Password?")}
+              {t('forgot_password', 'Forgot Password?')}
             </Link>
           </Typography>
         )}

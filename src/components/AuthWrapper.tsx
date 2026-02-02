@@ -12,7 +12,9 @@ interface AuthWrapperProps {
 
 const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
   const { user, loading } = useAuth();
-  const [currentView, setCurrentView] = useState<'login' | 'register' | 'passwordRecovery' | 'passwordRecoveryConfirm'>(() => {
+  const [currentView, setCurrentView] = useState<
+    'login' | 'register' | 'passwordRecovery' | 'passwordRecoveryConfirm'
+  >(() => {
     const path = window.location.pathname;
     if (path === '/PasswordRecovery') {
       return 'passwordRecovery';
@@ -32,7 +34,9 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
   });
 
   // Function to navigate to different views
-  const navigateToView = (view: 'login' | 'register' | 'passwordRecovery' | 'passwordRecoveryConfirm') => {
+  const navigateToView = (
+    view: 'login' | 'register' | 'passwordRecovery' | 'passwordRecoveryConfirm',
+  ) => {
     setCurrentView(view);
 
     // Update URL without page reload
@@ -68,14 +72,23 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children }) => {
       case 'register':
         return <Register onSwitchToLogin={() => navigateToView('login')} />;
       case 'passwordRecovery':
-        return <PasswordRecovery onSwitchToLogin={() => navigateToView('login')} />;
+        return (
+          <PasswordRecovery onSwitchToLogin={() => navigateToView('login')} />
+        );
       case 'passwordRecoveryConfirm':
-        return <PasswordRecoveryConfirm onSwitchToLogin={() => navigateToView('login')} token={recoveryToken || undefined} />;
+        return (
+          <PasswordRecoveryConfirm
+            onSwitchToLogin={() => navigateToView('login')}
+            token={recoveryToken || undefined}
+          />
+        );
       default:
         return (
           <Login
             onSwitchToRegister={() => navigateToView('register')}
-            onSwitchToPasswordRecovery={() => navigateToView('passwordRecovery')}
+            onSwitchToPasswordRecovery={() =>
+              navigateToView('passwordRecovery')
+            }
           />
         );
     }

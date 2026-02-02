@@ -9,7 +9,11 @@ const ThemeToggle: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <Tooltip title={t(mode === 'light' ? 'switch_to_dark_mode' : 'switch_to_light_mode')}>
+    <Tooltip
+      title={t(
+        mode === 'light' ? 'switch_to_dark_mode' : 'switch_to_light_mode',
+      )}
+    >
       <IconButton
         onClick={toggleColorMode}
         color="inherit"

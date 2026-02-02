@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Box,
   TextField,
@@ -6,13 +6,13 @@ import {
   Typography,
   Alert,
   Link,
-  Chip
-} from "@mui/material";
-import { useTranslation } from "react-i18next";
-import { post, validatePassword } from "./utils";
-import type { RegisterPayload } from "./utils";
-import ThemeToggle from "./components/ThemeToggle";
-import LanguageSelector from "./components/LanguageSelector";
+  Chip,
+} from '@mui/material';
+import { useTranslation } from 'react-i18next';
+import { post, validatePassword } from './utils';
+import type { RegisterPayload } from './utils';
+import ThemeToggle from './components/ThemeToggle';
+import LanguageSelector from './components/LanguageSelector';
 
 interface RegisterProps {
   onSwitchToLogin: () => void;
@@ -20,10 +20,10 @@ interface RegisterProps {
 
 const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
   const { t } = useTranslation();
-  const [studentId, setStudentId] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [studentId, setStudentId] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -45,35 +45,45 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
       // Validate password
       const passwordValidation = validatePassword(password);
       if (!passwordValidation.isValid) {
-        setError(t("password_validation_failed", "Password does not meet requirements"));
+        setError(
+          t(
+            'password_validation_failed',
+            'Password does not meet requirements',
+          ),
+        );
         return;
       }
 
       // Check password confirmation
       if (password !== confirmPassword) {
-        setError(t("password_mismatch", "Passwords do not match"));
+        setError(t('password_mismatch', 'Passwords do not match'));
         return;
       }
 
       const payload: RegisterPayload = {
         student_id: studentId,
         email: email,
-        password
+        password,
       };
 
-      await post(payload, "register");
-      setSuccess(t("registration_success", "Registration successful! You can now log in."));
+      await post(payload, 'register');
+      setSuccess(
+        t(
+          'registration_success',
+          'Registration successful! You can now log in.',
+        ),
+      );
 
       // Clear form
-      setStudentId("");
-      setEmail("");
-      setPassword("");
-      setConfirmPassword("");
+      setStudentId('');
+      setEmail('');
+      setPassword('');
+      setConfirmPassword('');
       setPasswordErrors([]);
-
     } catch (err: unknown) {
-      const fallbackMessage = t("registration_failed", "Registration failed");
-      const message = err instanceof Error && err.message ? err.message : fallbackMessage;
+      const fallbackMessage = t('registration_failed', 'Registration failed');
+      const message =
+        err instanceof Error && err.message ? err.message : fallbackMessage;
       setError(message);
     } finally {
       setLoading(false);
@@ -83,25 +93,25 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
   return (
     <Box
       sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        minHeight: "100vh",
-        width: "100%",
-        position: "relative",
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        width: '100%',
+        position: 'relative',
         padding: 2,
       }}
     >
       {/* Controls in top-right corner */}
       <Box
         sx={{
-          position: "absolute",
+          position: 'absolute',
           top: 16,
           right: 16,
-          display: "flex",
+          display: 'flex',
           gap: 1,
-          alignItems: "center",
+          alignItems: 'center',
         }}
       >
         <LanguageSelector />
@@ -113,42 +123,42 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
         component="form"
         onSubmit={handleSubmit}
         sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
           gap: 2,
-          width: "100%",
+          width: '100%',
           maxWidth: 500,
-          margin: "auto",
+          margin: 'auto',
         }}
       >
         <Typography variant="h4" component="h1" gutterBottom>
-          {t("register")}
+          {t('register')}
         </Typography>
 
         <TextField
-          label={t("student_id")}
+          label={t('student_id')}
           variant="outlined"
           value={studentId}
           onChange={(e) => setStudentId(e.target.value)}
           required
           fullWidth
-          helperText={t("student_id_help", "Your student ID number")}
+          helperText={t('student_id_help', 'Your student ID number')}
         />
 
         <TextField
-          label={t("email")}
+          label={t('email')}
           variant="outlined"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
           fullWidth
-          helperText={t("email_help", "Your primary email address")}
+          helperText={t('email_help', 'Your primary email address')}
         />
 
         <TextField
-          label={t("password")}
+          label={t('password')}
           variant="outlined"
           type="password"
           value={password}
@@ -158,27 +168,30 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
           error={passwordErrors.length > 0 && password.length > 0}
           helperText={
             password.length > 0 && passwordErrors.length > 0
-              ? t("password_requirements_not_met")
-              : t("password_requirements", "At least 8 characters with 3 types: uppercase, lowercase, numbers, symbols")
+              ? t('password_requirements_not_met')
+              : t(
+                  'password_requirements',
+                  'At least 8 characters with 3 types: uppercase, lowercase, numbers, symbols',
+                )
           }
         />
 
         {password.length > 0 && passwordErrors.length > 0 && (
-          <Box sx={{ width: "100%" }}>
+          <Box sx={{ width: '100%' }}>
             {passwordErrors.map((error, index) => (
               <Chip
                 key={index}
                 label={error}
                 color="error"
                 size="small"
-                sx={{ margin: 0.5, fontSize: "0.75rem" }}
+                sx={{ margin: 0.5, fontSize: '0.75rem' }}
               />
             ))}
           </Box>
         )}
 
         <TextField
-          label={t("confirm_password")}
+          label={t('confirm_password')}
           variant="outlined"
           type="password"
           value={confirmPassword}
@@ -188,19 +201,19 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
           error={confirmPassword.length > 0 && password !== confirmPassword}
           helperText={
             confirmPassword.length > 0 && password !== confirmPassword
-              ? t("password_mismatch", "Passwords do not match")
-              : ""
+              ? t('password_mismatch', 'Passwords do not match')
+              : ''
           }
         />
 
         {error && (
-          <Alert severity="error" sx={{ width: "100%" }}>
+          <Alert severity="error" sx={{ width: '100%' }}>
             {error}
           </Alert>
         )}
 
         {success && (
-          <Alert severity="success" sx={{ width: "100%" }}>
+          <Alert severity="success" sx={{ width: '100%' }}>
             {success}
           </Alert>
         )}
@@ -210,13 +223,15 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
           variant="contained"
           color="primary"
           fullWidth
-          disabled={loading || passwordErrors.length > 0 || password !== confirmPassword}
+          disabled={
+            loading || passwordErrors.length > 0 || password !== confirmPassword
+          }
         >
-          {loading ? t("registering", "Registering...") : t("register")}
+          {loading ? t('registering', 'Registering...') : t('register')}
         </Button>
 
-        <Typography variant="body2" sx={{ textAlign: "center", mt: 2 }}>
-          {t("already_have_account", "Already have an account?")}{" "}
+        <Typography variant="body2" sx={{ textAlign: 'center', mt: 2 }}>
+          {t('already_have_account', 'Already have an account?')}{' '}
           <Link
             component="button"
             variant="body2"
@@ -225,7 +240,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
               onSwitchToLogin();
             }}
           >
-            {t("login_here", "Login here")}
+            {t('login_here', 'Login here')}
           </Link>
         </Typography>
       </Box>

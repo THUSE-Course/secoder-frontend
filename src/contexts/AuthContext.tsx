@@ -52,7 +52,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const response = await fetch(`${apiEndpoint}/user`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${authToken}`,
+          Authorization: `Bearer ${authToken}`,
           'Content-Type': 'application/json',
         },
       });
@@ -70,7 +70,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               setUser(userData);
               return userData;
             } catch (parseError) {
-              console.error('JSON parse error in fetchUserInfo:', parseError, 'Response text:', text);
+              console.error(
+                'JSON parse error in fetchUserInfo:',
+                parseError,
+                'Response text:',
+                text,
+              );
               // Token might be invalid
               localStorage.removeItem('auth_token');
               setToken(null);
