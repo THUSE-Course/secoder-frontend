@@ -42,29 +42,6 @@ const OverviewPage: React.FC = () => {
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
       <Card sx={{ width: '100%' }}>
         <CardContent sx={{ p: 3 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-            <Avatar
-              sx={{
-                width: 64,
-                height: 64,
-                mr: 2,
-                backgroundColor: 'primary.main',
-              }}
-            >
-              <AccountCircle sx={{ fontSize: 40 }} />
-            </Avatar>
-            <Box>
-              <Typography variant="h5" component="h2" gutterBottom>
-                {t('welcome', 'Welcome')}!
-              </Typography>
-              <Typography variant="body1" color="text.secondary">
-                {t('user_info_subtitle', 'Here is your account information')}
-              </Typography>
-            </Box>
-          </Box>
-
-          <Divider sx={{ mb: 3 }} />
-
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             {user.name && (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -79,7 +56,6 @@ const OverviewPage: React.FC = () => {
                 </Box>
               </Box>
             )}
-
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <School color="primary" />
               <Box>
@@ -104,9 +80,7 @@ const OverviewPage: React.FC = () => {
               </Box>
             </Box>
           </Box>
-
           <Divider sx={{ mt: 3, mb: 3 }} />
-
           <Box>
             <Typography
               variant="h6"

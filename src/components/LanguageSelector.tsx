@@ -25,7 +25,6 @@ const LanguageSelector: React.FC = () => {
     { code: 'en', name: 'English' },
     { code: 'cn', name: '简体中文' },
     { code: 'tw', name: '繁體中文' },
-    { code: 'ko', name: '한국어' },
   ];
 
   return (

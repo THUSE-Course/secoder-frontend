@@ -5,7 +5,6 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 import en from './en.json';
 import cn from './cn.json';
 import tw from './tw.json';
-import ko from './ko.json';
 
 export const resources = {
   en: {
@@ -17,9 +16,6 @@ export const resources = {
   tw: {
     translation: tw,
   },
-  ko: {
-    translation: ko,
-  },
 } as const;
 
 // Language mapping for better browser detection
@@ -30,8 +26,6 @@ const languageMap: Record<string, string> = {
   'zh-TW': 'tw', // Chinese (Taiwan) -> Traditional Chinese
   'zh-HK': 'tw', // Chinese (Hong Kong) -> Traditional Chinese
   'zh-Hant': 'tw', // Chinese (Traditional) -> Traditional Chinese
-  ko: 'ko', // Korean -> Korean
-  'ko-KR': 'ko', // Korean (South Korea) -> Korean
   en: 'en', // English -> English
   'en-US': 'en', // English (US) -> English
   'en-GB': 'en', // English (UK) -> English
