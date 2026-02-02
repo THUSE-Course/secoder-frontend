@@ -171,6 +171,12 @@ interface ConfirmPasswordRecoveryPayload {
   newPassword: string;
 }
 
+interface EditUserPayload {
+  email?: string;
+  name?: string;
+  password?: string;
+}
+
 interface LoginResponse {
   token: string;
   msg?: string;
@@ -297,11 +303,19 @@ async function assignUserToGroup(groupCodeName: string, studentId: string): Prom
   });
 }
 
+async function editUserInfo(payload: EditUserPayload): Promise<ApiResponse> {
+  return authenticatedRequest<ApiResponse>('/user/edit', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+}
+
 export type {
   RegisterPayload,
   LoginPayload,
   RecoverPasswordPayload,
   ConfirmPasswordRecoveryPayload,
+  EditUserPayload,
   LoginResponse,
   UserInfo,
   User,
@@ -325,4 +339,5 @@ export {
   acceptJoinRequest,
   rejectJoinRequest,
   assignUserToGroup,
+  editUserInfo,
 };

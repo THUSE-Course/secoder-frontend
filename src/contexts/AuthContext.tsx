@@ -13,6 +13,7 @@ interface AuthContextType {
   login: (token: string) => Promise<void>;
   logout: () => void;
   checkAuth: () => Promise<boolean>;
+  updateUser: (updates: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -128,6 +129,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return userData !== null;
   };
 
+  const updateUser = (updates: Partial<User>) => {
+    setUser((prev) => (prev ? { ...prev, ...updates } : prev));
+  };
+
   const value: AuthContextType = {
     user,
     token,
@@ -135,6 +140,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     login,
     logout,
     checkAuth,
+    updateUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
