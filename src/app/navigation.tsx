@@ -4,11 +4,12 @@ import {
   People as PeopleIcon,
   Groups as GroupsIcon,
   ManageAccounts as ManageAccountsIcon,
+  Mail as MailIcon,
 } from '@mui/icons-material';
 import type { TFunction } from 'i18next';
 
 export type NavItem = {
-  id: 'overview' | 'users' | 'groups' | 'profile';
+  id: 'overview' | 'users' | 'groups' | 'invitations' | 'profile';
   label: string;
   icon: ReactNode;
   path: string;
@@ -32,6 +33,12 @@ export const buildNavItems = (t: TFunction): NavItem[] => [
     label: t('nav_groups', 'Groups'),
     icon: <GroupsIcon />,
     path: '/groups',
+  },
+  {
+    id: 'invitations',
+    label: t('nav_invitations', 'Invitations'),
+    icon: <MailIcon />,
+    path: '/invitations',
   },
   {
     id: 'profile',

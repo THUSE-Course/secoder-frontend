@@ -67,5 +67,20 @@
   "resetting_password": "正在重設密碼...",
   "reset_password": "重設密碼",
   "invalid_token": "無效或缺失的恢復令牌",
-  "users_directory": "使用者目錄"
+  "users_directory": "使用者目錄",
+  "nav_invitations": "邀請",
+  "invitations": "邀請",
+  "my_invitations": "我的邀請",
+  "group_invitations": "小組邀請",
+  "inviter_id": "邀請者",
+  "invitee_id": "受邀者",
+  "no_invitations": "目前沒有邀請。",
+  "no_group_invitations": "目前沒有小組邀請。",
+  "accept": "接受",
+  "reject": "拒絕",
+  "invite_only": "僅限邀請",
+  "request_invite": "請聯繫組長邀請",
+  "not_group_leader": "只有組長可以查看小組邀請。",
+  "no_groups_message": "未找到小組。建立或受邀加入小組以開始。",
+  "invite_fields_required": "請輸入學號"
 }

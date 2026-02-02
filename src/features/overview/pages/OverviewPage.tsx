@@ -191,7 +191,6 @@ const OverviewPage: React.FC = () => {
           </Box>
         </CardContent>
       </Card>
-
     </Box>
   );
 };

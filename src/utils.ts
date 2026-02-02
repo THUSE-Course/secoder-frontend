@@ -251,6 +251,23 @@ interface GroupsResponse {
   groups: Group[];
 }
 
+interface Invitation {
+  token: string;
+  group_code_name: string;
+  inviter_id: string;
+  invitee_id: string;
+}
+
+interface InvitationsResponse {
+  page: number;
+  page_size: number;
+  invitations: Invitation[];
+}
+
+interface GroupInvitationsResponse extends InvitationsResponse {
+  group_code_name: string;
+}
+
 // Grouping API functions
 async function getUsers(
   page: number = 1,
@@ -316,27 +333,31 @@ async function rejectInvitation(token: string): Promise<ApiResponse> {
   });
 }
 
-async function joinGroup(groupCodeName: string): Promise<ApiResponse> {
-  return authenticatedRequest<ApiResponse>('/group/join', {
-    method: 'POST',
-    body: JSON.stringify({
-      group_code_name: groupCodeName,
-    }),
-  });
+async function getUserInvitations(
+  page: number = 1,
+  pageSize: number = 20,
+): Promise<InvitationsResponse> {
+  return authenticatedRequest<InvitationsResponse>(
+    `/user/invite/list?page=${page}&page_size=${pageSize}`,
+    {
+      method: 'GET',
+    },
+  );
 }
 
-async function acceptJoinRequest(token: string): Promise<ApiResponse> {
-  return authenticatedRequest<ApiResponse>('/group/join/accept', {
-    method: 'POST',
-    body: JSON.stringify({ token }),
-  });
-}
-
-async function rejectJoinRequest(token: string): Promise<ApiResponse> {
-  return authenticatedRequest<ApiResponse>('/group/join/reject', {
-    method: 'POST',
-    body: JSON.stringify({ token }),
-  });
+async function getGroupInvitations(
+  groupCodeName: string,
+  page: number = 1,
+  pageSize: number = 20,
+): Promise<GroupInvitationsResponse> {
+  return authenticatedRequest<GroupInvitationsResponse>(
+    `/group/invite/list?group_code_name=${encodeURIComponent(
+      groupCodeName,
+    )}&page=${page}&page_size=${pageSize}`,
+    {
+      method: 'GET',
+    },
+  );
 }
 
 async function assignUserToGroup(
@@ -373,6 +394,9 @@ export type {
   GroupLeader,
   UsersResponse,
   GroupsResponse,
+  Invitation,
+  InvitationsResponse,
+  GroupInvitationsResponse,
 };
 export {
   post,
@@ -384,9 +408,8 @@ export {
   inviteToGroup,
   acceptInvitation,
   rejectInvitation,
-  joinGroup,
-  acceptJoinRequest,
-  rejectJoinRequest,
+  getUserInvitations,
+  getGroupInvitations,
   assignUserToGroup,
   editUserInfo,
 };

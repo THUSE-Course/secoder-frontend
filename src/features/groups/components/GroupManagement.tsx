@@ -30,7 +30,6 @@ import {
 import {
   Add as AddIcon,
   PersonAdd as PersonAddIcon,
-  GroupAdd as GroupAddIcon,
   Refresh as RefreshIcon,
 } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
@@ -41,7 +40,6 @@ import {
   getUsers,
   createGroup,
   inviteToGroup,
-  joinGroup,
 } from '../../../utils';
 import type { Group, User } from '../../../utils';
 
@@ -83,7 +81,6 @@ const GroupManagement: React.FC = () => {
   const [confirmCreateDialogOpen, setConfirmCreateDialogOpen] = useState(false);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
-  const [joinDialogOpen, setJoinDialogOpen] = useState(false);
 
   // Pagination states
   const [groupsPage, setGroupsPage] = useState(1);
@@ -97,8 +94,6 @@ const GroupManagement: React.FC = () => {
   const [newGroupCodeName, setNewGroupCodeName] = useState('');
   const [selectedGroupForInvite, setSelectedGroupForInvite] = useState('');
   const [inviteeStudentId, setInviteeStudentId] = useState('');
-  const [joinGroupCodeName, setJoinGroupCodeName] = useState('');
-  const [joinGroupName, setJoinGroupName] = useState('');
 
   const loadData = useCallback(
     async (newGroupsPage?: number, newUsersPage?: number) => {
@@ -185,31 +180,6 @@ const GroupManagement: React.FC = () => {
     } catch (err) {
       setError(
         err instanceof Error ? err.message : 'Failed to send invitation',
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleJoinGroup = async () => {
-    if (!joinGroupCodeName.trim()) {
-      setError(t('group_code_required', 'Please enter a group code name'));
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-    try {
-      await joinGroup(joinGroupCodeName.trim());
-      setSuccess(
-        t('join_request_sent_success', 'Join request sent successfully!'),
-      );
-      setJoinDialogOpen(false);
-      setJoinGroupCodeName('');
-      setJoinGroupName('');
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Failed to send join request',
       );
     } finally {
       setLoading(false);
@@ -308,7 +278,7 @@ const GroupManagement: React.FC = () => {
               <Typography variant="body2" color="text.secondary" sx={{ py: 2 }}>
                 {t(
                   'no_groups_message',
-                  'No groups found. Create or join a group to get started.',
+                  'No groups found. Create or get invited to a group to get started.',
                 )}
               </Typography>
             )}
@@ -430,11 +400,9 @@ const GroupManagement: React.FC = () => {
                       <TableCell>
                         <strong>{t('members', 'Members')}</strong>
                       </TableCell>
-                      {!myGroup && (
-                        <TableCell>
-                          <strong>{t('actions', 'Actions')}</strong>
-                        </TableCell>
-                      )}
+                      <TableCell>
+                        <strong>{t('actions', 'Actions')}</strong>
+                      </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -465,22 +433,25 @@ const GroupManagement: React.FC = () => {
                             ))}
                           </Box>
                         </TableCell>
-                        {!myGroup && (
-                          <TableCell>
-                            <Button
-                              size="small"
-                              variant="outlined"
-                              startIcon={<GroupAddIcon />}
-                              onClick={() => {
-                                setJoinGroupCodeName(group.code_name);
-                                setJoinGroupName(group.name);
-                                setJoinDialogOpen(true);
-                              }}
+                        <TableCell>
+                          {myGroup ? (
+                            <Typography
+                              variant="body2"
+                              color="text.secondary"
+                              sx={{ fontStyle: 'italic' }}
                             >
-                              {t('request_join', 'Join')}
-                            </Button>
-                          </TableCell>
-                        )}
+                              {t('invite_only', 'Invite only')}
+                            </Typography>
+                          ) : (
+                            <Typography
+                              variant="body2"
+                              color="text.secondary"
+                              sx={{ fontStyle: 'italic' }}
+                            >
+                              {t('request_invite', 'Request an invite')}
+                            </Typography>
+                          )}
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -681,48 +652,6 @@ const GroupManagement: React.FC = () => {
                 <CircularProgress size={24} />
               ) : (
                 t('send_invite', 'Send Invite')
-              )}
-            </Button>
-          </DialogActions>
-        </Dialog>
-
-        {/* Join Group Dialog */}
-        <Dialog
-          open={joinDialogOpen}
-          onClose={() => {
-            setJoinDialogOpen(false);
-            setJoinGroupCodeName('');
-            setJoinGroupName('');
-          }}
-          maxWidth="sm"
-          fullWidth
-        >
-          <DialogTitle>{t('join_group', 'Join Group')}</DialogTitle>
-          <DialogContent>
-            <Typography variant="body1" sx={{ py: 2 }}>
-              {t('join_group_confirm', 'Do you want to join group')}{' '}
-              <strong>{joinGroupName}</strong>?
-            </Typography>
-          </DialogContent>
-          <DialogActions>
-            <Button
-              onClick={() => {
-                setJoinDialogOpen(false);
-                setJoinGroupCodeName('');
-                setJoinGroupName('');
-              }}
-            >
-              {t('cancel', 'Cancel')}
-            </Button>
-            <Button
-              onClick={handleJoinGroup}
-              variant="contained"
-              disabled={loading}
-            >
-              {loading ? (
-                <CircularProgress size={24} />
-              ) : (
-                t('send_request', 'Send Request')
               )}
             </Button>
           </DialogActions>

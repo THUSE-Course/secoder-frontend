@@ -19,6 +19,9 @@ const OverviewPage = lazy(
 const UsersPage = lazy(() => import('../features/users/pages/UsersPage'));
 const GroupsPage = lazy(() => import('../features/groups/pages/GroupsPage'));
 const ProfilePage = lazy(() => import('../features/profile/pages/ProfilePage'));
+const InvitationsPage = lazy(
+  () => import('../features/invitations/pages/InvitationsPage'),
+);
 
 const PageLoader = () => (
   <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
@@ -74,6 +77,7 @@ const AppRoutes = () => {
             <Route path="overview" element={<OverviewPage />} />
             <Route path="users" element={<UsersPage />} />
             <Route path="groups" element={<GroupsPage />} />
+            <Route path="invitations" element={<InvitationsPage />} />
             <Route path="profile" element={<ProfilePage />} />
           </Route>
 

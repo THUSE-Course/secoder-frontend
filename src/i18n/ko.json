@@ -67,5 +67,20 @@
   "resetting_password": "비밀번호 재설정 중...",
   "reset_password": "비밀번호 재설정",
   "invalid_token": "유효하지 않거나 누락된 복구 토큰",
-  "users_directory": "사용자 디렉터리"
+  "users_directory": "사용자 디렉터리",
+  "nav_invitations": "초대",
+  "invitations": "초대",
+  "my_invitations": "내 초대",
+  "group_invitations": "그룹 초대",
+  "inviter_id": "초대한 사람",
+  "invitee_id": "초대 받은 사람",
+  "no_invitations": "아직 초대가 없습니다.",
+  "no_group_invitations": "그룹 초대가 없습니다.",
+  "accept": "수락",
+  "reject": "거절",
+  "invite_only": "초대 전용",
+  "request_invite": "초대를 요청하세요",
+  "not_group_leader": "그룹 리더만 그룹 초대를 볼 수 있습니다.",
+  "no_groups_message": "그룹이 없습니다. 그룹을 만들거나 초대받아 시작하세요.",
+  "invite_fields_required": "학번을 입력하세요"
 }
