@@ -5,7 +5,6 @@ import {
   Button,
   Card,
   CardContent,
-  Chip,
   Divider,
   Typography,
 } from '@mui/material';
@@ -41,7 +40,7 @@ const OverviewPage: React.FC = () => {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-      <Card sx={{ width: '100%', boxShadow: 2 }}>
+      <Card sx={{ width: '100%' }}>
         <CardContent sx={{ p: 3 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
             <Avatar
@@ -193,32 +192,6 @@ const OverviewPage: React.FC = () => {
         </CardContent>
       </Card>
 
-      <Card sx={{ width: '100%', boxShadow: 2 }}>
-        <CardContent sx={{ p: 3 }}>
-          <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-            {t('status_beam', 'Status Beam')}
-          </Typography>
-          <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
-            <Chip
-              label={`${t('student_id', 'Student ID')}: ${user.student_id}`}
-              color="primary"
-              variant="outlined"
-            />
-            <Chip
-              label={`${t('email', 'Email')}: ${user.email}`}
-              color="default"
-              variant="outlined"
-            />
-            {user.name && (
-              <Chip
-                label={`${t('name', 'Name')}: ${user.name}`}
-                color="default"
-                variant="outlined"
-              />
-            )}
-          </Box>
-        </CardContent>
-      </Card>
     </Box>
   );
 };

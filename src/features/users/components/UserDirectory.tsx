@@ -62,7 +62,7 @@ const UserDirectory: React.FC = () => {
   }, [loadUsers, usersPage]);
 
   return (
-    <Card sx={{ width: '100%', boxShadow: 2 }}>
+    <Card sx={{ width: '100%' }}>
       <CardContent sx={{ p: 3 }}>
         <PageHeader
           title={t('users_directory', 'Users Directory')}

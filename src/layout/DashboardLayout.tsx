@@ -52,6 +52,8 @@ const DashboardLayout: React.FC = () => {
           display: 'flex',
           flexGrow: 1,
           minWidth: 0,
+          alignItems: 'stretch',
+          minHeight: { xs: 'calc(100dvh - 64px)', md: 'calc(100dvh - 72px)' },
           backgroundColor: 'background.default',
         }}
       >
@@ -68,14 +70,13 @@ const DashboardLayout: React.FC = () => {
           component="main"
           sx={{
             flex: 1,
-            px: { xs: 2, md: 4 },
-            py: { xs: 3, md: 4 },
+            px: 0,
+            py: 0,
             width: '100%',
+            height: '100vdh',
           }}
         >
-          <Box sx={{ maxWidth: 1200, mx: 'auto', width: '100%' }}>
-            <Outlet />
-          </Box>
+          <Outlet />
         </Box>
       </Box>
     </Box>

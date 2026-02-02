@@ -111,7 +111,7 @@ export const CustomThemeProvider: React.FC<CustomThemeProviderProps> = ({
           subtitle1: { fontWeight: 600 },
           button: { textTransform: 'none', fontWeight: 600 },
         },
-        shape: { borderRadius: 6 },
+        shape: { borderRadius: 0 },
         components: {
           MuiCssBaseline: {
             styleOverrides: {
@@ -123,15 +123,16 @@ export const CustomThemeProvider: React.FC<CustomThemeProviderProps> = ({
           MuiCard: {
             styleOverrides: {
               root: {
-                borderRadius: 8,
+                borderRadius: 0,
                 border: '1px solid rgba(0, 0, 0, 0.08)',
+                boxShadow: 'none',
               },
             },
           },
           MuiButton: {
             styleOverrides: {
               root: {
-                borderRadius: 6,
+                borderRadius: 0,
               },
             },
           },
@@ -139,6 +140,7 @@ export const CustomThemeProvider: React.FC<CustomThemeProviderProps> = ({
             styleOverrides: {
               root: {
                 backgroundImage: 'none',
+                boxShadow: 'none',
               },
             },
           },

@@ -112,7 +112,7 @@ const ProfilePage: React.FC = () => {
   }
 
   return (
-    <Card sx={{ width: '100%', boxShadow: 2 }}>
+    <Card sx={{ width: '100%' }}>
       <CardContent sx={{ p: 3 }}>
         <PageHeader
           title={t('edit_profile', 'Edit Profile')}

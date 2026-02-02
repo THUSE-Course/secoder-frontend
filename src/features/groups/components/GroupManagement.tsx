@@ -240,7 +240,7 @@ const GroupManagement: React.FC = () => {
   };
 
   return (
-    <Card sx={{ width: '100%', boxShadow: 2 }}>
+    <Card sx={{ width: '100%' }}>
       <CardContent sx={{ padding: 3 }}>
         <PageHeader
           title={t('group_management', 'Group Management')}

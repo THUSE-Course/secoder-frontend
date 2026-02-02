@@ -1,18 +1,15 @@
 import React from 'react';
 import {
   Box,
-  Divider,
   Drawer,
   List,
   ListItemButton,
   ListItemIcon,
   ListItemText,
   Tooltip,
-  Typography,
 } from '@mui/material';
 import { NavLink } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
-import { useAuth } from '../contexts/AuthContext';
 import type { NavItem } from '../app/navigation';
 
 const drawerWidth = 240;
@@ -35,8 +32,6 @@ const SidebarContent: React.FC<{
   open: boolean;
   onToggleOpen: () => void;
 }> = ({ navItems, activePath, onItemClick, open, onToggleOpen }) => {
-  const { user } = useAuth();
-
   return (
     <Box
       sx={{
@@ -65,7 +60,6 @@ const SidebarContent: React.FC<{
               selected={activePath === item.path}
               onClick={onItemClick}
               sx={{
-                borderRadius: 2,
                 mb: 0.5,
                 color: 'text.primary',
                 justifyContent: open ? 'flex-start' : 'center',
@@ -97,50 +91,35 @@ const SidebarContent: React.FC<{
           </Tooltip>
         ))}
       </List>
-      <Divider />
-      <Box sx={{ px: open ? 3 : 1.5, py: 2.5 }}>
-        {open && (
-          <>
-            <Typography variant="body2" color="text.secondary">
-              Signed in as
-            </Typography>
-            <Typography variant="subtitle1" sx={{ fontWeight: 600 }} noWrap>
-              {user?.name || 'Student'}
-            </Typography>
-            <Typography variant="caption" color="text.secondary" noWrap>
-              {user?.student_id || ''}
-            </Typography>
-          </>
-        )}
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: open ? 'flex-end' : 'center',
-            mt: open ? 1 : 0,
-          }}
-        >
-          <Tooltip title={open ? 'Collapse sidebar' : 'Expand sidebar'}>
-            <Box
-              component="button"
-              onClick={onToggleOpen}
-              sx={{
-                border: 'none',
-                background: 'transparent',
-                cursor: 'pointer',
-                color: 'text.secondary',
-                display: 'flex',
-                alignItems: 'center',
-                padding: 0,
-              }}
-            >
-              {open ? (
-                <ChevronLeft fontSize="small" />
-              ) : (
-                <ChevronRight fontSize="small" />
-              )}
-            </Box>
-          </Tooltip>
-        </Box>
+      <Box
+        sx={{
+          px: open ? 3 : 1.5,
+          py: 2.5,
+          display: 'flex',
+          justifyContent: open ? 'flex-end' : 'center',
+        }}
+      >
+        <Tooltip title={open ? 'Collapse sidebar' : 'Expand sidebar'}>
+          <Box
+            component="button"
+            onClick={onToggleOpen}
+            sx={{
+              border: 'none',
+              background: 'transparent',
+              cursor: 'pointer',
+              color: 'text.secondary',
+              display: 'flex',
+              alignItems: 'center',
+              padding: 0,
+            }}
+          >
+            {open ? (
+              <ChevronLeft fontSize="small" />
+            ) : (
+              <ChevronRight fontSize="small" />
+            )}
+          </Box>
+        </Tooltip>
       </Box>
     </Box>
   );
@@ -161,7 +140,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       sx={{
         width: { md: open ? drawerWidth : drawerCollapsedWidth },
         flexShrink: { md: 0 },
-        height: '100%',
+        height: '100dvh',
       }}
       aria-label="dashboard navigation"
     >
@@ -175,7 +154,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             width: open ? drawerWidth : drawerCollapsedWidth,
             border: 'none',
             position: 'initial',
-            height: '100%',
+            height: '100dvh',
             transition: (theme) =>
               theme.transitions.create('width', {
                 easing: theme.transitions.easing.sharp,
