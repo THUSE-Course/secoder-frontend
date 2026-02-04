@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { apiEndpoint } from '../utils';
 
 interface User {
   id: string;
@@ -54,7 +55,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const fetchUserInfo = async (authToken: string): Promise<User | null> => {
     try {
-      const apiEndpoint = import.meta.env.VITE_API_ENDPOINT;
       const response = await fetch(`${apiEndpoint}/user`, {
         method: 'GET',
         headers: {

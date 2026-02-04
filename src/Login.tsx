@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Box, TextField, Button, Typography, Link } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { post, type LoginResponse } from './utils';
+import { apiEndpoint, post, type LoginResponse } from './utils';
 import { useAuth } from './contexts/AuthContext';
 import ThemeToggle from './components/ThemeToggle';
 import LanguageSelector from './components/LanguageSelector';
@@ -17,23 +17,76 @@ const Login: React.FC<LoginProps> = ({
   onSwitchToPasswordRecovery,
 }) => {
   const { t } = useTranslation();
-  const { login, user } = useAuth();
+  const { login, user, token } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [studentId, setStudentId] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [txnRedirecting, setTxnRedirecting] = useState(false);
+
+  const txn = useMemo(() => {
+    const params = new URLSearchParams(location.search);
+    return params.get('txn');
+  }, [location.search]);
+
+  const startTxnRedirect = useCallback(
+    async (txnId: string, authToken: string) => {
+      setTxnRedirecting(true);
+      setError(null);
+      try {
+        const response = await fetch(
+          `${apiEndpoint}/txn/${encodeURIComponent(txnId)}`,
+          {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+            redirect: 'follow',
+          },
+        );
+
+        if (response.redirected) {
+          window.location.href = response.url;
+          return;
+        }
+
+        const locationHeader =
+          response.headers.get('location') || response.headers.get('Location');
+        if (locationHeader) {
+          window.location.href = locationHeader;
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error(`Txn redirect failed with status ${response.status}`);
+        }
+      } catch (err: unknown) {
+        const fallbackMessage = t('login_failed');
+        const message =
+          err instanceof Error && err.message ? err.message : fallbackMessage;
+        setError(message);
+      } finally {
+        setTxnRedirecting(false);
+      }
+    },
+    [t],
+  );
 
   useEffect(() => {
     if (user) {
+      if (txn && token) {
+        void startTxnRedirect(txn, token);
+        return;
+      }
       if (user.id === 'admin') {
         navigate('/admin', { replace: true });
         return;
       }
       navigate('/overview', { replace: true });
     }
-  }, [navigate, user]);
+  }, [navigate, startTxnRedirect, token, txn, user]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -144,9 +197,9 @@ const Login: React.FC<LoginProps> = ({
           variant="contained"
           color="primary"
           fullWidth
-          disabled={loading}
+          disabled={loading || txnRedirecting}
         >
-          {loading ? t('logging_in') : t('login')}
+          {loading || txnRedirecting ? t('logging_in') : t('login')}
         </Button>
 
         <Typography variant="body2" sx={{ textAlign: 'center', mt: 2 }}>

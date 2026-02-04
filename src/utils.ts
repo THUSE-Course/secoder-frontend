@@ -37,6 +37,8 @@ function validatePassword(password: string): {
 
 type ApiResponse = Record<string, unknown>;
 
+export const apiEndpoint = import.meta.env.VITE_API_ENDPOINT;
+
 const extractErrorMessage = (data: unknown): string | undefined => {
   if (!data || typeof data !== 'object') {
     return undefined;
@@ -55,8 +57,6 @@ async function post<T = ApiResponse>(
     | ConfirmPasswordRecoveryPayload,
   route: string,
 ): Promise<T> {
-  const apiEndpoint = import.meta.env.VITE_API_ENDPOINT;
-
   try {
     const response = await fetch(`${apiEndpoint}/${route}`, {
       method: 'POST',
@@ -117,7 +117,6 @@ async function authenticatedRequest<T = ApiResponse>(
   options: RequestInit = {},
   token?: string,
 ): Promise<T> {
-  const apiEndpoint = import.meta.env.VITE_API_ENDPOINT;
   const authToken = token || localStorage.getItem('auth_token');
 
   const headers = {
