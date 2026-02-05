@@ -45,8 +45,43 @@ const extractErrorMessage = (data: unknown): string | undefined => {
   }
 
   const record = data as Record<string, unknown>;
-  const msg = record.msg ?? record.message;
+  const msg = record.msg;
   return typeof msg === 'string' ? msg : undefined;
+};
+
+const safeJsonParse = (text: string): unknown | undefined => {
+  if (!text.trim()) return undefined;
+  try {
+    return JSON.parse(text) as unknown;
+  } catch {
+    return undefined;
+  }
+};
+
+const handleResponse = async <T>(response: Response): Promise<T> => {
+  const text = await response.text();
+
+  if (!response.ok) {
+    const parsed = safeJsonParse(text);
+    const message =
+      extractErrorMessage(parsed) || (text.trim() ? text : undefined);
+    throw new Error(message || `Request failed with status ${response.status}`);
+  }
+
+  if (!text.trim()) {
+    return {} as T;
+  }
+
+  const contentType = response.headers.get('content-type') || '';
+  if (contentType.includes('application/json')) {
+    const parsed = safeJsonParse(text);
+    if (parsed === undefined) {
+      throw new Error('Invalid JSON response from server');
+    }
+    return parsed as T;
+  }
+
+  return text as T;
 };
 
 async function post<T = ApiResponse>(
@@ -65,43 +100,7 @@ async function post<T = ApiResponse>(
       },
       body: JSON.stringify(payload),
     });
-
-    // Check if response has content
-    const contentType = response.headers.get('content-type');
-    let data: unknown = null;
-
-    if (contentType && contentType.includes('application/json')) {
-      const text = await response.text();
-      if (text.trim()) {
-        try {
-          data = JSON.parse(text) as unknown;
-        } catch (parseError) {
-          console.error(
-            'JSON parse error:',
-            parseError,
-            'Response text:',
-            text,
-          );
-          throw new Error('Invalid JSON response from server');
-        }
-      } else {
-        data = {}; // Empty response
-      }
-    } else {
-      // Non-JSON response
-      const text = await response.text();
-      console.error('Non-JSON response:', text);
-      data = { msg: text || 'Unknown error' };
-    }
-
-    if (!response.ok) {
-      const errorMessage =
-        extractErrorMessage(data) ||
-        `Request failed with status ${response.status}`;
-      throw new Error(errorMessage);
-    }
-
-    return data as T;
+    return await handleResponse<T>(response);
   } catch (error: unknown) {
     console.error('API request error:', error);
     if (error instanceof TypeError && error.message.includes('fetch')) {
@@ -130,43 +129,7 @@ async function authenticatedRequest<T = ApiResponse>(
       ...options,
       headers,
     });
-
-    // Check if response has content
-    const contentType = response.headers.get('content-type');
-    let data: unknown = null;
-
-    if (contentType && contentType.includes('application/json')) {
-      const text = await response.text();
-      if (text.trim()) {
-        try {
-          data = JSON.parse(text) as unknown;
-        } catch (parseError) {
-          console.error(
-            'JSON parse error:',
-            parseError,
-            'Response text:',
-            text,
-          );
-          throw new Error('Invalid JSON response from server');
-        }
-      } else {
-        data = {}; // Empty response
-      }
-    } else {
-      // Non-JSON response
-      const text = await response.text();
-      console.error('Non-JSON response:', text);
-      data = { msg: text || 'Unknown error' };
-    }
-
-    if (!response.ok) {
-      const errorMessage =
-        extractErrorMessage(data) ||
-        `Request failed with status ${response.status}`;
-      throw new Error(errorMessage);
-    }
-
-    return data as T;
+    return await handleResponse<T>(response);
   } catch (error: unknown) {
     console.error('Authenticated API request error:', error);
     if (error instanceof TypeError && error.message.includes('fetch')) {
