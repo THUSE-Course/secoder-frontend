@@ -23,6 +23,9 @@ const InvitationsPage = lazy(
   () => import('../features/invitations/pages/InvitationsPage'),
 );
 const AdminPage = lazy(() => import('../features/admin/pages/AdminPage'));
+const JwtConsentPage = lazy(
+  () => import('../features/auth/pages/JwtConsentPage'),
+);
 
 const PageLoader = () => (
   <Box sx={{ display: 'flex', justifyContent: 'center', py: 6 }}>
@@ -70,6 +73,7 @@ const AppRoutes = () => {
         <Routes>
           <Route path="/login" element={<LoginScreen />} />
           <Route path="/register" element={<RegisterRoute />} />
+          <Route path="/jwt" element={<JwtConsentPage />} />
           <Route
             path="/"
             element={

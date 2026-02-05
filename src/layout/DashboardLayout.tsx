@@ -37,7 +37,7 @@ const DashboardLayout: React.FC = () => {
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        minHeight: '100vh',
+        height: '100vh',
         backgroundColor: 'background.default',
       }}
     >
@@ -52,7 +52,6 @@ const DashboardLayout: React.FC = () => {
           flexGrow: 1,
           minWidth: 0,
           alignItems: 'stretch',
-          minHeight: { xs: 'calc(100dvh - 64px)', md: 'calc(100dvh - 72px)' },
           backgroundColor: 'background.default',
         }}
       >

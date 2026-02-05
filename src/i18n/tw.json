@@ -93,5 +93,13 @@
   "delete_group_confirm": "確定要刪除這個小組嗎?",
   "group_deleted_success": "小組已刪除.",
   "switch_to_dark_mode": "切換為深色模式",
-  "switch_to_light_mode": "切換為淺色模式"
+  "switch_to_light_mode": "切換為淺色模式",
+  "gitlab_consent_title": "登入 GitLab",
+  "gitlab_consent_body": "GitLab 正在請求存取你的帳號. 是否繼續並登入?",
+  "gitlab_consent_missing": "尚未設定 GitLab 位址, 請聯絡管理員.",
+  "gitlab_consent_user": "你已登入為 {{name}}.",
+  "gitlab_consent_approve": "繼續前往 GitLab",
+  "gitlab_consent_cancel": "取消",
+  "gitlab_consent_login": "前往登入",
+  "gitlab_consent_redirecting": "正在轉址..."
 }

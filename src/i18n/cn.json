@@ -93,5 +93,13 @@
   "delete_group_confirm": "确定要删除该小组吗?",
   "group_deleted_success": "小组已删除.",
   "switch_to_dark_mode": "切换到暗色模式",
-  "switch_to_light_mode": "切换到亮色模式"
+  "switch_to_light_mode": "切换到亮色模式",
+  "gitlab_consent_title": "登录到 GitLab",
+  "gitlab_consent_body": "GitLab 请求访问你的账号. 是否继续并登录?",
+  "gitlab_consent_missing": "未配置 GitLab 地址, 请联系管理员.",
+  "gitlab_consent_user": "你已登录为 {{name}}.",
+  "gitlab_consent_approve": "继续前往 GitLab",
+  "gitlab_consent_cancel": "取消",
+  "gitlab_consent_login": "前往登录",
+  "gitlab_consent_redirecting": "正在跳转..."
 }

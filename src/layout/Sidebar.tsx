@@ -9,7 +9,7 @@ import {
   Tooltip,
 } from '@mui/material';
 import { NavLink } from 'react-router-dom';
-import { ChevronLeft, ChevronRight } from '@mui/icons-material';
+import { ChevronLeftOutlined, ChevronRightOutlined } from '@mui/icons-material';
 import type { NavItem } from '../app/navigation';
 
 const drawerWidth = 240;
@@ -114,9 +114,9 @@ const SidebarContent: React.FC<{
             }}
           >
             {open ? (
-              <ChevronLeft fontSize="small" />
+              <ChevronLeftOutlined fontSize="medium" />
             ) : (
-              <ChevronRight fontSize="small" />
+              <ChevronRightOutlined fontSize="medium" />
             )}
           </Box>
         </Tooltip>
@@ -140,7 +140,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       sx={{
         width: { md: open ? drawerWidth : drawerCollapsedWidth },
         flexShrink: { md: 0 },
-        height: '100dvh',
+        height: '100%',
       }}
       aria-label="dashboard navigation"
     >
@@ -154,13 +154,14 @@ const Sidebar: React.FC<SidebarProps> = ({
             width: open ? drawerWidth : drawerCollapsedWidth,
             border: 'none',
             position: 'initial',
-            height: '100dvh',
+            height: '100%',
             transition: (theme) =>
               theme.transitions.create('width', {
                 easing: theme.transitions.easing.sharp,
                 duration: theme.transitions.duration.enteringScreen,
               }),
           },
+          height: '100%',
         }}
       >
         <SidebarContent
