@@ -101,5 +101,9 @@
   "gitlab_consent_approve": "Continue to GitLab",
   "gitlab_consent_cancel": "Cancel",
   "gitlab_consent_login": "Go to login",
-  "gitlab_consent_redirecting": "Redirecting..."
+  "gitlab_consent_redirecting": "Redirecting...",
+  "gitlab_consent_shared_title": "Information shared with GitLab",
+  "gitlab_consent_shared_id": "ID",
+  "gitlab_consent_shared_email": "Email",
+  "gitlab_consent_shared_name": "Name"
 }

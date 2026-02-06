@@ -101,5 +101,9 @@
   "gitlab_consent_approve": "继续前往 GitLab",
   "gitlab_consent_cancel": "取消",
   "gitlab_consent_login": "前往登录",
-  "gitlab_consent_redirecting": "正在跳转..."
+  "gitlab_consent_redirecting": "正在跳转...",
+  "gitlab_consent_shared_title": "将与 GitLab 共享的信息",
+  "gitlab_consent_shared_id": "账号",
+  "gitlab_consent_shared_email": "邮箱",
+  "gitlab_consent_shared_name": "姓名"
 }

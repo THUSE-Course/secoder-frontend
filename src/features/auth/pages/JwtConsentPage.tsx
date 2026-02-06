@@ -39,7 +39,7 @@ const JwtConsentPage: React.FC = () => {
 
   useEffect(() => {
     if (!loading && !token) {
-      navigate('/login', { replace: true });
+      navigate('/login?next=/jwt', { replace: true });
     }
   }, [loading, navigate, token]);
 
@@ -71,6 +71,39 @@ const JwtConsentPage: React.FC = () => {
           <Typography variant="body1" color="text.secondary">
             {t('gitlab_consent_body')}
           </Typography>
+
+          <Box>
+            <Typography variant="subtitle1" sx={{ mb: 1 }}>
+              {t('gitlab_consent_shared_title')}
+            </Typography>
+            <Box
+              component="ul"
+              sx={{
+                listStyle: 'none',
+                m: 0,
+                p: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 0.5,
+              }}
+            >
+              <Box component="li">
+                <Typography variant="body2" color="text.secondary">
+                  {t('gitlab_consent_shared_id')}: {user?.id || '-'}
+                </Typography>
+              </Box>
+              <Box component="li">
+                <Typography variant="body2" color="text.secondary">
+                  {t('gitlab_consent_shared_email')}: {user?.email || '-'}
+                </Typography>
+              </Box>
+              <Box component="li">
+                <Typography variant="body2" color="text.secondary">
+                  {t('gitlab_consent_shared_name')}: {user?.name || '-'}
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
 
           {gitlabUrl && isSignedIn && user?.name && (
             <Alert severity="info">

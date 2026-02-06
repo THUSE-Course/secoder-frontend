@@ -101,5 +101,9 @@
   "gitlab_consent_approve": "繼續前往 GitLab",
   "gitlab_consent_cancel": "取消",
   "gitlab_consent_login": "前往登入",
-  "gitlab_consent_redirecting": "正在轉址..."
+  "gitlab_consent_redirecting": "正在轉址...",
+  "gitlab_consent_shared_title": "將與 GitLab 共享的資訊",
+  "gitlab_consent_shared_id": "帳號",
+  "gitlab_consent_shared_email": "電子郵件",
+  "gitlab_consent_shared_name": "姓名"
 }

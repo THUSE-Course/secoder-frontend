@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, TextField, Button, Typography, Link } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { post, type LoginResponse } from './utils';
 import { useAuth } from './contexts/AuthContext';
 import ThemeToggle from './components/ThemeToggle';
@@ -19,10 +19,20 @@ const Login: React.FC<LoginProps> = ({
   const { t } = useTranslation();
   const { login, user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [studentId, setStudentId] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const nextPath = React.useMemo(() => {
+    const params = new URLSearchParams(location.search);
+    const next = params.get('next');
+    if (!next) return null;
+    if (!next.startsWith('/')) return null;
+    if (next.startsWith('//')) return null;
+    return next;
+  }, [location.search]);
 
   useEffect(() => {
     if (user) {
@@ -30,9 +40,9 @@ const Login: React.FC<LoginProps> = ({
         navigate('/admin', { replace: true });
         return;
       }
-      navigate('/overview', { replace: true });
+      navigate(nextPath || '/overview', { replace: true });
     }
-  }, [navigate, user]);
+  }, [navigate, nextPath, user]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
