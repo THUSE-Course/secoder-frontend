@@ -105,5 +105,12 @@
   "gitlab_consent_shared_title": "Information shared with GitLab",
   "gitlab_consent_shared_id": "ID",
   "gitlab_consent_shared_email": "Email",
-  "gitlab_consent_shared_name": "Name"
+  "gitlab_consent_shared_name": "Name",
+  "rbac_token_label": "API Token",
+  "rbac_token_reveal": "Reveal token",
+  "rbac_token_copy": "Copy token",
+  "rbac_token_copied": "Token copied.",
+  "rbac_token_loading": "Fetching token...",
+  "rbac_token_failed": "Unable to fetch token.",
+  "rbac_token_hidden": "Hidden"
 }

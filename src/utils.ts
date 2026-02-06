@@ -364,6 +364,12 @@ async function editUserInfo(payload: EditUserPayload): Promise<ApiResponse> {
   });
 }
 
+async function getRbacToken(): Promise<string> {
+  return authenticatedRequest<string>('/rbac', {
+    method: 'GET',
+  });
+}
+
 export type {
   RegisterPayload,
   LoginPayload,
@@ -398,4 +404,5 @@ export {
   getGroupInvitations,
   assignUserToGroup,
   editUserInfo,
+  getRbacToken,
 };

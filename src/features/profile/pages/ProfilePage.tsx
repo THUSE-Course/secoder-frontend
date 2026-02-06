@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexts/AuthContext';
-import { editUserInfo, validatePassword } from '../../../utils';
+import { editUserInfo, getRbacToken, validatePassword } from '../../../utils';
 import PageHeader from '../../../components/common/PageHeader';
 
 const ProfilePage: React.FC = () => {
@@ -23,6 +23,11 @@ const ProfilePage: React.FC = () => {
   const [editSuccess, setEditSuccess] = useState<string | null>(null);
   const [editLoading, setEditLoading] = useState(false);
   const [editPasswordErrors, setEditPasswordErrors] = useState<string[]>([]);
+  const [rbacToken, setRbacToken] = useState<string | null>(null);
+  const [rbacVisible, setRbacVisible] = useState(false);
+  const [rbacLoading, setRbacLoading] = useState(false);
+  const [rbacError, setRbacError] = useState<string | null>(null);
+  const [rbacCopied, setRbacCopied] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -102,6 +107,39 @@ const ProfilePage: React.FC = () => {
       setEditError(message);
     } finally {
       setEditLoading(false);
+    }
+  };
+
+  const handleRevealToken = async () => {
+    setRbacError(null);
+    setRbacCopied(false);
+    if (!rbacToken) {
+      setRbacLoading(true);
+      try {
+        const token = await getRbacToken();
+        setRbacToken(typeof token === 'string' ? token : String(token));
+      } catch (err: unknown) {
+        const fallbackMessage = t('rbac_token_failed');
+        const message =
+          err instanceof Error && err.message ? err.message : fallbackMessage;
+        setRbacError(message);
+      } finally {
+        setRbacLoading(false);
+      }
+    }
+    setRbacVisible(true);
+  };
+
+  const handleCopyToken = async () => {
+    if (!rbacToken) return;
+    try {
+      await navigator.clipboard.writeText(rbacToken);
+      setRbacCopied(true);
+    } catch (err: unknown) {
+      const fallbackMessage = t('rbac_token_failed');
+      const message =
+        err instanceof Error && err.message ? err.message : fallbackMessage;
+      setRbacError(message);
     }
   };
 
@@ -191,6 +229,44 @@ const ProfilePage: React.FC = () => {
           >
             {editLoading ? t('saving') : t('save_changes')}
           </Button>
+        </Box>
+
+        <Box sx={{ mt: 3, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          <TextField
+            label={t('rbac_token_label')}
+            variant="outlined"
+            value={
+              rbacVisible
+                ? rbacToken || ''
+                : rbacToken
+                  ? t('rbac_token_hidden')
+                  : ''
+            }
+            fullWidth
+            InputProps={{ readOnly: true }}
+          />
+          <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={handleRevealToken}
+              disabled={rbacLoading}
+            >
+              {rbacLoading ? t('rbac_token_loading') : t('rbac_token_reveal')}
+            </Button>
+            <Button
+              variant="outlined"
+              color="inherit"
+              onClick={handleCopyToken}
+              disabled={!rbacToken}
+            >
+              {t('rbac_token_copy')}
+            </Button>
+          </Box>
+          {rbacError && <Alert severity="error">{rbacError}</Alert>}
+          {rbacCopied && (
+            <Alert severity="success">{t('rbac_token_copied')}</Alert>
+          )}
         </Box>
       </CardContent>
     </Card>

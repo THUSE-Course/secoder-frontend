@@ -105,5 +105,12 @@
   "gitlab_consent_shared_title": "將與 GitLab 共享的資訊",
   "gitlab_consent_shared_id": "帳號",
   "gitlab_consent_shared_email": "電子郵件",
-  "gitlab_consent_shared_name": "姓名"
+  "gitlab_consent_shared_name": "姓名",
+  "rbac_token_label": "API 權杖",
+  "rbac_token_reveal": "顯示權杖",
+  "rbac_token_copy": "複製權杖",
+  "rbac_token_copied": "權杖已複製.",
+  "rbac_token_loading": "正在取得權杖...",
+  "rbac_token_failed": "無法取得權杖.",
+  "rbac_token_hidden": "已隱藏"
 }

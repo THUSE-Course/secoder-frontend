@@ -105,5 +105,12 @@
   "gitlab_consent_shared_title": "将与 GitLab 共享的信息",
   "gitlab_consent_shared_id": "账号",
   "gitlab_consent_shared_email": "邮箱",
-  "gitlab_consent_shared_name": "姓名"
+  "gitlab_consent_shared_name": "姓名",
+  "rbac_token_label": "API 令牌",
+  "rbac_token_reveal": "显示令牌",
+  "rbac_token_copy": "复制令牌",
+  "rbac_token_copied": "令牌已复制.",
+  "rbac_token_loading": "正在获取令牌...",
+  "rbac_token_failed": "无法获取令牌.",
+  "rbac_token_hidden": "已隐藏"
 }
