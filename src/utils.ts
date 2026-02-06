@@ -181,6 +181,7 @@ interface UserInfo {
 interface User {
   id: string;
   name: string;
+  email?: string;
   group: string | null;
 }
 

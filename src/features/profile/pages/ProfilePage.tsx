@@ -9,12 +9,14 @@ import {
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { editUserInfo, getRbacToken, validatePassword } from '../../../utils';
 import PageHeader from '../../../components/common/PageHeader';
 
 const ProfilePage: React.FC = () => {
   const { t } = useTranslation();
-  const { user, updateUser } = useAuth();
+  const { user, updateUser, logout } = useAuth();
+  const navigate = useNavigate();
   const [editName, setEditName] = useState('');
   const [editEmail, setEditEmail] = useState('');
   const [editPassword, setEditPassword] = useState('');
@@ -97,6 +99,8 @@ const ProfilePage: React.FC = () => {
       setEditConfirmPassword('');
       setEditPasswordErrors([]);
       setEditSuccess(t('profile_update_success'));
+      logout();
+      navigate('/login', { replace: true });
     } catch (err: unknown) {
       const fallbackMessage = t(
         'profile_update_failed',

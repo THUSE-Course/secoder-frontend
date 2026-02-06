@@ -95,6 +95,9 @@ const UserDirectory: React.FC = () => {
                       <strong>{t('name')}</strong>
                     </TableCell>
                     <TableCell>
+                      <strong>{t('email')}</strong>
+                    </TableCell>
+                    <TableCell>
                       <strong>{t('student_id')}</strong>
                     </TableCell>
                     <TableCell>
@@ -113,6 +116,7 @@ const UserDirectory: React.FC = () => {
                       >
                         {user.name}
                       </TableCell>
+                      <TableCell>{user.email || '-'}</TableCell>
                       <TableCell>{user.id}</TableCell>
                       <TableCell>
                         {user.group ? (
