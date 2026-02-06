@@ -36,7 +36,7 @@ const Login: React.FC<LoginProps> = ({
 
   useEffect(() => {
     if (user) {
-      if (user.id === 'admin') {
+      if (user.isAdmin) {
         navigate('/admin', { replace: true });
         return;
       }
@@ -60,15 +60,7 @@ const Login: React.FC<LoginProps> = ({
       // Store the JWT token and update auth state
       const authToken = typeof result === 'string' ? result : result.token;
       if (authToken) {
-        if (studentId === 'admin') {
-          await login(authToken, {
-            id: 'admin',
-            name: 'Admin',
-            email: '',
-          });
-        } else {
-          await login(authToken);
-        }
+        await login(authToken);
       } else {
         throw new Error(t('no_token_received'));
       }

@@ -99,8 +99,11 @@ const ProfilePage: React.FC = () => {
       setEditConfirmPassword('');
       setEditPasswordErrors([]);
       setEditSuccess(t('profile_update_success'));
-      logout();
-      navigate('/login', { replace: true });
+      window.setTimeout(() => {
+        localStorage.clear();
+        logout();
+        navigate('/login', { replace: true });
+      }, 2000);
     } catch (err: unknown) {
       const fallbackMessage = t(
         'profile_update_failed',

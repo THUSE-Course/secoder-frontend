@@ -39,6 +39,26 @@ type ApiResponse = Record<string, unknown>;
 
 export const apiEndpoint = import.meta.env.VITE_API_ENDPOINT;
 
+const decodeBase64Url = (value: string): string => {
+  const normalized = value.replace(/-/g, '+').replace(/_/g, '/');
+  const padLength = (4 - (normalized.length % 4)) % 4;
+  const padded = `${normalized}${'='.repeat(padLength)}`;
+  return atob(padded);
+};
+
+const parseJwtClaims = (token: string): Record<string, unknown> | null => {
+  const parts = token.split('.');
+  if (parts.length < 2) return null;
+  try {
+    const payload = decodeBase64Url(parts[1]);
+    const parsed = JSON.parse(payload) as Record<string, unknown>;
+    return parsed;
+  } catch (error) {
+    console.error('Failed to parse JWT claims:', error);
+    return null;
+  }
+};
+
 const extractErrorMessage = (data: unknown): string | undefined => {
   if (!data || typeof data !== 'object') {
     return undefined;
@@ -392,6 +412,7 @@ export type {
 export {
   post,
   authenticatedRequest,
+  parseJwtClaims,
   validatePassword,
   getUsers,
   getGroups,

@@ -1,10 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { apiEndpoint } from '../utils';
+import { apiEndpoint, parseJwtClaims } from '../utils';
 
 interface User {
   id: string;
   name: string;
   email: string;
+  isAdmin: boolean;
 }
 
 interface AuthContextType {
@@ -39,15 +40,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Load token from localStorage on mount
   useEffect(() => {
     const savedToken = localStorage.getItem('auth_token');
-    const isAdmin = localStorage.getItem('admin_user') === 'true';
     if (savedToken) {
       setToken(savedToken);
-      if (isAdmin) {
-        setUser({ id: 'admin', name: 'Admin', email: '' });
-        setLoading(false);
-      } else {
-        fetchUserInfo(savedToken);
-      }
+      fetchUserInfo(savedToken);
     } else {
       setLoading(false);
     }
@@ -55,6 +50,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const fetchUserInfo = async (authToken: string): Promise<User | null> => {
     try {
+      const claims = parseJwtClaims(authToken);
+      const isAdmin = claims?.sudo === true;
       const response = await fetch(`${apiEndpoint}/user`, {
         method: 'GET',
         headers: {
@@ -73,8 +70,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           if (text.trim()) {
             try {
               userData = JSON.parse(text);
-              setUser(userData);
-              return userData;
+              const enrichedUser = { ...userData, isAdmin };
+              setUser(enrichedUser);
+              return enrichedUser;
             } catch (parseError) {
               console.error(
                 'JSON parse error in fetchUserInfo:',
@@ -127,13 +125,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   ): Promise<void> => {
     // Clear any in-memory user data before starting a new session.
     setUser(null);
-    localStorage.removeItem('admin_user');
     localStorage.setItem('auth_token', newToken);
     setToken(newToken);
     if (userOverride) {
-      if (userOverride.id === 'admin') {
-        localStorage.setItem('admin_user', 'true');
-      }
       setUser(userOverride);
       setLoading(false);
       return;
@@ -144,14 +138,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('auth_token');
-    localStorage.removeItem('admin_user');
     setToken(null);
     setUser(null);
   };
 
   const checkAuth = async (): Promise<boolean> => {
     if (!token) return false;
-    if (localStorage.getItem('admin_user') === 'true') return true;
     const userData = await fetchUserInfo(token);
     return userData !== null;
   };
