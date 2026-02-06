@@ -106,6 +106,7 @@
   "gitlab_consent_shared_id": "ID",
   "gitlab_consent_shared_email": "Email",
   "gitlab_consent_shared_name": "Name",
+  "gitlab_consent_remember": "Remember my choice for 4 weeks",
   "rbac_token_label": "API Token",
   "rbac_token_reveal": "Reveal token",
   "rbac_token_copy": "Copy token",

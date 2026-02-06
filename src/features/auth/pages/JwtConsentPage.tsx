@@ -6,17 +6,50 @@ import {
   Card,
   CardContent,
   CircularProgress,
+  FormControlLabel,
+  Checkbox,
   Typography,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 
+const REMEMBER_KEY = 'gitlab_jwt_consent';
+const FOUR_WEEKS_MS = 28 * 24 * 60 * 60 * 1000;
+
+type RememberRecord = {
+  expiresAt: number;
+};
+
+const readRememberRecord = (): RememberRecord | null => {
+  try {
+    const raw = localStorage.getItem(REMEMBER_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as RememberRecord;
+    if (!parsed?.expiresAt || typeof parsed.expiresAt !== 'number') {
+      return null;
+    }
+    return parsed;
+  } catch {
+    return null;
+  }
+};
+
+const writeRememberRecord = () => {
+  const record: RememberRecord = { expiresAt: Date.now() + FOUR_WEEKS_MS };
+  localStorage.setItem(REMEMBER_KEY, JSON.stringify(record));
+};
+
+const clearRememberRecord = () => {
+  localStorage.removeItem(REMEMBER_KEY);
+};
+
 const JwtConsentPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user, token, loading } = useAuth();
   const [redirecting, setRedirecting] = useState(false);
+  const [rememberChoice, setRememberChoice] = useState(false);
 
   const gitlabUrl = import.meta.env.VITE_GITLAB_URL as string | undefined;
 
@@ -33,6 +66,11 @@ const JwtConsentPage: React.FC = () => {
 
   const handleApprove = () => {
     if (!callbackUrl) return;
+    if (rememberChoice) {
+      writeRememberRecord();
+    } else {
+      clearRememberRecord();
+    }
     setRedirecting(true);
     window.location.assign(callbackUrl);
   };
@@ -42,6 +80,17 @@ const JwtConsentPage: React.FC = () => {
       navigate('/login?next=/jwt', { replace: true });
     }
   }, [loading, navigate, token]);
+
+  useEffect(() => {
+    if (!callbackUrl || !token) return;
+    const record = readRememberRecord();
+    if (!record) return;
+    if (record.expiresAt < Date.now()) {
+      clearRememberRecord();
+      return;
+    }
+    window.location.assign(callbackUrl);
+  }, [callbackUrl, token]);
 
   if (loading || !token) {
     return (
@@ -104,6 +153,16 @@ const JwtConsentPage: React.FC = () => {
               </Box>
             </Box>
           </Box>
+
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={rememberChoice}
+                onChange={(event) => setRememberChoice(event.target.checked)}
+              />
+            }
+            label={t('gitlab_consent_remember')}
+          />
 
           {gitlabUrl && isSignedIn && user?.name && (
             <Alert severity="info">

@@ -106,6 +106,7 @@
   "gitlab_consent_shared_id": "账号",
   "gitlab_consent_shared_email": "邮箱",
   "gitlab_consent_shared_name": "姓名",
+  "gitlab_consent_remember": "4 周内不再提示",
   "rbac_token_label": "API 令牌",
   "rbac_token_reveal": "显示令牌",
   "rbac_token_copy": "复制令牌",
