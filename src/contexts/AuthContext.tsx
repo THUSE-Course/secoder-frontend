@@ -63,14 +63,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (response.ok) {
         // Check if response has JSON content
         const contentType = response.headers.get('content-type');
-        let userData: User | null = null;
 
         if (contentType && contentType.includes('application/json')) {
           const text = await response.text();
           if (text.trim()) {
             try {
-              userData = JSON.parse(text);
-              const enrichedUser = { ...userData, isAdmin };
+              const parsed = JSON.parse(text) as User;
+              if (!parsed?.id) {
+                throw new Error('Invalid user payload');
+              }
+              const enrichedUser: User = { ...parsed, isAdmin };
               setUser(enrichedUser);
               return enrichedUser;
             } catch (parseError) {

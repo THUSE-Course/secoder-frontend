@@ -370,18 +370,6 @@ async function getGroupInvitations(
   );
 }
 
-async function assignUserToGroup(
-  groupCodeName: string,
-  studentId: string,
-): Promise<ApiResponse> {
-  return authenticatedRequest<ApiResponse>('/admin/group_assign', {
-    method: 'POST',
-    body: JSON.stringify({
-      group_code_name: groupCodeName,
-      id: studentId,
-    }),
-  });
-}
 
 async function editUserInfo(payload: EditUserPayload): Promise<ApiResponse> {
   return authenticatedRequest<ApiResponse>('/user/edit', {
@@ -413,6 +401,12 @@ async function impersonateUser(id: string): Promise<LoginResponse | string> {
   return authenticatedRequest<LoginResponse | string>('/admin/impersonate', {
     method: 'POST',
     body: JSON.stringify({ id }),
+  });
+}
+
+async function syncGitlab(): Promise<ApiResponse> {
+  return authenticatedRequest<ApiResponse>('/sync', {
+    method: 'GET',
   });
 }
 
@@ -450,10 +444,10 @@ export {
   rejectInvitation,
   getUserInvitations,
   getGroupInvitations,
-  assignUserToGroup,
   editUserInfo,
   getRbacToken,
   getStatus,
   setReadonlyMode,
   impersonateUser,
+  syncGitlab,
 };

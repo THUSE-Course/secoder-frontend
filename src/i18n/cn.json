@@ -131,5 +131,9 @@
   "admin_impersonate_loading": "正在冒充...",
   "admin_impersonate_success": "已进入冒充状态.",
   "admin_impersonate_failed": "无法冒充用户.",
-  "admin_impersonate_required": "请输入用户账号."
+  "admin_impersonate_required": "请输入用户账号.",
+  "sync_action": "同步 GitLab 子组",
+  "sync_loading": "正在同步...",
+  "sync_success": "已开始同步.",
+  "sync_failed": "无法开始同步."
 }

@@ -10,7 +10,12 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { editUserInfo, getRbacToken, validatePassword } from '../../../utils';
+import {
+  editUserInfo,
+  getRbacToken,
+  syncGitlab,
+  validatePassword,
+} from '../../../utils';
 import PageHeader from '../../../components/common/PageHeader';
 
 const ProfilePage: React.FC = () => {
@@ -30,6 +35,9 @@ const ProfilePage: React.FC = () => {
   const [rbacLoading, setRbacLoading] = useState(false);
   const [rbacError, setRbacError] = useState<string | null>(null);
   const [rbacCopied, setRbacCopied] = useState(false);
+  const [syncLoading, setSyncLoading] = useState(false);
+  const [syncError, setSyncError] = useState<string | null>(null);
+  const [syncSuccess, setSyncSuccess] = useState<string | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -147,6 +155,23 @@ const ProfilePage: React.FC = () => {
       const message =
         err instanceof Error && err.message ? err.message : fallbackMessage;
       setRbacError(message);
+    }
+  };
+
+  const handleSyncGitlab = async () => {
+    setSyncLoading(true);
+    setSyncError(null);
+    setSyncSuccess(null);
+    try {
+      await syncGitlab();
+      setSyncSuccess(t('sync_success'));
+    } catch (err: unknown) {
+      const fallbackMessage = t('sync_failed');
+      const message =
+        err instanceof Error && err.message ? err.message : fallbackMessage;
+      setSyncError(message);
+    } finally {
+      setSyncLoading(false);
     }
   };
 
@@ -274,6 +299,18 @@ const ProfilePage: React.FC = () => {
           {rbacCopied && (
             <Alert severity="success">{t('rbac_token_copied')}</Alert>
           )}
+        </Box>
+
+        <Box sx={{ mt: 3, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          <Button
+            variant="outlined"
+            onClick={handleSyncGitlab}
+            disabled={syncLoading}
+          >
+            {syncLoading ? t('sync_loading') : t('sync_action')}
+          </Button>
+          {syncError && <Alert severity="error">{syncError}</Alert>}
+          {syncSuccess && <Alert severity="success">{syncSuccess}</Alert>}
         </Box>
       </CardContent>
     </Card>
