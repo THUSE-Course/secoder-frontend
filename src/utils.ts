@@ -202,6 +202,7 @@ interface User {
   id: string;
   name: string;
   email?: string;
+  sudo?: boolean;
   group: string | null;
 }
 
@@ -249,6 +250,10 @@ interface InvitationsResponse {
 
 interface GroupInvitationsResponse extends InvitationsResponse {
   group_code_name: string;
+}
+
+interface StatusResponse {
+  readonly: boolean;
 }
 
 // Grouping API functions
@@ -391,6 +396,26 @@ async function getRbacToken(): Promise<string> {
   });
 }
 
+async function getStatus(): Promise<StatusResponse> {
+  return authenticatedRequest<StatusResponse>('/status', {
+    method: 'GET',
+  });
+}
+
+async function setReadonlyMode(readonly: boolean): Promise<ApiResponse> {
+  return authenticatedRequest<ApiResponse>('/admin/readonly', {
+    method: 'POST',
+    body: JSON.stringify({ readonly }),
+  });
+}
+
+async function impersonateUser(id: string): Promise<LoginResponse | string> {
+  return authenticatedRequest<LoginResponse | string>('/admin/impersonate', {
+    method: 'POST',
+    body: JSON.stringify({ id }),
+  });
+}
+
 export type {
   RegisterPayload,
   LoginPayload,
@@ -408,6 +433,7 @@ export type {
   Invitation,
   InvitationsResponse,
   GroupInvitationsResponse,
+  StatusResponse,
 };
 export {
   post,
@@ -427,4 +453,7 @@ export {
   assignUserToGroup,
   editUserInfo,
   getRbacToken,
+  getStatus,
+  setReadonlyMode,
+  impersonateUser,
 };

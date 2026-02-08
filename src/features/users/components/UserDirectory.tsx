@@ -101,6 +101,9 @@ const UserDirectory: React.FC = () => {
                       <strong>{t('student_id')}</strong>
                     </TableCell>
                     <TableCell>
+                      <strong>{t('sudo')}</strong>
+                    </TableCell>
+                    <TableCell>
                       <strong>{t('group')}</strong>
                     </TableCell>
                   </TableRow>
@@ -118,6 +121,7 @@ const UserDirectory: React.FC = () => {
                       </TableCell>
                       <TableCell>{user.email || '-'}</TableCell>
                       <TableCell>{user.id}</TableCell>
+                      <TableCell>{user.sudo ? t('yes') : t('no')}</TableCell>
                       <TableCell>
                         {user.group ? (
                           user.group
