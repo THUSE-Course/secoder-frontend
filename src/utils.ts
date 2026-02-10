@@ -370,7 +370,6 @@ async function getGroupInvitations(
   );
 }
 
-
 async function editUserInfo(payload: EditUserPayload): Promise<ApiResponse> {
   return authenticatedRequest<ApiResponse>('/user/edit', {
     method: 'POST',

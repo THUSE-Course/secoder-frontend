@@ -135,5 +135,6 @@
   "sync_action": "同步 GitLab 子群組",
   "sync_loading": "正在同步...",
   "sync_success": "已開始同步.",
-  "sync_failed": "無法開始同步."
+  "sync_failed": "無法開始同步.",
+  "nav_admin": "管理員"
 }

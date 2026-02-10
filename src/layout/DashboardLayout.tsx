@@ -6,16 +6,21 @@ import { useTranslation } from 'react-i18next';
 import Sidebar from './Sidebar';
 import TopBar from './TopBar';
 import { buildNavItems } from '../app/navigation';
+import { useAuth } from '../contexts/AuthContext';
 
 const DashboardLayout: React.FC = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const location = useLocation();
+  const { user } = useAuth();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [mobileOpen, setMobileOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  const navItems = useMemo(() => buildNavItems(t), [t]);
+  const navItems = useMemo(
+    () => buildNavItems(t, Boolean(user?.isAdmin)),
+    [t, user?.isAdmin],
+  );
   const activeItem = navItems.find((item) =>
     location.pathname.startsWith(item.path),
   );

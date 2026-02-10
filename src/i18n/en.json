@@ -135,5 +135,6 @@
   "sync_action": "Sync GitLab subgroups",
   "sync_loading": "Syncing...",
   "sync_success": "Sync started.",
-  "sync_failed": "Unable to start sync."
+  "sync_failed": "Unable to start sync.",
+  "nav_admin": "Admin"
 }
