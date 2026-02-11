@@ -682,17 +682,11 @@ const GroupManagement: React.FC = () => {
           <DialogContent>
             <AlertMessage
               severity="warning"
-              message={t(
-                'create_group_warning_message',
-                'Once a group is created, you cannot delete it. You will become the group leader.',
-              )}
+              message={t('create_group_warning_message')}
               sx={{ mb: 2 }}
             />
             <Typography variant="body2" color="text.secondary">
-              {t(
-                'create_group_confirm_message',
-                'Are you sure you want to create a new group?',
-              )}
+              {t('create_group_confirm_message')}
             </Typography>
           </DialogContent>
           <DialogActions>

@@ -136,5 +136,9 @@
   "sync_loading": "Syncing...",
   "sync_success": "Sync started.",
   "sync_failed": "Unable to start sync.",
-  "nav_admin": "Admin"
+  "nav_admin": "Admin",
+  "create_group_warning": "Create Group Warning",
+  "create_group_warning_message": "Once a group is created, you cannot delete it. You will become the group leader.",
+  "create_group_confirm_message": "Are you sure you want to create a new group?",
+  "continue": "Continue"
 }

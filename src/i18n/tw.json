@@ -136,5 +136,9 @@
   "sync_loading": "正在同步...",
   "sync_success": "已開始同步.",
   "sync_failed": "無法開始同步.",
-  "nav_admin": "管理員"
+  "nav_admin": "管理員",
+  "create_group_warning": "建立小組提醒",
+  "create_group_warning_message": "小組建立後無法刪除. 你將成為組長.",
+  "create_group_confirm_message": "確定要建立新小組嗎?",
+  "continue": "繼續"
 }
