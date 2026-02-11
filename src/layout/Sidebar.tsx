@@ -145,10 +145,11 @@ const Sidebar: React.FC<SidebarProps> = ({
       aria-label="dashboard navigation"
     >
       <Drawer
+        key={isMobile ? 'mobile-drawer' : 'desktop-drawer'}
         variant={isMobile ? 'temporary' : 'permanent'}
         open={isMobile ? mobileOpen : true}
         onClose={onMobileClose}
-        ModalProps={{ keepMounted: true }}
+        ModalProps={{ keepMounted: false }}
         sx={{
           '& .MuiDrawer-paper': {
             width: open ? drawerWidth : drawerCollapsedWidth,
