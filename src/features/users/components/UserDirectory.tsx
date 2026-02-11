@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-  Alert,
   Box,
   Card,
   CardContent,
@@ -22,6 +21,7 @@ import { useTranslation } from 'react-i18next';
 import { getUsers } from '../../../utils';
 import type { User } from '../../../utils';
 import PageHeader from '../../../components/common/PageHeader';
+import AlertMessage from '../../../components/common/AlertMessage';
 
 const UserDirectory: React.FC = () => {
   const { t } = useTranslation();
@@ -76,9 +76,7 @@ const UserDirectory: React.FC = () => {
         />
 
         {error && (
-          <Alert severity="error" sx={{ mb: 2 }}>
-            {error}
-          </Alert>
+          <AlertMessage severity="error" message={error} sx={{ mb: 2 }} />
         )}
 
         {loading ? (

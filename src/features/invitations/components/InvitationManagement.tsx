@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  Alert,
   Box,
   Button,
   Card,
@@ -22,6 +21,7 @@ import {
 import { Refresh as RefreshIcon } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import PageHeader from '../../../components/common/PageHeader';
+import AlertMessage from '../../../components/common/AlertMessage';
 import {
   acceptInvitation,
   rejectInvitation,
@@ -180,15 +180,21 @@ const InvitationManagement: React.FC = () => {
         />
 
         {error && (
-          <Alert severity="error" onClose={closeAlerts} sx={{ mb: 2 }}>
-            {error}
-          </Alert>
+          <AlertMessage
+            severity="error"
+            message={error}
+            onClose={closeAlerts}
+            sx={{ mb: 2 }}
+          />
         )}
 
         {success && (
-          <Alert severity="success" onClose={closeAlerts} sx={{ mb: 2 }}>
-            {success}
-          </Alert>
+          <AlertMessage
+            severity="success"
+            message={success}
+            onClose={closeAlerts}
+            sx={{ mb: 2 }}
+          />
         )}
 
         <Divider sx={{ marginBottom: 2 }} />

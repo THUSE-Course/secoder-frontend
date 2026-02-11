@@ -1,22 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Alert,
-  Box,
-  Button,
-  Card,
-  CardContent,
-  TextField,
-} from '@mui/material';
+import { Box, Button, Card, CardContent, TextField } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import {
-  editUserInfo,
-  getRbacToken,
-  syncGitlab,
-  validatePassword,
-} from '../../../utils';
+import { editUserInfo, getRbacToken, syncGitlab } from '../../../utils';
 import PageHeader from '../../../components/common/PageHeader';
+import AlertMessage from '../../../components/common/AlertMessage';
 
 const ProfilePage: React.FC = () => {
   const { t } = useTranslation();
@@ -29,7 +18,6 @@ const ProfilePage: React.FC = () => {
   const [editError, setEditError] = useState<string | null>(null);
   const [editSuccess, setEditSuccess] = useState<string | null>(null);
   const [editLoading, setEditLoading] = useState(false);
-  const [editPasswordErrors, setEditPasswordErrors] = useState<string[]>([]);
   const [rbacToken, setRbacToken] = useState<string | null>(null);
   const [rbacVisible, setRbacVisible] = useState(false);
   const [rbacLoading, setRbacLoading] = useState(false);
@@ -45,12 +33,6 @@ const ProfilePage: React.FC = () => {
       setEditEmail(user.email || '');
     }
   }, [user]);
-
-  const handleEditPasswordChange = (value: string) => {
-    setEditPassword(value);
-    const validation = validatePassword(value);
-    setEditPasswordErrors(validation.errors);
-  };
 
   const handleProfileSave = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -71,22 +53,9 @@ const ProfilePage: React.FC = () => {
       return;
     }
 
-    if (trimmedPassword) {
-      const passwordValidation = validatePassword(trimmedPassword);
-      if (!passwordValidation.isValid) {
-        setEditError(
-          t(
-            'password_validation_failed',
-            'Password does not meet requirements',
-          ),
-        );
-        return;
-      }
-
-      if (trimmedPassword !== editConfirmPassword) {
-        setEditError(t('password_mismatch'));
-        return;
-      }
+    if (trimmedPassword && trimmedPassword !== editConfirmPassword) {
+      setEditError(t('password_mismatch'));
+      return;
     }
 
     setEditLoading(true);
@@ -105,7 +74,6 @@ const ProfilePage: React.FC = () => {
       });
       setEditPassword('');
       setEditConfirmPassword('');
-      setEditPasswordErrors([]);
       setEditSuccess(t('profile_update_success'));
       window.setTimeout(() => {
         localStorage.clear();
@@ -217,17 +185,8 @@ const ProfilePage: React.FC = () => {
             variant="outlined"
             type="password"
             value={editPassword}
-            onChange={(e) => handleEditPasswordChange(e.target.value)}
+            onChange={(e) => setEditPassword(e.target.value)}
             fullWidth
-            error={editPassword.length > 0 && editPasswordErrors.length > 0}
-            helperText={
-              editPassword.length > 0 && editPasswordErrors.length > 0
-                ? t('password_requirements_not_met')
-                : t(
-                    'password_requirements',
-                    'At least 8 characters with 3 types: uppercase, lowercase, numbers, symbols',
-                  )
-            }
           />
 
           <TextField
@@ -249,9 +208,11 @@ const ProfilePage: React.FC = () => {
             }
           />
 
-          {editError && <Alert severity="error">{editError}</Alert>}
+          {editError && <AlertMessage severity="error" message={editError} />}
 
-          {editSuccess && <Alert severity="success">{editSuccess}</Alert>}
+          {editSuccess && (
+            <AlertMessage severity="success" message={editSuccess} />
+          )}
 
           <Button
             type="submit"
@@ -295,9 +256,9 @@ const ProfilePage: React.FC = () => {
               {t('rbac_token_copy')}
             </Button>
           </Box>
-          {rbacError && <Alert severity="error">{rbacError}</Alert>}
+          {rbacError && <AlertMessage severity="error" message={rbacError} />}
           {rbacCopied && (
-            <Alert severity="success">{t('rbac_token_copied')}</Alert>
+            <AlertMessage severity="success" message={t('rbac_token_copied')} />
           )}
         </Box>
 
@@ -309,8 +270,10 @@ const ProfilePage: React.FC = () => {
           >
             {syncLoading ? t('sync_loading') : t('sync_action')}
           </Button>
-          {syncError && <Alert severity="error">{syncError}</Alert>}
-          {syncSuccess && <Alert severity="success">{syncSuccess}</Alert>}
+          {syncError && <AlertMessage severity="error" message={syncError} />}
+          {syncSuccess && (
+            <AlertMessage severity="success" message={syncSuccess} />
+          )}
         </Box>
       </CardContent>
     </Card>

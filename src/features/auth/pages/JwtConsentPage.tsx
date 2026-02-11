@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
-  Alert,
   Box,
   Button,
   Card,
@@ -13,6 +12,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
+import AlertMessage from '../../../components/common/AlertMessage';
 
 const REMEMBER_KEY = 'gitlab_jwt_consent';
 const FOUR_WEEKS_MS = 28 * 24 * 60 * 60 * 1000;
@@ -165,13 +165,17 @@ const JwtConsentPage: React.FC = () => {
           />
 
           {gitlabUrl && isSignedIn && user?.name && (
-            <Alert severity="info">
-              {t('gitlab_consent_user', { name: user.name })}
-            </Alert>
+            <AlertMessage
+              severity="info"
+              message={t('gitlab_consent_user', { name: user.name })}
+            />
           )}
 
           {!gitlabUrl && (
-            <Alert severity="error">{t('gitlab_consent_missing')}</Alert>
+            <AlertMessage
+              severity="error"
+              message={t('gitlab_consent_missing')}
+            />
           )}
 
           <Box sx={{ display: 'flex', gap: 1.5, mt: 1 }}>

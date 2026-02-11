@@ -12,7 +12,6 @@ import {
   DialogActions,
   Chip,
   Divider,
-  Alert,
   CircularProgress,
   Tab,
   Tabs,
@@ -37,6 +36,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexts/AuthContext';
 import PageHeader from '../../../components/common/PageHeader';
+import AlertMessage from '../../../components/common/AlertMessage';
 import {
   getGroups,
   getUsers,
@@ -334,15 +334,21 @@ const GroupManagement: React.FC = () => {
         />
 
         {error && (
-          <Alert severity="error" onClose={closeAlerts} sx={{ mb: 2 }}>
-            {error}
-          </Alert>
+          <AlertMessage
+            severity="error"
+            message={error}
+            onClose={closeAlerts}
+            sx={{ mb: 2 }}
+          />
         )}
 
         {success && (
-          <Alert severity="success" onClose={closeAlerts} sx={{ mb: 2 }}>
-            {success}
-          </Alert>
+          <AlertMessage
+            severity="success"
+            message={success}
+            onClose={closeAlerts}
+            sx={{ mb: 2 }}
+          />
         )}
 
         <Divider sx={{ marginBottom: 2 }} />
@@ -674,12 +680,14 @@ const GroupManagement: React.FC = () => {
         >
           <DialogTitle>{t('create_group_warning')}</DialogTitle>
           <DialogContent>
-            <Alert severity="warning" sx={{ mb: 2 }}>
-              {t(
+            <AlertMessage
+              severity="warning"
+              message={t(
                 'create_group_warning_message',
                 'Once a group is created, you cannot delete it. You will become the group leader.',
               )}
-            </Alert>
+              sx={{ mb: 2 }}
+            />
             <Typography variant="body2" color="text.secondary">
               {t(
                 'create_group_confirm_message',
@@ -825,9 +833,11 @@ const GroupManagement: React.FC = () => {
         >
           <DialogTitle>{t('delete_group')}</DialogTitle>
           <DialogContent>
-            <Alert severity="warning" sx={{ mb: 2 }}>
-              {t('delete_group_warning')}
-            </Alert>
+            <AlertMessage
+              severity="warning"
+              message={t('delete_group_warning')}
+              sx={{ mb: 2 }}
+            />
             <Typography variant="body2" color="text.secondary">
               {t('delete_group_confirm')}
             </Typography>

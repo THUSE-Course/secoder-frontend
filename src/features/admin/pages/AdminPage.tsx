@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-  Alert,
   Box,
   Button,
   Card,
@@ -19,6 +18,7 @@ import {
   type StatusResponse,
 } from '../../../utils';
 import { useAuth } from '../../../contexts/AuthContext';
+import AlertMessage from '../../../components/common/AlertMessage';
 
 const AdminPage: React.FC = () => {
   const { t } = useTranslation();
@@ -152,8 +152,8 @@ const AdminPage: React.FC = () => {
               </Button>
             </Box>
 
-            {error && <Alert severity="error">{error}</Alert>}
-            {success && <Alert severity="success">{success}</Alert>}
+            {error && <AlertMessage severity="error" message={error} />}
+            {success && <AlertMessage severity="success" message={success} />}
           </CardContent>
         </Card>
 
@@ -187,10 +187,10 @@ const AdminPage: React.FC = () => {
             </Box>
 
             {impersonateError && (
-              <Alert severity="error">{impersonateError}</Alert>
+              <AlertMessage severity="error" message={impersonateError} />
             )}
             {impersonateSuccess && (
-              <Alert severity="success">{impersonateSuccess}</Alert>
+              <AlertMessage severity="success" message={impersonateSuccess} />
             )}
           </CardContent>
         </Card>
