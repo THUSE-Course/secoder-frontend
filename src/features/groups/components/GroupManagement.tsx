@@ -83,7 +83,6 @@ const GroupManagement: React.FC = () => {
   const [success, setSuccess] = useState<string | null>(null);
 
   // Dialog states
-  const [confirmCreateDialogOpen, setConfirmCreateDialogOpen] = useState(false);
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -372,7 +371,7 @@ const GroupManagement: React.FC = () => {
                 <Button
                   variant="contained"
                   startIcon={<AddIcon />}
-                  onClick={() => setConfirmCreateDialogOpen(true)}
+                  onClick={() => setCreateDialogOpen(true)}
                   disabled={loading}
                 >
                   {t('create_group')}
@@ -671,41 +670,6 @@ const GroupManagement: React.FC = () => {
           </TabPanel>
         )}
 
-        {/* Confirm Create Group Dialog */}
-        <Dialog
-          open={confirmCreateDialogOpen}
-          onClose={() => setConfirmCreateDialogOpen(false)}
-          maxWidth="sm"
-          fullWidth
-        >
-          <DialogTitle>{t('create_group_warning')}</DialogTitle>
-          <DialogContent>
-            <AlertMessage
-              severity="warning"
-              message={t('create_group_warning_message')}
-              sx={{ mb: 2 }}
-            />
-            <Typography variant="body2" color="text.secondary">
-              {t('create_group_confirm_message')}
-            </Typography>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setConfirmCreateDialogOpen(false)}>
-              {t('cancel')}
-            </Button>
-            <Button
-              onClick={() => {
-                setConfirmCreateDialogOpen(false);
-                setCreateDialogOpen(true);
-              }}
-              variant="contained"
-              color="primary"
-            >
-              {t('continue')}
-            </Button>
-          </DialogActions>
-        </Dialog>
-
         {/* Create Group Dialog */}
         <Dialog
           open={createDialogOpen}
@@ -735,6 +699,9 @@ const GroupManagement: React.FC = () => {
                 'Unique identifier (must conform to GitLab group name rules)',
               )}
             />
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+              {t('create_group_leader_notice')}
+            </Typography>
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setCreateDialogOpen(false)}>
@@ -827,11 +794,6 @@ const GroupManagement: React.FC = () => {
         >
           <DialogTitle>{t('delete_group')}</DialogTitle>
           <DialogContent>
-            <AlertMessage
-              severity="warning"
-              message={t('delete_group_warning')}
-              sx={{ mb: 2 }}
-            />
             <Typography variant="body2" color="text.secondary">
               {t('delete_group_confirm')}
             </Typography>

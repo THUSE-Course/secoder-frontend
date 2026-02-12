@@ -81,10 +81,7 @@ const ProfilePage: React.FC = () => {
         navigate('/login', { replace: true });
       }, 2000);
     } catch (err: unknown) {
-      const fallbackMessage = t(
-        'profile_update_failed',
-        'Profile update failed',
-      );
+      const fallbackMessage = 'Profile update failed';
       const message =
         err instanceof Error && err.message ? err.message : fallbackMessage;
       setEditError(message);
@@ -102,7 +99,7 @@ const ProfilePage: React.FC = () => {
         const token = await getRbacToken();
         setRbacToken(typeof token === 'string' ? token : String(token));
       } catch (err: unknown) {
-        const fallbackMessage = t('rbac_token_failed');
+        const fallbackMessage = 'Unable to fetch token';
         const message =
           err instanceof Error && err.message ? err.message : fallbackMessage;
         setRbacError(message);
@@ -119,7 +116,7 @@ const ProfilePage: React.FC = () => {
       await navigator.clipboard.writeText(rbacToken);
       setRbacCopied(true);
     } catch (err: unknown) {
-      const fallbackMessage = t('rbac_token_failed');
+      const fallbackMessage = 'Unable to fetch token';
       const message =
         err instanceof Error && err.message ? err.message : fallbackMessage;
       setRbacError(message);
@@ -134,7 +131,7 @@ const ProfilePage: React.FC = () => {
       await syncGitlab();
       setSyncSuccess(t('sync_success'));
     } catch (err: unknown) {
-      const fallbackMessage = t('sync_failed');
+      const fallbackMessage = 'Unable to start sync';
       const message =
         err instanceof Error && err.message ? err.message : fallbackMessage;
       setSyncError(message);

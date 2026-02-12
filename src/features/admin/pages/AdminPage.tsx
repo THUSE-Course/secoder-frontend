@@ -42,14 +42,14 @@ const AdminPage: React.FC = () => {
       const result = await getStatus();
       setStatus(result);
     } catch (err: unknown) {
-      const fallbackMessage = t('admin_status_failed');
+      const fallbackMessage = 'Unable to load status';
       const message =
         err instanceof Error && err.message ? err.message : fallbackMessage;
       setError(message);
     } finally {
       setLoading(false);
     }
-  }, [t]);
+  }, []);
 
   useEffect(() => {
     loadStatus();
@@ -68,7 +68,7 @@ const AdminPage: React.FC = () => {
       setStatus({ ...status, readonly: nextValue });
       setSuccess(t('admin_readonly_updated'));
     } catch (err: unknown) {
-      const fallbackMessage = t('admin_readonly_failed');
+      const fallbackMessage = 'Unable to update read-only setting';
       const message =
         err instanceof Error && err.message ? err.message : fallbackMessage;
       setError(message);
@@ -91,12 +91,12 @@ const AdminPage: React.FC = () => {
       const result = await impersonateUser(targetId);
       const token = typeof result === 'string' ? result : result.token;
       if (!token) {
-        throw new Error(t('no_token_received'));
+        throw new Error('No token received');
       }
       await login(token);
       setImpersonateSuccess(t('admin_impersonate_success'));
     } catch (err: unknown) {
-      const fallbackMessage = t('admin_impersonate_failed');
+      const fallbackMessage = 'Unable to impersonate user';
       const message =
         err instanceof Error && err.message ? err.message : fallbackMessage;
       setImpersonateError(message);

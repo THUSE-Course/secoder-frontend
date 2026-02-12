@@ -54,7 +54,7 @@ const Register: React.FC<RegisterProps> = ({ onSwitchToLogin }) => {
       setEmail('');
       setPassword('');
     } catch (err: unknown) {
-      const fallbackMessage = t('registration_failed');
+      const fallbackMessage = 'Registration failed';
       const message =
         err instanceof Error && err.message ? err.message : fallbackMessage;
       setError(message);

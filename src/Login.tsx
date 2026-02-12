@@ -62,10 +62,10 @@ const Login: React.FC<LoginProps> = ({
       if (authToken) {
         await login(authToken);
       } else {
-        throw new Error(t('no_token_received'));
+        throw new Error('No token received');
       }
     } catch (err: unknown) {
-      const fallbackMessage = t('login_failed');
+      const fallbackMessage = 'Login failed';
       const message =
         err instanceof Error && err.message ? err.message : fallbackMessage;
       setError(message);
