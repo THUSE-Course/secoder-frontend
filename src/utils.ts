@@ -449,6 +449,13 @@ async function banAdminUser(id: string): Promise<ApiResponse> {
   });
 }
 
+async function unbanAdminUser(id: string): Promise<ApiResponse> {
+  return authenticatedRequest<ApiResponse>('/admin/users/unban', {
+    method: 'POST',
+    body: JSON.stringify({ id }),
+  });
+}
+
 async function syncGitlab(): Promise<ApiResponse> {
   return authenticatedRequest<ApiResponse>('/sync', {
     method: 'GET',
@@ -499,5 +506,6 @@ export {
   getAdminUsers,
   addAdminUser,
   banAdminUser,
+  unbanAdminUser,
   syncGitlab,
 };

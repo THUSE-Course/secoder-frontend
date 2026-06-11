@@ -28,6 +28,7 @@ import {
 import {
   Add as AddIcon,
   Block as BlockIcon,
+  LockOpen as LockOpenIcon,
   Refresh as RefreshIcon,
 } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
@@ -38,6 +39,7 @@ import {
   getStatus,
   impersonateUser,
   setReadonlyMode,
+  unbanAdminUser,
   type AdminUserAccess,
   type StatusResponse,
 } from '../../../utils';
@@ -71,8 +73,10 @@ const AdminPage: React.FC = () => {
   );
   const [newUserId, setNewUserId] = useState('');
   const [newUserPassword, setNewUserPassword] = useState('');
-  const [banDialogOpen, setBanDialogOpen] = useState(false);
-  const [banTarget, setBanTarget] = useState<AdminUserAccess | null>(null);
+  const [accessDialogOpen, setAccessDialogOpen] = useState(false);
+  const [accessTarget, setAccessTarget] = useState<AdminUserAccess | null>(
+    null,
+  );
 
   const loadStatus = useCallback(async () => {
     setLoading(true);
@@ -184,7 +188,7 @@ const AdminPage: React.FC = () => {
     setAdminUsersSuccess(null);
     try {
       await addAdminUser(id, password);
-      setAdminUsersSuccess(t('admin_user_access_added'));
+      setAdminUsersSuccess(t('admin_user_added'));
       setNewUserId('');
       setNewUserPassword('');
       setAdminUsersPage(1);
@@ -199,19 +203,24 @@ const AdminPage: React.FC = () => {
     }
   };
 
-  const handleBanUser = async () => {
-    if (!banTarget) return;
+  const handleToggleUserAccess = async () => {
+    if (!accessTarget) return;
     setAdminUsersSaving(true);
     setAdminUsersError(null);
     setAdminUsersSuccess(null);
     try {
-      await banAdminUser(banTarget.id);
-      setAdminUsersSuccess(t('admin_user_access_banned'));
-      setBanDialogOpen(false);
-      setBanTarget(null);
+      if (accessTarget.banned) {
+        await unbanAdminUser(accessTarget.id);
+        setAdminUsersSuccess(t('admin_user_access_unbanned'));
+      } else {
+        await banAdminUser(accessTarget.id);
+        setAdminUsersSuccess(t('admin_user_access_banned'));
+      }
+      setAccessDialogOpen(false);
+      setAccessTarget(null);
       await loadAdminUsers();
     } catch (err: unknown) {
-      const fallbackMessage = 'Unable to ban user';
+      const fallbackMessage = 'Unable to update user access';
       const message =
         err instanceof Error && err.message ? err.message : fallbackMessage;
       setAdminUsersError(message);
@@ -421,12 +430,14 @@ const AdminPage: React.FC = () => {
                     </TableHead>
                     <TableBody>
                       {adminUsers.map((user) => {
-                        const banDisabled =
+                        const accessDisabled =
                           readonly ||
-                          user.banned ||
                           user.sudo ||
                           user.id === currentUser?.id ||
                           adminUsersSaving;
+                        const accessAction = user.banned
+                          ? t('admin_user_unban_action')
+                          : t('admin_user_ban_action');
                         return (
                           <TableRow key={user.id} hover>
                             <TableCell>{user.id}</TableCell>
@@ -456,17 +467,21 @@ const AdminPage: React.FC = () => {
                             </TableCell>
                             <TableCell>{user.group || '-'}</TableCell>
                             <TableCell align="right">
-                              <Tooltip title={t('admin_user_ban_action')}>
+                              <Tooltip title={accessAction}>
                                 <span>
                                   <IconButton
-                                    color="error"
-                                    disabled={banDisabled}
+                                    color={user.banned ? 'primary' : 'error'}
+                                    disabled={accessDisabled}
                                     onClick={() => {
-                                      setBanTarget(user);
-                                      setBanDialogOpen(true);
+                                      setAccessTarget(user);
+                                      setAccessDialogOpen(true);
                                     }}
                                   >
-                                    <BlockIcon />
+                                    {user.banned ? (
+                                      <LockOpenIcon />
+                                    ) : (
+                                      <BlockIcon />
+                                    )}
                                   </IconButton>
                                 </span>
                               </Tooltip>
@@ -497,27 +512,37 @@ const AdminPage: React.FC = () => {
       </Box>
 
       <Dialog
-        open={banDialogOpen}
-        onClose={() => setBanDialogOpen(false)}
+        open={accessDialogOpen}
+        onClose={() => setAccessDialogOpen(false)}
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>{t('admin_user_ban_action')}</DialogTitle>
+        <DialogTitle>
+          {accessTarget?.banned
+            ? t('admin_user_unban_action')
+            : t('admin_user_ban_action')}
+        </DialogTitle>
         <DialogContent>
           <Typography variant="body2" color="text.secondary">
-            {t('admin_user_ban_confirm', { id: banTarget?.id || '' })}
+            {accessTarget?.banned
+              ? t('admin_user_unban_confirm', { id: accessTarget?.id || '' })
+              : t('admin_user_ban_confirm', { id: accessTarget?.id || '' })}
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setBanDialogOpen(false)}>{t('cancel')}</Button>
+          <Button onClick={() => setAccessDialogOpen(false)}>
+            {t('cancel')}
+          </Button>
           <Button
-            onClick={handleBanUser}
+            onClick={handleToggleUserAccess}
             variant="contained"
-            color="error"
+            color={accessTarget?.banned ? 'primary' : 'error'}
             disabled={adminUsersSaving}
           >
             {adminUsersSaving ? (
               <CircularProgress size={24} />
+            ) : accessTarget?.banned ? (
+              t('admin_user_unban_action')
             ) : (
               t('admin_user_ban_action')
             )}
