@@ -1,5 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Card, CardContent, TextField } from '@mui/material';
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+} from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -53,6 +64,8 @@ current-context: ${contextName}
 `;
 };
 
+type SensitiveRbacAction = 'reveal' | 'copy' | 'download';
+
 const ProfilePage: React.FC = () => {
   const { t } = useTranslation();
   const { user, updateUser, logout } = useAuth();
@@ -69,6 +82,8 @@ const ProfilePage: React.FC = () => {
   const [rbacLoading, setRbacLoading] = useState(false);
   const [rbacError, setRbacError] = useState<string | null>(null);
   const [rbacCopied, setRbacCopied] = useState(false);
+  const [sensitiveAction, setSensitiveAction] =
+    useState<SensitiveRbacAction | null>(null);
   const [syncLoading, setSyncLoading] = useState(false);
   const [syncError, setSyncError] = useState<string | null>(null);
   const [syncSuccess, setSyncSuccess] = useState<string | null>(null);
@@ -136,7 +151,7 @@ const ProfilePage: React.FC = () => {
     }
   };
 
-  const handleRevealToken = async () => {
+  const performRevealToken = async () => {
     setRbacError(null);
     setRbacCopied(false);
     if (!rbacToken) {
@@ -176,7 +191,7 @@ const ProfilePage: React.FC = () => {
     }
   };
 
-  const handleCopyToken = async () => {
+  const performCopyToken = async () => {
     if (!rbacToken) return;
     try {
       await navigator.clipboard.writeText(rbacToken);
@@ -189,7 +204,7 @@ const ProfilePage: React.FC = () => {
     }
   };
 
-  const handleDownloadKubeconfig = async () => {
+  const performDownloadKubeconfig = async () => {
     if (!user) return;
 
     setRbacError(null);
@@ -210,6 +225,36 @@ const ProfilePage: React.FC = () => {
     link.click();
     link.remove();
     URL.revokeObjectURL(url);
+  };
+
+  const handleRevealToken = () => {
+    setSensitiveAction('reveal');
+  };
+
+  const handleCopyToken = () => {
+    if (!rbacToken) return;
+    setSensitiveAction('copy');
+  };
+
+  const handleDownloadKubeconfig = () => {
+    setSensitiveAction('download');
+  };
+
+  const handleCloseSensitiveDialog = () => {
+    setSensitiveAction(null);
+  };
+
+  const handleConfirmSensitiveAction = async () => {
+    const action = sensitiveAction;
+    setSensitiveAction(null);
+
+    if (action === 'reveal') {
+      await performRevealToken();
+    } else if (action === 'copy') {
+      await performCopyToken();
+    } else if (action === 'download') {
+      await performDownloadKubeconfig();
+    }
   };
 
   const handleSyncGitlab = async () => {
@@ -324,10 +369,6 @@ const ProfilePage: React.FC = () => {
             fullWidth
             InputProps={{ readOnly: true }}
           />
-          <AlertMessage
-            severity="warning"
-            message={t('rbac_token_secret_note')}
-          />
           <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
             <Button
               variant="outlined"
@@ -373,6 +414,28 @@ const ProfilePage: React.FC = () => {
             <AlertMessage severity="success" message={syncSuccess} />
           )}
         </Box>
+
+        <Dialog
+          open={sensitiveAction !== null}
+          onClose={handleCloseSensitiveDialog}
+          maxWidth="sm"
+          fullWidth
+        >
+          <DialogTitle>{t('rbac_secret_confirm_title')}</DialogTitle>
+          <DialogContent>
+            <DialogContentText>{t('rbac_token_secret_note')}</DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseSensitiveDialog}>{t('cancel')}</Button>
+            <Button
+              variant="contained"
+              color="warning"
+              onClick={handleConfirmSensitiveAction}
+            >
+              {t('rbac_secret_confirm_action')}
+            </Button>
+          </DialogActions>
+        </Dialog>
       </CardContent>
     </Card>
   );
