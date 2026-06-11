@@ -256,6 +256,23 @@ interface StatusResponse {
   readonly: boolean;
 }
 
+interface AdminUserAccess {
+  id: string;
+  banned: boolean;
+  registered: boolean;
+  name?: string | null;
+  email?: string | null;
+  sudo: boolean;
+  group?: string | null;
+}
+
+interface AdminUsersResponse {
+  page: number;
+  page_size: number;
+  total: number;
+  users: AdminUserAccess[];
+}
+
 // Grouping API functions
 async function getUsers(
   page: number = 1,
@@ -403,6 +420,35 @@ async function impersonateUser(id: string): Promise<LoginResponse | string> {
   });
 }
 
+async function getAdminUsers(
+  page: number = 1,
+  pageSize: number = 20,
+): Promise<AdminUsersResponse> {
+  return authenticatedRequest<AdminUsersResponse>(
+    `/admin/users?page=${page}&page_size=${pageSize}`,
+    {
+      method: 'GET',
+    },
+  );
+}
+
+async function addAdminUser(
+  id: string,
+  password: string,
+): Promise<ApiResponse> {
+  return authenticatedRequest<ApiResponse>('/admin/users/add', {
+    method: 'POST',
+    body: JSON.stringify({ id, password }),
+  });
+}
+
+async function banAdminUser(id: string): Promise<ApiResponse> {
+  return authenticatedRequest<ApiResponse>('/admin/users/ban', {
+    method: 'POST',
+    body: JSON.stringify({ id }),
+  });
+}
+
 async function syncGitlab(): Promise<ApiResponse> {
   return authenticatedRequest<ApiResponse>('/sync', {
     method: 'GET',
@@ -427,6 +473,8 @@ export type {
   InvitationsResponse,
   GroupInvitationsResponse,
   StatusResponse,
+  AdminUserAccess,
+  AdminUsersResponse,
 };
 export {
   post,
@@ -448,5 +496,8 @@ export {
   getStatus,
   setReadonlyMode,
   impersonateUser,
+  getAdminUsers,
+  addAdminUser,
+  banAdminUser,
   syncGitlab,
 };
