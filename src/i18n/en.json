@@ -106,6 +106,8 @@
   "rbac_token_label": "API Token",
   "rbac_token_reveal": "Reveal token",
   "rbac_token_copy": "Copy token",
+  "rbac_kubeconfig_download": "Download kubectl config",
+  "rbac_token_secret_note": "Treat this token and downloaded kubectl config as CONFIDENTIAL, like a password. Never share them or let others know them.",
   "rbac_token_copied": "Token copied.",
   "rbac_token_loading": "Fetching token...",
   "rbac_token_hidden": "Hidden",

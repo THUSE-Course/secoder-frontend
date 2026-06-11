@@ -106,6 +106,8 @@
   "rbac_token_label": "API 令牌",
   "rbac_token_reveal": "显示令牌",
   "rbac_token_copy": "复制令牌",
+  "rbac_kubeconfig_download": "下载 kubectl 配置",
+  "rbac_token_secret_note": "请将此令牌和下载的 kubectl 配置视为机密信息, 像密码一样保管. 切勿分享或让他人知晓.",
   "rbac_token_copied": "令牌已复制.",
   "rbac_token_loading": "正在获取令牌...",
   "rbac_token_hidden": "已隐藏",

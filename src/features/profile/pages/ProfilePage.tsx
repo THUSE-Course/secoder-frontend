@@ -7,6 +7,52 @@ import { editUserInfo, getRbacToken, syncGitlab } from '../../../utils';
 import PageHeader from '../../../components/common/PageHeader';
 import AlertMessage from '../../../components/common/AlertMessage';
 
+const kubeApiServerFromLocation = (): string => {
+  const { protocol, hostname } = window.location;
+  return `${protocol}//kube.${hostname}`;
+};
+
+const sanitizeK8sName = (value: string): string => {
+  const sanitized = value
+    .toLowerCase()
+    .replace(/[^a-z0-9-]/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 63)
+    .replace(/-+$/g, '');
+
+  return sanitized || 'default';
+};
+
+const buildKubeconfig = (token: string, userId: string): string => {
+  const namespace = sanitizeK8sName(`u-${userId}`);
+  const clusterName = 'secoder-t';
+  const userName = `secoder-${namespace}`;
+  const contextName = `${userName}@${clusterName}`;
+
+  return `apiVersion: v1
+kind: Config
+
+clusters:
+  - name: ${clusterName}
+    cluster:
+      server: ${kubeApiServerFromLocation()}
+
+users:
+  - name: ${userName}
+    user:
+      token: ${token}
+
+contexts:
+  - name: ${contextName}
+    context:
+      cluster: ${clusterName}
+      user: ${userName}
+      namespace: ${namespace}
+
+current-context: ${contextName}
+`;
+};
+
 const ProfilePage: React.FC = () => {
   const { t } = useTranslation();
   const { user, updateUser, logout } = useAuth();
@@ -110,6 +156,26 @@ const ProfilePage: React.FC = () => {
     setRbacVisible(true);
   };
 
+  const ensureRbacToken = async (): Promise<string | null> => {
+    if (rbacToken) return rbacToken;
+
+    setRbacLoading(true);
+    try {
+      const token = await getRbacToken();
+      const tokenText = typeof token === 'string' ? token : String(token);
+      setRbacToken(tokenText);
+      return tokenText;
+    } catch (err: unknown) {
+      const fallbackMessage = 'Unable to fetch token';
+      const message =
+        err instanceof Error && err.message ? err.message : fallbackMessage;
+      setRbacError(message);
+      return null;
+    } finally {
+      setRbacLoading(false);
+    }
+  };
+
   const handleCopyToken = async () => {
     if (!rbacToken) return;
     try {
@@ -121,6 +187,29 @@ const ProfilePage: React.FC = () => {
         err instanceof Error && err.message ? err.message : fallbackMessage;
       setRbacError(message);
     }
+  };
+
+  const handleDownloadKubeconfig = async () => {
+    if (!user) return;
+
+    setRbacError(null);
+    setRbacCopied(false);
+    const token = await ensureRbacToken();
+    if (!token) return;
+
+    const kubeconfig = buildKubeconfig(token, user.id);
+    const blob = new Blob([kubeconfig], {
+      type: 'application/yaml;charset=utf-8',
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+
+    link.href = url;
+    link.download = `${sanitizeK8sName(`u-${user.id}`)}.kubeconfig`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
   };
 
   const handleSyncGitlab = async () => {
@@ -235,6 +324,10 @@ const ProfilePage: React.FC = () => {
             fullWidth
             InputProps={{ readOnly: true }}
           />
+          <AlertMessage
+            severity="warning"
+            message={t('rbac_token_secret_note')}
+          />
           <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
             <Button
               variant="outlined"
@@ -251,6 +344,14 @@ const ProfilePage: React.FC = () => {
               disabled={!rbacToken}
             >
               {t('rbac_token_copy')}
+            </Button>
+            <Button
+              variant="outlined"
+              color="inherit"
+              onClick={handleDownloadKubeconfig}
+              disabled={rbacLoading}
+            >
+              {t('rbac_kubeconfig_download')}
             </Button>
           </Box>
           {rbacError && <AlertMessage severity="error" message={rbacError} />}
