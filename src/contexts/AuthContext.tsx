@@ -1,5 +1,17 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { apiEndpoint, parseJwtClaims } from '../utils';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useState,
+  useEffect,
+} from 'react';
+import {
+  apiEndpoint,
+  clearStoredAuthToken,
+  getStoredAuthToken,
+  parseJwtClaims,
+  storeAuthToken,
+} from '../utils';
 
 interface User {
   id: string;
@@ -12,10 +24,15 @@ interface AuthContextType {
   user: User | null;
   token: string | null;
   loading: boolean;
-  login: (token: string, userOverride?: User) => Promise<void>;
+  login: (token: string, options?: LoginOptions) => Promise<void>;
   logout: () => void;
   checkAuth: () => Promise<boolean>;
   updateUser: (updates: Partial<User>) => void;
+}
+
+interface LoginOptions {
+  remember?: boolean;
+  userOverride?: User;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -37,100 +54,102 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Load token from localStorage on mount
+  const clearAuthState = useCallback(() => {
+    clearStoredAuthToken();
+    setToken(null);
+    setUser(null);
+  }, []);
+
+  const fetchUserInfo = useCallback(
+    async (authToken: string): Promise<User | null> => {
+      try {
+        const claims = parseJwtClaims(authToken);
+        const isAdmin = claims?.sudo === true;
+        const response = await fetch(`${apiEndpoint}/user`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          // Check if response has JSON content
+          const contentType = response.headers.get('content-type');
+
+          if (contentType && contentType.includes('application/json')) {
+            const text = await response.text();
+            if (text.trim()) {
+              try {
+                const parsed = JSON.parse(text) as User;
+                if (!parsed?.id) {
+                  throw new Error('Invalid user payload');
+                }
+                const enrichedUser: User = { ...parsed, isAdmin };
+                setUser(enrichedUser);
+                return enrichedUser;
+              } catch (parseError) {
+                console.error(
+                  'JSON parse error in fetchUserInfo:',
+                  parseError,
+                  'Response text:',
+                  text,
+                );
+                // Token might be invalid
+                clearAuthState();
+                return null;
+              }
+            } else {
+              console.error('Empty response from user endpoint');
+              clearAuthState();
+              return null;
+            }
+          } else {
+            console.error('Non-JSON response from user endpoint');
+            clearAuthState();
+            return null;
+          }
+        } else {
+          // Token is invalid, remove it
+          console.warn(
+            'User endpoint returned non-OK status:',
+            response.status,
+          );
+          clearAuthState();
+          return null;
+        }
+      } catch (error) {
+        console.error('Failed to fetch user info:', error);
+        clearAuthState();
+        return null;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [clearAuthState],
+  );
+
+  // Load token from the current browser session first, then remembered login.
   useEffect(() => {
-    const savedToken = localStorage.getItem('auth_token');
+    const savedToken = getStoredAuthToken();
     if (savedToken) {
       setToken(savedToken);
       fetchUserInfo(savedToken);
     } else {
       setLoading(false);
     }
-  }, []);
-
-  const fetchUserInfo = async (authToken: string): Promise<User | null> => {
-    try {
-      const claims = parseJwtClaims(authToken);
-      const isAdmin = claims?.sudo === true;
-      const response = await fetch(`${apiEndpoint}/user`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        // Check if response has JSON content
-        const contentType = response.headers.get('content-type');
-
-        if (contentType && contentType.includes('application/json')) {
-          const text = await response.text();
-          if (text.trim()) {
-            try {
-              const parsed = JSON.parse(text) as User;
-              if (!parsed?.id) {
-                throw new Error('Invalid user payload');
-              }
-              const enrichedUser: User = { ...parsed, isAdmin };
-              setUser(enrichedUser);
-              return enrichedUser;
-            } catch (parseError) {
-              console.error(
-                'JSON parse error in fetchUserInfo:',
-                parseError,
-                'Response text:',
-                text,
-              );
-              // Token might be invalid
-              localStorage.removeItem('auth_token');
-              setToken(null);
-              setUser(null);
-              return null;
-            }
-          } else {
-            console.error('Empty response from user endpoint');
-            localStorage.removeItem('auth_token');
-            setToken(null);
-            setUser(null);
-            return null;
-          }
-        } else {
-          console.error('Non-JSON response from user endpoint');
-          localStorage.removeItem('auth_token');
-          setToken(null);
-          setUser(null);
-          return null;
-        }
-      } else {
-        // Token is invalid, remove it
-        console.warn('User endpoint returned non-OK status:', response.status);
-        localStorage.removeItem('auth_token');
-        setToken(null);
-        setUser(null);
-        return null;
-      }
-    } catch (error) {
-      console.error('Failed to fetch user info:', error);
-      localStorage.removeItem('auth_token');
-      setToken(null);
-      setUser(null);
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [fetchUserInfo]);
 
   const login = async (
     newToken: string,
-    userOverride?: User,
+    options: LoginOptions = {},
   ): Promise<void> => {
     // Clear any in-memory user data before starting a new session.
     setUser(null);
-    localStorage.setItem('auth_token', newToken);
+    storeAuthToken(newToken, options.remember === true);
     setToken(newToken);
-    if (userOverride) {
-      setUser(userOverride);
+    if (options.userOverride) {
+      setUser(options.userOverride);
       setLoading(false);
       return;
     }
@@ -139,9 +158,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logout = () => {
-    localStorage.removeItem('auth_token');
-    setToken(null);
-    setUser(null);
+    clearAuthState();
   };
 
   const checkAuth = async (): Promise<boolean> => {

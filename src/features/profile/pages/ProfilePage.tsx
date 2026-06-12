@@ -16,6 +16,7 @@ import { useAuth } from '../../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import {
   editUserInfo,
+  clearStoredAuthToken,
   getRbacToken,
   rotateRbacToken,
   syncGitlab,
@@ -143,7 +144,7 @@ const ProfilePage: React.FC = () => {
       setEditConfirmPassword('');
       setEditSuccess(t('profile_update_success'));
       window.setTimeout(() => {
-        localStorage.clear();
+        clearStoredAuthToken();
         logout();
         navigate('/login', { replace: true });
       }, 2000);

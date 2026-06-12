@@ -38,6 +38,27 @@ function validatePassword(password: string): {
 type ApiResponse = Record<string, unknown>;
 
 export const apiEndpoint = import.meta.env.VITE_API_ENDPOINT;
+const AUTH_TOKEN_KEY = 'auth_token';
+
+export const getStoredAuthToken = (): string | null =>
+  sessionStorage.getItem(AUTH_TOKEN_KEY) ||
+  localStorage.getItem(AUTH_TOKEN_KEY);
+
+export const storeAuthToken = (token: string, remember: boolean): void => {
+  if (remember) {
+    sessionStorage.removeItem(AUTH_TOKEN_KEY);
+    localStorage.setItem(AUTH_TOKEN_KEY, token);
+    return;
+  }
+
+  localStorage.removeItem(AUTH_TOKEN_KEY);
+  sessionStorage.setItem(AUTH_TOKEN_KEY, token);
+};
+
+export const clearStoredAuthToken = (): void => {
+  sessionStorage.removeItem(AUTH_TOKEN_KEY);
+  localStorage.removeItem(AUTH_TOKEN_KEY);
+};
 
 const decodeBase64Url = (value: string): string => {
   const normalized = value.replace(/-/g, '+').replace(/_/g, '/');
@@ -136,7 +157,7 @@ async function authenticatedRequest<T = ApiResponse>(
   options: RequestInit = {},
   token?: string,
 ): Promise<T> {
-  const authToken = token || localStorage.getItem('auth_token');
+  const authToken = token || getStoredAuthToken();
 
   const headers = {
     'Content-Type': 'application/json',

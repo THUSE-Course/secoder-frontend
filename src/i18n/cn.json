@@ -88,6 +88,7 @@
   "delete_group_warning": "删除小组会移除所有成员并清除待处理邀请.",
   "delete_group_confirm": "确定要删除该小组吗?",
   "group_deleted_success": "小组已删除.",
+  "remember_login": "记住登录",
   "switch_to_dark_mode": "切换到暗色模式",
   "switch_to_light_mode": "切换到亮色模式",
   "gitlab_consent_title": "登录到 GitLab",

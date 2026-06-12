@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Box, TextField, Button, Typography, Link } from '@mui/material';
+import {
+  Box,
+  TextField,
+  Button,
+  Typography,
+  Link,
+  FormControlLabel,
+  Checkbox,
+} from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { post, type LoginResponse } from './utils';
@@ -22,6 +30,7 @@ const Login: React.FC<LoginProps> = ({
   const location = useLocation();
   const [studentId, setStudentId] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberLogin, setRememberLogin] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -60,7 +69,7 @@ const Login: React.FC<LoginProps> = ({
       // Store the JWT token and update auth state
       const authToken = typeof result === 'string' ? result : result.token;
       if (authToken) {
-        await login(authToken);
+        await login(authToken, { remember: rememberLogin });
       } else {
         throw new Error('No token received');
       }
@@ -134,6 +143,17 @@ const Login: React.FC<LoginProps> = ({
           onChange={(e) => setPassword(e.target.value)}
           required
           fullWidth
+        />
+
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={rememberLogin}
+              onChange={(event) => setRememberLogin(event.target.checked)}
+            />
+          }
+          label={t('remember_login')}
+          sx={{ alignSelf: 'flex-start' }}
         />
 
         {error && (
