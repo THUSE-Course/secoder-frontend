@@ -400,6 +400,12 @@ async function getRbacToken(): Promise<string> {
   });
 }
 
+async function rotateRbacToken(): Promise<string> {
+  return authenticatedRequest<string>('/rbac/rotate', {
+    method: 'POST',
+  });
+}
+
 async function getStatus(): Promise<StatusResponse> {
   return authenticatedRequest<StatusResponse>('/status', {
     method: 'GET',
@@ -500,6 +506,7 @@ export {
   getGroupInvitations,
   editUserInfo,
   getRbacToken,
+  rotateRbacToken,
   getStatus,
   setReadonlyMode,
   impersonateUser,

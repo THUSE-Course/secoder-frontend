@@ -14,7 +14,12 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { editUserInfo, getRbacToken, syncGitlab } from '../../../utils';
+import {
+  editUserInfo,
+  getRbacToken,
+  rotateRbacToken,
+  syncGitlab,
+} from '../../../utils';
 import PageHeader from '../../../components/common/PageHeader';
 import AlertMessage from '../../../components/common/AlertMessage';
 
@@ -64,7 +69,7 @@ current-context: ${contextName}
 `;
 };
 
-type SensitiveRbacAction = 'reveal' | 'copy' | 'download';
+type SensitiveRbacAction = 'reveal' | 'copy' | 'download' | 'rotate';
 
 const ProfilePage: React.FC = () => {
   const { t } = useTranslation();
@@ -81,6 +86,7 @@ const ProfilePage: React.FC = () => {
   const [rbacVisible, setRbacVisible] = useState(false);
   const [rbacLoading, setRbacLoading] = useState(false);
   const [rbacError, setRbacError] = useState<string | null>(null);
+  const [rbacSuccess, setRbacSuccess] = useState<string | null>(null);
   const [rbacCopied, setRbacCopied] = useState(false);
   const [sensitiveAction, setSensitiveAction] =
     useState<SensitiveRbacAction | null>(null);
@@ -153,6 +159,7 @@ const ProfilePage: React.FC = () => {
 
   const performRevealToken = async () => {
     setRbacError(null);
+    setRbacSuccess(null);
     setRbacCopied(false);
     if (!rbacToken) {
       setRbacLoading(true);
@@ -175,6 +182,7 @@ const ProfilePage: React.FC = () => {
     if (rbacToken) return rbacToken;
 
     setRbacLoading(true);
+    setRbacSuccess(null);
     try {
       const token = await getRbacToken();
       const tokenText = typeof token === 'string' ? token : String(token);
@@ -208,6 +216,7 @@ const ProfilePage: React.FC = () => {
     if (!user) return;
 
     setRbacError(null);
+    setRbacSuccess(null);
     setRbacCopied(false);
     const token = await ensureRbacToken();
     if (!token) return;
@@ -227,6 +236,27 @@ const ProfilePage: React.FC = () => {
     URL.revokeObjectURL(url);
   };
 
+  const performRotateToken = async () => {
+    setRbacLoading(true);
+    setRbacError(null);
+    setRbacSuccess(null);
+    setRbacCopied(false);
+    try {
+      const token = await rotateRbacToken();
+      setRbacToken(typeof token === 'string' ? token : String(token));
+      setRbacVisible(true);
+      setRbacCopied(false);
+      setRbacSuccess(t('rbac_token_rotated'));
+    } catch (err: unknown) {
+      const fallbackMessage = 'Unable to rotate token';
+      const message =
+        err instanceof Error && err.message ? err.message : fallbackMessage;
+      setRbacError(message);
+    } finally {
+      setRbacLoading(false);
+    }
+  };
+
   const handleRevealToken = () => {
     setSensitiveAction('reveal');
   };
@@ -238,6 +268,10 @@ const ProfilePage: React.FC = () => {
 
   const handleDownloadKubeconfig = () => {
     setSensitiveAction('download');
+  };
+
+  const handleRotateToken = () => {
+    setSensitiveAction('rotate');
   };
 
   const handleCloseSensitiveDialog = () => {
@@ -254,6 +288,8 @@ const ProfilePage: React.FC = () => {
       await performCopyToken();
     } else if (action === 'download') {
       await performDownloadKubeconfig();
+    } else if (action === 'rotate') {
+      await performRotateToken();
     }
   };
 
@@ -394,8 +430,19 @@ const ProfilePage: React.FC = () => {
             >
               {t('rbac_kubeconfig_download')}
             </Button>
+            <Button
+              variant="outlined"
+              color="warning"
+              onClick={handleRotateToken}
+              disabled={rbacLoading}
+            >
+              {t('rbac_token_rotate')}
+            </Button>
           </Box>
           {rbacError && <AlertMessage severity="error" message={rbacError} />}
+          {rbacSuccess && (
+            <AlertMessage severity="success" message={rbacSuccess} />
+          )}
           {rbacCopied && (
             <AlertMessage severity="success" message={t('rbac_token_copied')} />
           )}
@@ -423,7 +470,11 @@ const ProfilePage: React.FC = () => {
         >
           <DialogTitle>{t('rbac_secret_confirm_title')}</DialogTitle>
           <DialogContent>
-            <DialogContentText>{t('rbac_token_secret_note')}</DialogContentText>
+            <DialogContentText>
+              {sensitiveAction === 'rotate'
+                ? t('rbac_token_rotate_confirm')
+                : t('rbac_token_secret_note')}
+            </DialogContentText>
           </DialogContent>
           <DialogActions>
             <Button onClick={handleCloseSensitiveDialog}>{t('cancel')}</Button>
