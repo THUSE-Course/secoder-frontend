@@ -30,6 +30,7 @@ import {
   Block as BlockIcon,
   LockOpen as LockOpenIcon,
   Refresh as RefreshIcon,
+  UploadFile as UploadFileIcon,
 } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import {
@@ -47,6 +48,46 @@ import { useAuth } from '../../../contexts/AuthContext';
 import AlertMessage from '../../../components/common/AlertMessage';
 
 const ADMIN_USERS_PAGE_SIZE = 10;
+
+type BulkUserEntry = {
+  id: string;
+  password: string;
+};
+
+function parseBulkUsers(text: string): {
+  entries: BulkUserEntry[];
+  invalidUsers: string[];
+} {
+  const entries: BulkUserEntry[] = [];
+  const invalidUsers: string[] = [];
+
+  text.split(/\r?\n/).forEach((rawLine, index) => {
+    const line = rawLine.trim();
+    if (!line) return;
+
+    const separatorIndex = line.indexOf(':');
+    if (separatorIndex === -1) {
+      invalidUsers.push(`line ${index + 1}`);
+      return;
+    }
+
+    const id = line.slice(0, separatorIndex).trim();
+    const password = line.slice(separatorIndex + 1).trim();
+    if (!id || !password) {
+      invalidUsers.push(id || `line ${index + 1}`);
+      return;
+    }
+
+    entries.push({ id, password });
+  });
+  return { entries, invalidUsers };
+}
+
+function formatBulkAddResult(successCount: number, failedUsers: string[]) {
+  return `success: ${successCount}\nfailed: ${failedUsers.length} (${failedUsers.join(
+    ', ',
+  )})`;
+}
 
 const AdminPage: React.FC = () => {
   const { t } = useTranslation();
@@ -195,6 +236,48 @@ const AdminPage: React.FC = () => {
       await loadAdminUsers(1);
     } catch (err: unknown) {
       const fallbackMessage = 'Unable to update user access';
+      const message =
+        err instanceof Error && err.message ? err.message : fallbackMessage;
+      setAdminUsersError(message);
+    } finally {
+      setAdminUsersSaving(false);
+    }
+  };
+
+  const handleBulkAddUsers = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+
+    setAdminUsersSaving(true);
+    setAdminUsersError(null);
+    setAdminUsersSuccess(null);
+    try {
+      const text = await file.text();
+      const { entries, invalidUsers } = parseBulkUsers(text);
+      if (entries.length === 0 && invalidUsers.length === 0) {
+        setAdminUsersError(t('admin_user_bulk_empty'));
+        return;
+      }
+
+      let successCount = 0;
+      const failedUsers = [...invalidUsers];
+      for (const entry of entries) {
+        try {
+          await addAdminUser(entry.id, entry.password);
+          successCount += 1;
+        } catch {
+          failedUsers.push(entry.id);
+        }
+      }
+
+      setAdminUsersSuccess(formatBulkAddResult(successCount, failedUsers));
+      setAdminUsersPage(1);
+      await loadAdminUsers(1);
+    } catch (err: unknown) {
+      const fallbackMessage = 'Unable to bulk add users';
       const message =
         err instanceof Error && err.message ? err.message : fallbackMessage;
       setAdminUsersError(message);
@@ -385,6 +468,30 @@ const AdminPage: React.FC = () => {
                 >
                   {adminUsersSaving ? t('saving') : t('admin_user_add_action')}
                 </Button>
+                <Tooltip
+                  title={
+                    <Box sx={{ whiteSpace: 'pre-line' }}>
+                      {t('admin_user_bulk_add_tutorial')}
+                    </Box>
+                  }
+                >
+                  <span>
+                    <Button
+                      component="label"
+                      variant="outlined"
+                      disabled={readonly || adminUsersSaving}
+                      startIcon={<UploadFileIcon />}
+                    >
+                      {t('admin_user_bulk_add_action')}
+                      <input
+                        hidden
+                        type="file"
+                        accept=".txt,text/plain"
+                        onChange={handleBulkAddUsers}
+                      />
+                    </Button>
+                  </span>
+                </Tooltip>
               </Box>
             </Box>
 
@@ -392,7 +499,11 @@ const AdminPage: React.FC = () => {
               <AlertMessage severity="error" message={adminUsersError} />
             )}
             {adminUsersSuccess && (
-              <AlertMessage severity="success" message={adminUsersSuccess} />
+              <AlertMessage
+                severity="success"
+                message={adminUsersSuccess}
+                sx={{ whiteSpace: 'pre-line' }}
+              />
             )}
 
             {adminUsersLoading ? (
