@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Box,
+  Alert,
   Button,
   Card,
   CardContent,
@@ -501,11 +502,9 @@ const AdminPage: React.FC = () => {
               <AlertMessage severity="error" message={adminUsersError} />
             )}
             {adminUsersSuccess && (
-              <AlertMessage
-                severity="success"
-                message={adminUsersSuccess}
-                sx={{ whiteSpace: 'pre-line' }}
-              />
+              <Alert severity="success" sx={{ whiteSpace: 'pre-line' }}>
+                {adminUsersSuccess}
+              </Alert>
             )}
 
             {adminUsersLoading ? (
