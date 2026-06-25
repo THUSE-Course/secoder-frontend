@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import AlertMessage from '../../../components/common/AlertMessage';
+import { getStoredAuthToken } from '../../../utils';
 
 const REMEMBER_KEY = 'gitlab_jwt_consent';
 const FOUR_WEEKS_MS = 28 * 24 * 60 * 60 * 1000;
@@ -48,21 +49,22 @@ const JwtConsentPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user, token, loading } = useAuth();
+  const authToken = token || getStoredAuthToken();
   const [redirecting, setRedirecting] = useState(false);
   const [rememberChoice, setRememberChoice] = useState(false);
 
   const gitlabUrl = import.meta.env.VITE_GITLAB_URL as string | undefined;
 
   const callbackUrl = useMemo(() => {
-    if (!gitlabUrl || !token) return null;
+    if (!gitlabUrl || !authToken) return null;
     try {
       const url = new URL('/users/auth/jwt/callback', gitlabUrl);
-      url.searchParams.set('jwt', token);
+      url.searchParams.set('jwt', authToken);
       return url.toString();
     } catch {
       return null;
     }
-  }, [gitlabUrl, token]);
+  }, [authToken, gitlabUrl]);
 
   const handleApprove = () => {
     if (!callbackUrl) return;
@@ -76,13 +78,13 @@ const JwtConsentPage: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!loading && !token) {
+    if (!loading && !authToken) {
       navigate('/login?next=/jwt', { replace: true });
     }
-  }, [loading, navigate, token]);
+  }, [authToken, loading, navigate]);
 
   useEffect(() => {
-    if (!callbackUrl || !token) return;
+    if (!callbackUrl || !authToken) return;
     const record = readRememberRecord();
     if (!record) return;
     if (record.expiresAt < Date.now()) {
@@ -90,9 +92,9 @@ const JwtConsentPage: React.FC = () => {
       return;
     }
     window.location.assign(callbackUrl);
-  }, [callbackUrl, token]);
+  }, [authToken, callbackUrl]);
 
-  if (loading || !token) {
+  if (loading || !authToken) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
         <CircularProgress />
@@ -100,7 +102,7 @@ const JwtConsentPage: React.FC = () => {
     );
   }
 
-  const isSignedIn = Boolean(token);
+  const isSignedIn = Boolean(authToken);
 
   return (
     <Box
