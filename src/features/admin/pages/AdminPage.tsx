@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Box,
   Button,
@@ -114,6 +114,7 @@ const AdminPage: React.FC = () => {
   );
   const [newUserId, setNewUserId] = useState('');
   const [newUserPassword, setNewUserPassword] = useState('');
+  const bulkAddInputRef = useRef<HTMLInputElement | null>(null);
   const [accessDialogOpen, setAccessDialogOpen] = useState(false);
   const [accessTarget, setAccessTarget] = useState<AdminUserAccess | null>(
     null,
@@ -469,29 +470,30 @@ const AdminPage: React.FC = () => {
                   {adminUsersSaving ? t('saving') : t('admin_user_add_action')}
                 </Button>
                 <Tooltip
+                  describeChild
                   title={
                     <Box sx={{ whiteSpace: 'pre-line' }}>
                       {t('admin_user_bulk_add_tutorial')}
                     </Box>
                   }
                 >
-                  <span>
-                    <Button
-                      component="label"
-                      variant="outlined"
-                      disabled={readonly || adminUsersSaving}
-                      startIcon={<UploadFileIcon />}
-                    >
-                      {t('admin_user_bulk_add_action')}
-                      <input
-                        hidden
-                        type="file"
-                        accept=".txt,text/plain"
-                        onChange={handleBulkAddUsers}
-                      />
-                    </Button>
-                  </span>
+                  <Button
+                    type="button"
+                    variant="contained"
+                    disabled={readonly || adminUsersSaving}
+                    startIcon={<UploadFileIcon />}
+                    onClick={() => bulkAddInputRef.current?.click()}
+                  >
+                    {t('admin_user_bulk_add_action')}
+                  </Button>
                 </Tooltip>
+                <input
+                  ref={bulkAddInputRef}
+                  hidden
+                  type="file"
+                  accept=".txt,text/plain"
+                  onChange={handleBulkAddUsers}
+                />
               </Box>
             </Box>
 
