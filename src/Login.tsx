@@ -45,6 +45,10 @@ const Login: React.FC<LoginProps> = ({
 
   useEffect(() => {
     if (user) {
+      if (nextPath === '/jwt') {
+        navigate(nextPath, { replace: true });
+        return;
+      }
       if (user.isAdmin) {
         navigate('/admin', { replace: true });
         return;

@@ -39,24 +39,41 @@ type ApiResponse = Record<string, unknown>;
 
 export const apiEndpoint = import.meta.env.VITE_API_ENDPOINT;
 const AUTH_TOKEN_KEY = 'auth_token';
+const AUTH_TOKEN_COOKIE_KEY = 'secoder_auth_token';
+
+const getCookie = (name: string): string | null => {
+  const prefix = `${name}=`;
+  const cookie = document.cookie
+    .split('; ')
+    .find((entry) => entry.startsWith(prefix));
+  if (!cookie) return null;
+  return decodeURIComponent(cookie.slice(prefix.length));
+};
+
+const setSessionCookie = (name: string, value: string): void => {
+  document.cookie = `${name}=${encodeURIComponent(value)}; Path=/; SameSite=Strict; Secure`;
+};
+
+const clearCookie = (name: string): void => {
+  document.cookie = `${name}=; Path=/; SameSite=Strict; Secure; Max-Age=0`;
+};
 
 export const getStoredAuthToken = (): string | null =>
-  sessionStorage.getItem(AUTH_TOKEN_KEY) ||
-  localStorage.getItem(AUTH_TOKEN_KEY);
+  getCookie(AUTH_TOKEN_COOKIE_KEY) || localStorage.getItem(AUTH_TOKEN_KEY);
 
 export const storeAuthToken = (token: string, remember: boolean): void => {
   if (remember) {
-    sessionStorage.removeItem(AUTH_TOKEN_KEY);
+    clearCookie(AUTH_TOKEN_COOKIE_KEY);
     localStorage.setItem(AUTH_TOKEN_KEY, token);
     return;
   }
 
   localStorage.removeItem(AUTH_TOKEN_KEY);
-  sessionStorage.setItem(AUTH_TOKEN_KEY, token);
+  setSessionCookie(AUTH_TOKEN_COOKIE_KEY, token);
 };
 
 export const clearStoredAuthToken = (): void => {
-  sessionStorage.removeItem(AUTH_TOKEN_KEY);
+  clearCookie(AUTH_TOKEN_COOKIE_KEY);
   localStorage.removeItem(AUTH_TOKEN_KEY);
 };
 

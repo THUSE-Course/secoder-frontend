@@ -129,7 +129,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     [clearAuthState],
   );
 
-  // Load token from the current browser session first, then remembered login.
+  // Load token from the browser-session cookie first, then remembered login.
   useEffect(() => {
     const savedToken = getStoredAuthToken();
     if (savedToken) {
