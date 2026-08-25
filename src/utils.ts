@@ -104,7 +104,20 @@ const extractErrorMessage = (data: unknown): string | undefined => {
 
   const record = data as Record<string, unknown>;
   const msg = record.msg;
-  return typeof msg === 'string' ? msg : undefined;
+  if (typeof msg === 'string') return msg;
+
+  const errors = record.errors;
+  if (Array.isArray(errors)) {
+    const messages = errors
+      .map((error) => {
+        if (!error || typeof error !== 'object') return undefined;
+        const message = (error as Record<string, unknown>).message;
+        return typeof message === 'string' ? message : undefined;
+      })
+      .filter((message): message is string => Boolean(message));
+    if (messages.length > 0) return messages.join('\n');
+  }
+  return undefined;
 };
 
 const safeJsonParse = (text: string): unknown | undefined => {
@@ -311,6 +324,70 @@ interface AdminUsersResponse {
   users: AdminUserAccess[];
 }
 
+interface RosterValidationError {
+  row?: number | null;
+  column?: string | null;
+  message: string;
+}
+
+interface CreatedGroupChange {
+  code_name: string;
+  display_name: string;
+  leader: string;
+}
+
+interface RenamedGroupChange {
+  code_name: string;
+  from: string;
+  to: string;
+}
+
+interface LeaderChange {
+  code_name: string;
+  from: string;
+  to: string;
+}
+
+interface StudentGroupChange {
+  id: string;
+  from_group?: string | null;
+  to_group?: string | null;
+}
+
+interface RosterChanges {
+  created_groups: CreatedGroupChange[];
+  renamed_groups: RenamedGroupChange[];
+  leader_changes: LeaderChange[];
+  student_changes: StudentGroupChange[];
+}
+
+interface RosterSummary {
+  groups_created: number;
+  groups_renamed: number;
+  leaders_changed: number;
+  students_changed: number;
+  students_ungrouped: number;
+}
+
+interface GroupRosterPreview {
+  valid: boolean;
+  errors: RosterValidationError[];
+  preview_token?: string | null;
+  summary?: RosterSummary | null;
+  changes?: RosterChanges | null;
+}
+
+interface ReconciliationWarning {
+  group_code_name: string;
+  message: string;
+}
+
+interface ApplyGroupRosterResponse {
+  applied: boolean;
+  summary: RosterSummary;
+  reconciliation_warnings: ReconciliationWarning[];
+}
+
 // Grouping API functions
 async function getUsers(
   page: number = 1,
@@ -500,6 +577,29 @@ async function unbanAdminUser(id: string): Promise<ApiResponse> {
   });
 }
 
+async function previewGroupRoster(csv: string): Promise<GroupRosterPreview> {
+  return authenticatedRequest<GroupRosterPreview>(
+    '/admin/group-roster/preview',
+    {
+      method: 'POST',
+      body: JSON.stringify({ csv }),
+    },
+  );
+}
+
+async function applyGroupRoster(
+  csv: string,
+  previewToken: string,
+): Promise<ApplyGroupRosterResponse> {
+  return authenticatedRequest<ApplyGroupRosterResponse>(
+    '/admin/group-roster/apply',
+    {
+      method: 'POST',
+      body: JSON.stringify({ csv, preview_token: previewToken }),
+    },
+  );
+}
+
 async function syncGitlab(): Promise<ApiResponse> {
   return authenticatedRequest<ApiResponse>('/sync', {
     method: 'GET',
@@ -526,6 +626,16 @@ export type {
   StatusResponse,
   AdminUserAccess,
   AdminUsersResponse,
+  RosterValidationError,
+  CreatedGroupChange,
+  RenamedGroupChange,
+  LeaderChange,
+  StudentGroupChange,
+  RosterChanges,
+  RosterSummary,
+  GroupRosterPreview,
+  ReconciliationWarning,
+  ApplyGroupRosterResponse,
 };
 export {
   post,
@@ -552,5 +662,7 @@ export {
   addAdminUser,
   banAdminUser,
   unbanAdminUser,
+  previewGroupRoster,
+  applyGroupRoster,
   syncGitlab,
 };

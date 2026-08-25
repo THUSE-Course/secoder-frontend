@@ -40,9 +40,13 @@ import {
   getAdminUsers,
   getStatus,
   impersonateUser,
+  previewGroupRoster,
+  applyGroupRoster,
   setReadonlyMode,
   unbanAdminUser,
   type AdminUserAccess,
+  type ApplyGroupRosterResponse,
+  type GroupRosterPreview,
   type StatusResponse,
 } from '../../../utils';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -116,6 +120,18 @@ const AdminPage: React.FC = () => {
   const [newUserId, setNewUserId] = useState('');
   const [newUserPassword, setNewUserPassword] = useState('');
   const bulkAddInputRef = useRef<HTMLInputElement | null>(null);
+  const rosterInputRef = useRef<HTMLInputElement | null>(null);
+  const [rosterFileName, setRosterFileName] = useState('');
+  const [rosterCsv, setRosterCsv] = useState('');
+  const [rosterPreview, setRosterPreview] = useState<GroupRosterPreview | null>(
+    null,
+  );
+  const [rosterLoading, setRosterLoading] = useState(false);
+  const [rosterApplying, setRosterApplying] = useState(false);
+  const [rosterError, setRosterError] = useState<string | null>(null);
+  const [rosterResult, setRosterResult] =
+    useState<ApplyGroupRosterResponse | null>(null);
+  const [rosterConfirmOpen, setRosterConfirmOpen] = useState(false);
   const [accessDialogOpen, setAccessDialogOpen] = useState(false);
   const [accessTarget, setAccessTarget] = useState<AdminUserAccess | null>(
     null,
@@ -314,6 +330,59 @@ const AdminPage: React.FC = () => {
     }
   };
 
+  const handleRosterUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+
+    setRosterLoading(true);
+    setRosterError(null);
+    setRosterResult(null);
+    setRosterPreview(null);
+    setRosterFileName(file.name);
+    try {
+      const csv = await file.text();
+      setRosterCsv(csv);
+      const preview = await previewGroupRoster(csv);
+      setRosterPreview(preview);
+    } catch (err: unknown) {
+      const fallbackMessage = 'Unable to preview group roster';
+      const message =
+        err instanceof Error && err.message ? err.message : fallbackMessage;
+      setRosterError(message);
+      setRosterCsv('');
+    } finally {
+      setRosterLoading(false);
+    }
+  };
+
+  const handleApplyRoster = async () => {
+    const previewToken = rosterPreview?.preview_token;
+    if (!rosterCsv || !previewToken) return;
+
+    setRosterApplying(true);
+    setRosterError(null);
+    setRosterResult(null);
+    try {
+      const result = await applyGroupRoster(rosterCsv, previewToken);
+      setRosterResult(result);
+      setRosterConfirmOpen(false);
+      await loadAdminUsers();
+      const refreshedPreview = await previewGroupRoster(rosterCsv);
+      setRosterPreview(refreshedPreview);
+    } catch (err: unknown) {
+      const fallbackMessage = 'Unable to apply group roster';
+      const message =
+        err instanceof Error && err.message ? err.message : fallbackMessage;
+      setRosterError(message);
+      setRosterConfirmOpen(false);
+    } finally {
+      setRosterApplying(false);
+    }
+  };
+
   const handleAdminUsersPageChange = (
     _event: React.ChangeEvent<unknown>,
     value: number,
@@ -371,6 +440,246 @@ const AdminPage: React.FC = () => {
 
             {error && <AlertMessage severity="error" message={error} />}
             {success && <AlertMessage severity="success" message={success} />}
+          </CardContent>
+        </Card>
+
+        <Card sx={{ width: '100%' }}>
+          <CardContent
+            sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+          >
+            <Box>
+              <Typography variant="h6">
+                {t('admin_group_roster_title')}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {t('admin_group_roster_desc')}
+              </Typography>
+            </Box>
+
+            <Alert severity="info" sx={{ whiteSpace: 'pre-line' }}>
+              {t('admin_group_roster_format')}
+            </Alert>
+
+            <Box
+              sx={{
+                display: 'flex',
+                gap: 1.5,
+                alignItems: 'center',
+                flexWrap: 'wrap',
+              }}
+            >
+              <Button
+                variant="contained"
+                startIcon={<UploadFileIcon />}
+                onClick={() => rosterInputRef.current?.click()}
+                disabled={rosterLoading || rosterApplying}
+              >
+                {rosterLoading
+                  ? t('admin_group_roster_previewing')
+                  : t('admin_group_roster_upload')}
+              </Button>
+              {rosterFileName && (
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ overflowWrap: 'anywhere' }}
+                >
+                  {rosterFileName}
+                </Typography>
+              )}
+              <input
+                ref={rosterInputRef}
+                hidden
+                type="file"
+                accept=".csv,text/csv"
+                onChange={handleRosterUpload}
+              />
+            </Box>
+
+            {rosterError && (
+              <AlertMessage severity="error" message={rosterError} />
+            )}
+            {rosterResult &&
+              (rosterResult.reconciliation_warnings.length > 0 ? (
+                <Alert severity="warning" sx={{ whiteSpace: 'pre-line' }}>
+                  {t('admin_group_roster_applied_with_warnings', {
+                    groups: rosterResult.reconciliation_warnings
+                      .map((warning) => warning.group_code_name)
+                      .join(', '),
+                  })}
+                </Alert>
+              ) : (
+                <AlertMessage
+                  severity="success"
+                  message={t('admin_group_roster_applied')}
+                />
+              ))}
+
+            {rosterPreview && !rosterPreview.valid && (
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                <Typography variant="subtitle1" fontWeight={600}>
+                  {t('admin_group_roster_errors')}
+                </Typography>
+                <TableContainer component={Paper} variant="outlined">
+                  <Table size="small">
+                    <TableHead>
+                      <TableRow sx={{ backgroundColor: 'action.hover' }}>
+                        <TableCell>
+                          {t('admin_group_roster_location')}
+                        </TableCell>
+                        <TableCell>{t('admin_group_roster_problem')}</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {rosterPreview.errors.map((validationError, index) => (
+                        <TableRow key={`${validationError.row}-${index}`}>
+                          <TableCell>
+                            {validationError.row
+                              ? t('admin_group_roster_row_column', {
+                                  row: validationError.row,
+                                  column: validationError.column || '-',
+                                })
+                              : t('admin_group_roster_file')}
+                          </TableCell>
+                          <TableCell>{validationError.message}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Box>
+            )}
+
+            {rosterPreview &&
+              rosterPreview.valid &&
+              rosterPreview.summary &&
+              rosterPreview.changes && (
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <Typography variant="subtitle1" fontWeight={600}>
+                    {t('admin_group_roster_preview_title')}
+                  </Typography>
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                    <Chip
+                      label={t('admin_group_roster_groups_created', {
+                        count: rosterPreview.summary.groups_created,
+                      })}
+                    />
+                    <Chip
+                      label={t('admin_group_roster_groups_renamed', {
+                        count: rosterPreview.summary.groups_renamed,
+                      })}
+                    />
+                    <Chip
+                      label={t('admin_group_roster_leaders_changed', {
+                        count: rosterPreview.summary.leaders_changed,
+                      })}
+                    />
+                    <Chip
+                      label={t('admin_group_roster_students_changed', {
+                        count: rosterPreview.summary.students_changed,
+                      })}
+                    />
+                    <Chip
+                      label={t('admin_group_roster_students_ungrouped', {
+                        count: rosterPreview.summary.students_ungrouped,
+                      })}
+                    />
+                  </Box>
+
+                  <TableContainer component={Paper} variant="outlined">
+                    <Table size="small">
+                      <TableHead>
+                        <TableRow sx={{ backgroundColor: 'action.hover' }}>
+                          <TableCell>
+                            {t('admin_group_roster_change')}
+                          </TableCell>
+                          <TableCell>
+                            {t('admin_group_roster_details')}
+                          </TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {rosterPreview.changes.created_groups.map((change) => (
+                          <TableRow key={`create-${change.code_name}`}>
+                            <TableCell>
+                              {t('admin_group_roster_create_group')}
+                            </TableCell>
+                            <TableCell>
+                              {change.code_name} — {change.display_name} (
+                              {change.leader})
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                        {rosterPreview.changes.renamed_groups.map((change) => (
+                          <TableRow key={`rename-${change.code_name}`}>
+                            <TableCell>
+                              {t('admin_group_roster_rename_group')}
+                            </TableCell>
+                            <TableCell>
+                              {change.code_name}: {change.from} → {change.to}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                        {rosterPreview.changes.leader_changes.map((change) => (
+                          <TableRow key={`leader-${change.code_name}`}>
+                            <TableCell>
+                              {t('admin_group_roster_change_leader')}
+                            </TableCell>
+                            <TableCell>
+                              {change.code_name}: {change.from} → {change.to}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                        {rosterPreview.changes.student_changes.map((change) => (
+                          <TableRow key={`student-${change.id}`}>
+                            <TableCell>
+                              {t('admin_group_roster_move_student')}
+                            </TableCell>
+                            <TableCell>
+                              {change.id}: {change.from_group || t('no_group')}{' '}
+                              → {change.to_group || t('no_group')}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                        {rosterPreview.summary.groups_created === 0 &&
+                          rosterPreview.summary.groups_renamed === 0 &&
+                          rosterPreview.summary.leaders_changed === 0 &&
+                          rosterPreview.summary.students_changed === 0 && (
+                            <TableRow>
+                              <TableCell colSpan={2}>
+                                {t('admin_group_roster_no_changes')}
+                              </TableCell>
+                            </TableRow>
+                          )}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+
+                  <Box>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => setRosterConfirmOpen(true)}
+                      disabled={
+                        readonly ||
+                        rosterApplying ||
+                        !rosterPreview.preview_token
+                      }
+                    >
+                      {t('admin_group_roster_apply')}
+                    </Button>
+                    {readonly && (
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ ml: 1.5 }}
+                      >
+                        {t('admin_group_roster_readonly')}
+                      </Typography>
+                    )}
+                  </Box>
+                </Box>
+              )}
           </CardContent>
         </Card>
 
@@ -622,6 +931,39 @@ const AdminPage: React.FC = () => {
           </CardContent>
         </Card>
       </Box>
+
+      <Dialog
+        open={rosterConfirmOpen}
+        onClose={() => !rosterApplying && setRosterConfirmOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>{t('admin_group_roster_confirm_title')}</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" color="text.secondary">
+            {t('admin_group_roster_confirm_desc')}
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setRosterConfirmOpen(false)}
+            disabled={rosterApplying}
+          >
+            {t('cancel')}
+          </Button>
+          <Button
+            onClick={handleApplyRoster}
+            variant="contained"
+            disabled={rosterApplying || readonly}
+          >
+            {rosterApplying ? (
+              <CircularProgress size={24} />
+            ) : (
+              t('admin_group_roster_apply')
+            )}
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Dialog
         open={accessDialogOpen}
