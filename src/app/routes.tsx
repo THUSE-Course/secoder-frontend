@@ -57,6 +57,11 @@ const RequireAuth: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return <>{children}</>;
 };
 
+const AdminRoute = () => {
+  const { user } = useAuth();
+  return user?.isAdmin ? <AdminPage /> : <Navigate to="/overview" replace />;
+};
+
 const AppRoutes = () => {
   const RegisterRoute = () => {
     const navigate = useNavigate();
@@ -83,7 +88,7 @@ const AppRoutes = () => {
             <Route path="users" element={<UsersPage />} />
             <Route path="groups" element={<GroupsPage />} />
             <Route path="invitations" element={<InvitationsPage />} />
-            <Route path="admin" element={<AdminPage />} />
+            <Route path="admin" element={<AdminRoute />} />
             <Route path="profile" element={<ProfilePage />} />
           </Route>
 
