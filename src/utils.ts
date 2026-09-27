@@ -283,6 +283,7 @@ interface UsersResponse {
 interface GroupsResponse {
   page: number;
   page_size: number;
+  total: number;
   groups: Group[];
 }
 
@@ -411,6 +412,10 @@ async function getGroups(
       method: 'GET',
     },
   );
+}
+
+async function getMyGroup(): Promise<Group | null> {
+  return authenticatedRequest<Group | null>('/group/my', { method: 'GET' });
 }
 
 async function createGroup(
@@ -644,6 +649,7 @@ export {
   validatePassword,
   getUsers,
   getGroups,
+  getMyGroup,
   createGroup,
   inviteToGroup,
   editGroupName,

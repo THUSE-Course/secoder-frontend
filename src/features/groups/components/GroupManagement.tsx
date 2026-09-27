@@ -39,7 +39,7 @@ import PageHeader from '../../../components/common/PageHeader';
 import AlertMessage from '../../../components/common/AlertMessage';
 import {
   getGroups,
-  getUsers,
+  getMyGroup,
   createGroup,
   inviteToGroup,
   getGroupInvitations,
@@ -92,7 +92,6 @@ const GroupManagement: React.FC = () => {
   const [groupsPage, setGroupsPage] = useState(1);
   const [groupsTotal, setGroupsTotal] = useState(0);
   const pageSize = 10;
-  const usersLookupPageSize = 200;
   const invitationsPageSize = 10;
   const [invitationsPage, setInvitationsPage] = useState(1);
   const [invitationsTotal, setInvitationsTotal] = useState(0);
@@ -112,34 +111,20 @@ const GroupManagement: React.FC = () => {
       try {
         const gPage = newGroupsPage ?? groupsPage;
 
-        const [groupsData, usersData] = await Promise.all([
+        const [groupsData, myGroupData] = await Promise.all([
           getGroups(gPage, pageSize),
-          getUsers(1, usersLookupPageSize),
+          getMyGroup(),
         ]);
         setGroups(groupsData.groups || []);
-        setGroupsTotal(Math.ceil((groupsData.groups?.length || 0) / pageSize));
-
-        // Find current user's group
-        if (currentUser) {
-          const userInfo = usersData.users?.find(
-            (u) => u.id === currentUser.id,
-          );
-          if (userInfo?.group) {
-            const userGroup = groupsData.groups?.find(
-              (g) => g.code_name === userInfo.group,
-            );
-            setMyGroup(userGroup || null);
-          } else {
-            setMyGroup(null);
-          }
-        }
+        setGroupsTotal(Math.ceil(groupsData.total / pageSize));
+        setMyGroup(myGroupData);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load data');
       } finally {
         setLoading(false);
       }
     },
-    [currentUser, groupsPage, pageSize, usersLookupPageSize],
+    [groupsPage],
   );
 
   useEffect(() => {
