@@ -277,6 +277,7 @@ interface Group {
 interface UsersResponse {
   page: number;
   page_size: number;
+  total: number;
   users: User[];
 }
 

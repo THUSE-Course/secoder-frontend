@@ -40,7 +40,7 @@ const UserDirectory: React.FC = () => {
         const targetPage = page ?? usersPage;
         const usersData = await getUsers(targetPage, pageSize);
         setUsers(usersData.users || []);
-        setUsersTotal(Math.ceil((usersData.users?.length || 0) / pageSize));
+        setUsersTotal(Math.ceil(usersData.total / pageSize));
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load users');
       } finally {
