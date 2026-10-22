@@ -175,7 +175,9 @@ async function post<T = ApiResponse>(
   } catch (error: unknown) {
     console.error('API request error:', error);
     if (error instanceof TypeError && error.message.includes('fetch')) {
-      throw new Error('Network error: Unable to connect to server');
+      throw new Error('Network error: Unable to connect to server', {
+        cause: error,
+      });
     }
     throw error;
   }
@@ -204,7 +206,9 @@ async function authenticatedRequest<T = ApiResponse>(
   } catch (error: unknown) {
     console.error('Authenticated API request error:', error);
     if (error instanceof TypeError && error.message.includes('fetch')) {
-      throw new Error('Network error: Unable to connect to server');
+      throw new Error('Network error: Unable to connect to server', {
+        cause: error,
+      });
     }
     throw error;
   }

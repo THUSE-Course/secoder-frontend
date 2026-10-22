@@ -394,7 +394,7 @@ const AdminPage: React.FC = () => {
 
   return (
     <Box sx={{ width: '100%', height: '100%', p: 3 }}>
-      <Typography variant="h4" fontWeight={700} sx={{ mb: 3 }}>
+      <Typography variant="h4" sx={{ mb: 3, fontWeight: 700 }}>
         {t('admin_title')}
       </Typography>
 
@@ -517,7 +517,7 @@ const AdminPage: React.FC = () => {
 
             {rosterPreview && !rosterPreview.valid && (
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                <Typography variant="subtitle1" fontWeight={600}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
                   {t('admin_group_roster_errors')}
                 </Typography>
                 <TableContainer component={Paper} variant="outlined">
@@ -555,7 +555,7 @@ const AdminPage: React.FC = () => {
               rosterPreview.summary &&
               rosterPreview.changes && (
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                  <Typography variant="subtitle1" fontWeight={600}>
+                  <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
                     {t('admin_group_roster_preview_title')}
                   </Typography>
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>

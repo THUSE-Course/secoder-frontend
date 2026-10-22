@@ -556,7 +556,7 @@ const GroupManagement: React.FC = () => {
                           <Typography
                             variant="caption"
                             color="text.secondary"
-                            display="block"
+                            sx={{ display: 'block' }}
                           >
                             ({group.leader.id})
                           </Typography>

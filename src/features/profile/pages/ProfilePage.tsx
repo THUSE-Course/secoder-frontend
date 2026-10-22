@@ -404,7 +404,7 @@ const ProfilePage: React.FC = () => {
                   : ''
             }
             fullWidth
-            InputProps={{ readOnly: true }}
+            slotProps={{ input: { readOnly: true } }}
           />
           <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
             <Button

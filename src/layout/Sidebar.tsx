@@ -84,7 +84,7 @@ const SidebarContent: React.FC<{
               {open && (
                 <ListItemText
                   primary={item.label}
-                  primaryTypographyProps={{ fontWeight: 600 }}
+                  slotProps={{ primary: { sx: { fontWeight: 600 } } }}
                 />
               )}
             </ListItemButton>

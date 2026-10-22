@@ -62,12 +62,12 @@ const AdminRoute = () => {
   return user?.isAdmin ? <AdminPage /> : <Navigate to="/overview" replace />;
 };
 
-const AppRoutes = () => {
-  const RegisterRoute = () => {
-    const navigate = useNavigate();
-    return <Register onSwitchToLogin={() => navigate('/login')} />;
-  };
+const RegisterRoute = () => {
+  const navigate = useNavigate();
+  return <Register onSwitchToLogin={() => navigate('/login')} />;
+};
 
+const AppRoutes = () => {
   return (
     <BrowserRouter>
       <Suspense fallback={<PageLoader />}>

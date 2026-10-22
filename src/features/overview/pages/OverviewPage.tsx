@@ -153,8 +153,11 @@ const OverviewPage: React.FC = () => {
                   </Typography>
                   <Typography
                     variant="body1"
-                    fontWeight="medium"
-                    sx={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}
+                    sx={{
+                      fontWeight: 'medium',
+                      wordBreak: 'break-word',
+                      overflowWrap: 'anywhere',
+                    }}
                   >
                     {user.name}
                   </Typography>
@@ -167,7 +170,7 @@ const OverviewPage: React.FC = () => {
                 <Typography variant="subtitle2" color="text.secondary">
                   {t('student_id')}
                 </Typography>
-                <Typography variant="body1" fontWeight="medium">
+                <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
                   {user.id}
                 </Typography>
               </Box>
@@ -181,8 +184,11 @@ const OverviewPage: React.FC = () => {
                 </Typography>
                 <Typography
                   variant="body1"
-                  fontWeight="medium"
-                  sx={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}
+                  sx={{
+                    fontWeight: 'medium',
+                    wordBreak: 'break-word',
+                    overflowWrap: 'anywhere',
+                  }}
                 >
                   {user.email}
                 </Typography>
